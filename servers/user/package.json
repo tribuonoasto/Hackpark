@@ -4,7 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --runInBand --forceExit",
+    "testLogin": "jest login.test.js --runInBand --forceExit",
+    "testRegis": "jest register.test.js --runInBand --forceExit",
+    "testMovie": "jest movie.test.js--runInBand --forceExit ",
+    "dev": "nodemon ./bin/www.js",
+    "start": "node ./bin/www.js"
   },
   "keywords": [],
   "author": "",
