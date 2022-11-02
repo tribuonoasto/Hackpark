@@ -15,7 +15,6 @@ const Search = ({ clicked, setClicked, searchPhrase, setSearchPhrase }) => {
           color="black"
           style={{ marginLeft: 1 }}
         />
-        {/* Input field */}
         <TextInput
           style={styles.input}
           placeholder="Search"
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E3E7FA",
   },
   input: {
-    height: 40,
+    height: 45,
     borderWidth: 1,
     padding: 10,
     backgroundColor: "#E3E7FA",

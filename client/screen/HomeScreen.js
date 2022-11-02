@@ -1,21 +1,22 @@
-import { View, Text, SafeAreaView, StyleSheet } from "react-native";
+import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
 
-import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
-
+import { Entypo, FontAwesome } from "react-native-vector-icons";
 import { useState } from "react";
 import Search from "../components/Search";
+import Card from "../components/Card";
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
 
-  console.log(searchPhrase);
+  // console.log(searchPhrase);
+  const data = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
   return (
     <SafeAreaView style={styles.container}>
       <View
         style={{
           backgroundColor: "#2E3049",
-          height: 300,
+          height: 250,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
@@ -60,10 +61,36 @@ const HomeScreen = () => {
                 setClicked={setClicked}
                 searchPhrase={searchPhrase}
                 setSearchPhrase={setSearchPhrase}
+                navigation={navigation}
               />
             </View>
           </View>
         </View>
+      </View>
+
+      <View
+        style={{
+          flex: 1,
+          width: "100%",
+          padding: 20,
+        }}
+      >
+        <Text
+          style={{
+            fontWeight: "bold",
+            fontSize: 24,
+            color: "#474E68",
+            marginBottom: 20,
+          }}
+        >
+          Closest spot
+        </Text>
+        <FlatList
+          data={data}
+          renderItem={({ item }) => (
+            <Card item={item} navigation={navigation} />
+          )}
+        />
       </View>
     </SafeAreaView>
   );
