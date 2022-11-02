@@ -1,6 +1,13 @@
-import { View, Text, SafeAreaView, StyleSheet, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  SafeAreaView,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 
-import { Entypo, FontAwesome } from "react-native-vector-icons";
+import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useState } from "react";
 import Search from "../components/Search";
 import Card from "../components/Card";
@@ -56,13 +63,33 @@ const HomeScreen = ({ navigation }) => {
               >
                 Let's find the best parking spot for you
               </Text>
-              <Search
+              {/* <Search
                 clicked={clicked}
                 setClicked={setClicked}
                 searchPhrase={searchPhrase}
                 setSearchPhrase={setSearchPhrase}
                 navigation={navigation}
-              />
+              /> */}
+              <TouchableOpacity
+                style={styles.searchWrapper}
+                onPress={() => navigation.navigate("SearchScreen")}
+              >
+                <Feather
+                  name="search"
+                  size={20}
+                  color="black"
+                  style={{ marginLeft: 1 }}
+                />
+                <View style={styles.input}>
+                  <Text
+                    style={{
+                      color: "#909090",
+                    }}
+                  >
+                    Search your spot...
+                  </Text>
+                </View>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
@@ -114,7 +141,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#E3E7FA",
   },
   input: {
-    height: 40,
+    height: 45,
     borderWidth: 1,
     padding: 10,
     backgroundColor: "#E3E7FA",
@@ -124,20 +151,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginLeft: 10,
     width: "90%",
-  },
-  searchBar__unclicked: {
-    flexDirection: "row",
-    width: "95%",
-    backgroundColor: "#E3E7FA",
-    borderRadius: 20,
-    alignItems: "center",
-  },
-  searchBar__clicked: {
-    flexDirection: "row",
-    width: "80%",
-    backgroundColor: "#E3E7FA",
-    borderRadius: 20,
-    alignItems: "center",
-    justifyContent: "space-evenly",
+    justifyContent: "center",
   },
 });

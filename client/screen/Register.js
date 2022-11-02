@@ -28,8 +28,8 @@ const Register = ({ navigation }) => {
         >
           <Image
             style={{
-              width: 300,
-              height: 300,
+              width: 250,
+              height: 250,
               borderRadius: "200%",
               resizeMode: "cover",
             }}
@@ -48,7 +48,7 @@ const Register = ({ navigation }) => {
                   fontWeight: "600",
                 }}
               >
-                Please login to your account
+                Fill this form to save your spot!
               </Text>
             </View>
             <View>

@@ -55,16 +55,17 @@ const First = ({ navigation }) => {
                   justifyContent: "center",
                   marginTop: 10,
                   width: "100%",
+                  flexDirection: "row",
                 }}
               >
                 <Text style={{ color: "#EDEDED" }}>
-                  Don't have an account yet?
-                  <Text
-                    style={{ color: "#6B728E" }}
-                    onPress={() => navigation.navigate("Register")}
-                  >
-                    Sign up
-                  </Text>
+                  Don't have an account yet?{" "}
+                </Text>
+                <Text
+                  style={{ color: "#6B728E" }}
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  Sign up
                 </Text>
               </View>
             </View>

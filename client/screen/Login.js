@@ -28,8 +28,8 @@ const Login = ({ navigation }) => {
         >
           <Image
             style={{
-              width: 300,
-              height: 300,
+              width: 250,
+              height: 250,
               borderRadius: "200%",
               resizeMode: "cover",
             }}
