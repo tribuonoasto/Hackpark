@@ -65,6 +65,9 @@ _Response (400 - Bad Request)_
 }
 OR
 {
+  "message": "username is already use"
+}
+{
   "message": "email is required"
 }
 OR
