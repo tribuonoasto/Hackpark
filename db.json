@@ -1,0 +1,55 @@
+{
+    "users": [
+      {
+        "id": 1,
+        "username": "Customer",
+        "email": "customer@mail.com",
+        "password": "customer"
+      }
+    ],
+    "vehicles": [
+      {
+        "id": 1,
+        "UserId": "1",
+        "plat": "B 1234 XYZ",
+        "modelName": "Suzuki Ertiga",
+        "type": "Car"
+      }
+    ],
+    "venues": [
+      {
+        "id": 1,
+        "name": "PIM",
+        "slot": 10,
+        "address": "Jalan Metro Pondok Indah Kav. IV, Pd. Pinang, Kec. Kby. Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta",
+        "lat": "",
+        "lng": "",
+        "parkingPrice": 10000,
+        "bookingPrice": 10000,
+        "imgVenue": "https://awsimages.detik.net.id/visual/2021/05/03/dok-pondok-indah-mall_169.jpeg?w=650"
+      }
+    ],
+    "priceAdjusters": [
+      {
+        "id": 1,
+        "name": "test",
+        "value": "20000"
+      }
+    ],
+    "bookings": [
+      {
+        "id": 1,
+        "UserId": 1,
+        "VenueId": 1,
+        "bookingDate": "2022-10-31 15:35:38.808 +0700",
+        "expiredDate": "2022-10-31 16:35:38.808 +0700",
+        "checkinDate": "2022-10-31 16:00:38.808 +0700",
+        "checkoutDate": "2022-10-31 17:35:38.808 +0700",
+        "transactionStatus": false,
+        "paymentStatus": false,
+        "PriceAdjustersId": 1,
+        "totalPrice": 20000
+      }
+    ]
+  }
+  
