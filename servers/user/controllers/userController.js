@@ -1,7 +1,11 @@
+const { User } = require("../models");
+
 class Controller {
   static async getAllUsers(req, res, next) {
     try {
-      // disini
+      const users = await User.findAll();
+
+      res.status(200).json(users);
     } catch (err) {
       next(err);
     }

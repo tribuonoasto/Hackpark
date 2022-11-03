@@ -10,8 +10,8 @@ class Controller {
   static async register(req, res, next) {
     try {
       const { username, email, password } = req.body;
-    } catch (rtt) {
-      next(er);
+    } catch (err) {
+      next(err);
     }
   }
 }
