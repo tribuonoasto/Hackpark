@@ -1,22 +1,23 @@
 const request = require("supertest");
 const { Sequelize } = require("../models");
 const app = require("../app");
-const { QueryInterface } = Sequelize;
+const { queryInterface } = Sequelize;
 
-beforeAll(async () => {
-  await QueryInterface.bulkDelete("Users", null, {
-    truncate: true,
-    restartIdentity: true,
-  });
-});
+// beforeAll(async () => {
+//   console.log(queryInterface);
+//   await queryInterface.bulkDelete("Users", null, {
+//     truncate: true,
+//     restartIdentity: true,
+//   });
+// });
 
 describe("post register customer", () => {
-  it("post /customers/register => fail test status(400),no username", async () => {
+  it("post /register => fail test status(400),no username", async () => {
     const payload = {
       email: `lordfeexz2@gmail.com`,
       password: `qwertyui`,
     };
-    const result = await request(app).post("/customers/register").send(payload);
+    const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", "username is required");
   });
