@@ -1,9 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import DetailUser from "./../components/DetailUser"
 
 export default function User() {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("https://2f03-120-188-66-213.ap.ngrok.io/users")
+      .then((response) => response.json())
+      .then((json) => setUsers(json));
+  }, []);
+
   return (
     <View style={style.content}>
-      <Text>USER</Text>
+      <FlatList
+        data={users}
+        renderItem={({item}) => <DetailUser props={item}/>}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }

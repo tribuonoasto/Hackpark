@@ -1,9 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import DetailPriceAdjuster from "./../components/DetailPriceAdjuster"
 
 export default function PriceAdjuster() {
+  const [priceAdjusters, setPriceAdjusters] = useState([]);
+
+  useEffect(() => {
+    fetch("https://2f03-120-188-66-213.ap.ngrok.io/priceAdjusters")
+      .then((response) => response.json())
+      .then((json) => setPriceAdjusters(json));
+  }, []);
+
   return (
     <View style={style.content}>
-      <Text>PRICE</Text>
+      <FlatList
+        data={priceAdjusters}
+        renderItem={({item}) => <DetailPriceAdjuster props={item}/>}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }

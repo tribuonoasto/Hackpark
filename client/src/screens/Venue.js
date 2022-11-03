@@ -1,9 +1,23 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, View, FlatList } from "react-native";
+import { useEffect, useState } from "react";
+import DetailVenue from "./../components/DetailVenue"
 
 export default function Venue() {
+  const [venues, setVenues] = useState([]);
+
+  useEffect(() => {
+    fetch("https://2f03-120-188-66-213.ap.ngrok.io/venues")
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
+
   return (
     <View style={style.content}>
-      <Text>VENUE</Text>
+      <FlatList
+        data={venues}
+        renderItem={({item}) => <DetailVenue props={item}/>}
+        keyExtractor={(item) => item.id}
+      />
     </View>
   );
 }
