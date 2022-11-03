@@ -1,7 +1,6 @@
 const { compare } = require("../helpers/bcrypt");
 const env = require("../helpers/env");
 const { createToken } = require("../helpers/jwt");
-const { sequelize } = require("../models");
 const { User } = require("../models");
 
 class Controller {
@@ -64,19 +63,20 @@ class Controller {
       };
 
       transporter.sendMail(mailOption, (err, info) => {
-        if (err) throw { name: "email not send" };
-        User.create({
-          username,
-          email,
-          password,
-        })
-          .then(() => {
-            res.status(201).json({ message: `Success register` });
-          })
-          .catch((err) => {
-            throw err;
-          });
+        if (err) {
+          return console.log(err);
+        } else {
+          console.log("success");
+        }
       });
+
+      await User.create({
+        username,
+        email,
+        password,
+      });
+
+      res.status(201).json({ message: "Success register" });
     } catch (err) {
       next(err);
     }
