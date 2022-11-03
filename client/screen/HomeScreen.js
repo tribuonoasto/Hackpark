@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
@@ -18,7 +19,15 @@ const HomeScreen = ({ navigation }) => {
   const [searchPhrase, setSearchPhrase] = useState("");
 
   // console.log(searchPhrase);
-  const data = [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }, { id: 5 }];
+  const data = [
+    { id: 1 },
+    { id: 2 },
+    { id: 3 },
+    { id: 4 },
+    { id: 5 },
+    { id: 6 },
+    { id: 7 },
+  ];
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -96,12 +105,11 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
-
       <View
         style={{
-          flex: 1,
           width: "100%",
           padding: 20,
+          flex: 1,
         }}
       >
         <Text
@@ -116,6 +124,9 @@ const HomeScreen = ({ navigation }) => {
         </Text>
         <FlatList
           data={data}
+          scrollEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
             <Card item={item} navigation={navigation} />
           )}
@@ -129,14 +140,13 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: "absolute",
-    right: 0,
-    left: 0,
-    top: -60,
+    // position: "absolute",
+    // right: 0,
+    // left: 0,
+    // top: -60,
   },
   searchWrapper: {
     marginTop: 15,
-
     paddingLeft: 20,
     paddingRight: 30,
     paddingVertical: 5,

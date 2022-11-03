@@ -7,6 +7,7 @@ import {
   Button,
   TouchableOpacity,
   TouchableNativeFeedback,
+  SafeAreaView,
 } from "react-native";
 
 const DetailScreen = () => {
@@ -32,7 +33,10 @@ const DetailScreen = () => {
           borderTopRightRadius: 40,
           borderTopLeftRadius: 40,
           padding: 40,
+          flex: 1,
         }}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       >
         <View
           style={{
@@ -148,7 +152,7 @@ const DetailScreen = () => {
             width: "100%",
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 80,
+            marginTop: 40,
             paddingVertical: 15,
             borderRadius: 40,
           }}

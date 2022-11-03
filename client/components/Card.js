@@ -77,7 +77,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 5,
     borderRadius: 10,
-    height: 100,
     width: "95%",
     marginVertical: 10,
     alignItems: "center",
@@ -91,7 +90,6 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
-
     elevation: 5,
   },
 });
