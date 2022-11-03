@@ -47,7 +47,17 @@ class Controller {
 
   static async changeUsername(req, res, next) {
     try {
-      // disini
+      const { id } = req.params;
+      const { username } = req.body;
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      await User.update({ username }, { where: { id } });
+
+      res.status(201).json({ message: "success update username" });
     } catch (err) {
       next(err);
     }
