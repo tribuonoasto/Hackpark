@@ -14,6 +14,12 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name == "invalid_credentials") {
     status = 401;
     message = "Invalid email/password";
+  } else if (err.name == "username is already use") {
+    status = 409;
+    message = err.name;
+  } else if (err.name == `invalid token` || err.name == `JsonWebTokenError`) {
+    status = 401;
+    message = `Invalid Token`;
   }
 
   res.status(status).json({ message });

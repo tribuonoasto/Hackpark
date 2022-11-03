@@ -55,6 +55,8 @@ class Controller {
 
       if (!user) throw { name: "User not found" };
 
+      if (user.username === username) throw { name: "username is already use" };
+
       await User.update({ username }, { where: { id } });
 
       res.status(201).json({ message: "success update username" });
