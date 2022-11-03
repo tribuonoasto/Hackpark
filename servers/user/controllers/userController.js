@@ -29,7 +29,7 @@ class Controller {
 
   static async delete(req, res, next) {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
 
       const user = await User.findOne({
         where: { id },
@@ -47,7 +47,7 @@ class Controller {
 
   static async changeUsername(req, res, next) {
     try {
-      const { id } = req.params;
+      const { id } = req.user;
       const { username } = req.body;
       const user = await User.findOne({
         where: { id },

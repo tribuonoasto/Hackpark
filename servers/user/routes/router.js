@@ -12,10 +12,10 @@ router.get("/users", Controller.getAllUsers);
 
 router.use(authentication);
 
+router.delete("/users", Controller.delete);
+
+router.patch("/users", Controller.changeUsername);
+
 router.get("/users/:id", Controller.getUser);
-
-router.delete("/users/:id", Controller.delete);
-
-router.patch("/users/:id", Controller.changeUsername);
 
 module.exports = router;
