@@ -6,7 +6,7 @@ import HomeStack from "./HomeStack";
 
 const Tab = createBottomTabNavigator();
 
-const Home = () => {
+const TabScreen = () => {
   return (
     <Tab.Navigator>
       <Tab.Screen
@@ -17,13 +17,11 @@ const Home = () => {
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="home" color={color} size={size} />
           ),
-          headerShown: true,
+          headerShown: false,
           headerTitle: "",
           headerStyle: {
             backgroundColor: "#2E3049",
           },
-          headerShadowVisible: false,
-          headerBackTitleVisible: false,
         }}
       />
       <Tab.Screen
@@ -34,7 +32,7 @@ const Home = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="search" color={color} size={size} />
           ),
-          headerShown: true,
+          headerShown: false,
           headerTitle: "",
           headerStyle: {
             backgroundColor: "#2E3049",
@@ -46,4 +44,4 @@ const Home = () => {
     </Tab.Navigator>
   );
 };
-export default Home;
+export default TabScreen;

@@ -11,6 +11,7 @@ import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useState } from "react";
 import Search from "../components/Search";
 import Card from "../components/Card";
+import Constants from "expo-constants";
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
@@ -23,10 +24,11 @@ const HomeScreen = ({ navigation }) => {
       <View
         style={{
           backgroundColor: "#2E3049",
-          height: 250,
+          height: 310,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
+          paddingTop: Constants.statusBarHeight + 20,
         }}
       >
         <View>
@@ -127,9 +129,14 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    position: "absolute",
+    right: 0,
+    left: 0,
+    top: -60,
   },
   searchWrapper: {
     marginTop: 15,
+
     paddingLeft: 20,
     paddingRight: 30,
     paddingVertical: 5,

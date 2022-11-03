@@ -3,7 +3,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import First from "./screen/First";
 import Login from "./screen/Login";
 import Register from "./screen/Register";
-import Home from "./screen/Home";
+import TabScreen from "./screen/TabScreen";
 
 const Stack = createNativeStackNavigator();
 
@@ -39,8 +39,8 @@ export default function App() {
           }}
         />
         <Stack.Screen
-          name="Home"
-          component={Home}
+          name="TabScreen"
+          component={TabScreen}
           options={{
             headerShown: false,
             headerTransparent: true,

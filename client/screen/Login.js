@@ -66,7 +66,7 @@ const Login = ({ navigation }) => {
               />
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Home")}
+              onPress={() => navigation.navigate("TabScreen")}
               style={{
                 marginTop: 15,
                 height: 40,

@@ -1,6 +1,6 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import DetailScreen from "./DetailScreen";
 import HomeScreen from "./HomeScreen";
+import DetailScreen from "./DetailScreen";
 
 const Stack = createNativeStackNavigator();
 const HomeStack = () => {
@@ -11,7 +11,7 @@ const HomeStack = () => {
         component={HomeScreen}
         options={{
           headerShown: false,
-          headerTransparent: false,
+          headerTransparent: true,
           headerTitle: "",
         }}
       />
