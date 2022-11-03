@@ -29,7 +29,17 @@ class Controller {
 
   static async delete(req, res, next) {
     try {
-      // disini
+      const { id } = req.params;
+
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      await User.destroy({ where: { id } });
+
+      res.status(200).json({ message: "Success delete user" });
     } catch (err) {
       next(err);
     }
