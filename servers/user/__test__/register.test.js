@@ -1,15 +1,6 @@
 const request = require("supertest");
 const { Sequelize } = require("../models");
 const app = require("../app");
-const { queryInterface } = Sequelize;
-
-// beforeAll(async () => {
-//   console.log(queryInterface);
-//   await queryInterface.bulkDelete("Users", null, {
-//     truncate: true,
-//     restartIdentity: true,
-//   });
-// });
 
 describe("post register customer", () => {
   it("post /register => fail test status(400),no username", async () => {
@@ -99,5 +90,21 @@ describe("post register customer", () => {
       "message",
       "password minimum character is 5"
     );
+  });
+});
+
+describe("post register customer", () => {
+  it("post /register => success test status(201)", async () => {
+    const payload = {
+      username: `Lord Feexz`,
+      email: `lordfeexz4@gmail.com`,
+      password: `qwertyui`,
+    };
+    const result = await request(app).post("/register").send(payload);
+    expect(result.status).toBe(201);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("id", expect.any(Number));
+    expect(result.body).toHaveProperty("username", expect.any(String));
+    expect(result.body).toHaveProperty("email", expect.any(String));
   });
 });
