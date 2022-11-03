@@ -13,7 +13,15 @@ class Controller {
 
   static async getUser(req, res, next) {
     try {
-      // disini
+      const { id } = req.params;
+
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      res.status(200).json(user);
     } catch (err) {
       next(err);
     }
