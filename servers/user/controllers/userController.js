@@ -1,9 +1,11 @@
-const { User } = require("../models");
+const { User, BalanceHistory, Vehicle } = require("../models");
 
 class Controller {
   static async getAllUsers(req, res, next) {
     try {
-      const users = await User.findAll();
+      const users = await User.findAll({
+        include: [BalanceHistory, Vehicle],
+      });
 
       res.status(200).json(users);
     } catch (err) {
@@ -17,6 +19,7 @@ class Controller {
 
       const user = await User.findOne({
         where: { id },
+        include: [BalanceHistory, Vehicle],
       });
 
       if (!user) throw { name: "User not found" };
