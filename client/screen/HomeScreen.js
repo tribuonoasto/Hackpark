@@ -11,7 +11,6 @@ import {
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
-import Constants from "expo-constants";
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
@@ -43,6 +42,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
+          paddingTop: 20,
         }}
       >
         <View>
@@ -126,7 +126,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           padding: 20,
           flex: 1,
-          backgroundColor: "#fff",
+          backgroundColor: "#ededed",
         }}
       >
         <Text

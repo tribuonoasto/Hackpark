@@ -7,7 +7,7 @@ const Card = ({ navigation, item }) => {
       style={[styles.container, styles.shadow]}
       onPress={() => navigation.navigate("DetailScreen", item.id)}
     >
-      <View style={{ flexDirection: "row", margin: 10 }}>
+      <View style={{ flexDirection: "row", marginBottom: 15 }}>
         <Image
           source={{ uri: item.imgVenue }}
           style={{
@@ -21,7 +21,7 @@ const Card = ({ navigation, item }) => {
           style={{
             marginLeft: 20,
             flexDirection: "row",
-            width: 200,
+            width: 220,
             justifyContent: "space-between",
           }}
         >
@@ -74,22 +74,18 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ededed",
     padding: 5,
     borderRadius: 10,
-    width: "95%",
-    marginVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   shadow: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 4,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 4,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
   },
 });

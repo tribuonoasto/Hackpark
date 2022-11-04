@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SearchScreen from "./SearchScreen";
 import HomeStack from "./HomeStack";
 import Orders from "./Orders";
+import { Button, TouchableOpacity } from "react-native";
 
 const Tab = createBottomTabNavigator();
 
@@ -38,11 +39,7 @@ const TabScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="search" color={color} size={size} />
           ),
-          headerShown: false,
           headerTitle: "",
-          headerStyle: {
-            backgroundColor: "#2E3049",
-          },
           headerShadowVisible: false,
           headerBackTitleVisible: false,
         }}
@@ -55,11 +52,10 @@ const TabScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="history" color={color} size={size} />
           ),
-          headerShown: false,
-          headerTitle: "",
           headerStyle: {
-            backgroundColor: "#2E3049",
+            backgroundColor: "#ededed",
           },
+          headerTitle: "",
           headerShadowVisible: false,
           headerBackTitleVisible: false,
         }}

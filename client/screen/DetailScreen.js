@@ -4,10 +4,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  Button,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  SafeAreaView,
   FlatList,
 } from "react-native";
 import { useEffect, useState } from "react";
