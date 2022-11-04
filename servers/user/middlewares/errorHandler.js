@@ -25,6 +25,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name == `invalid_email`) {
     status = 400;
     message = "use real email";
+  } else if (err.name == "Forbidden") {
+    status = 403;
+    message = err.name;
   }
 
   res.status(status).json({ message });
