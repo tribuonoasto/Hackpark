@@ -1,16 +1,15 @@
 const request = require("supertest");
-const { Sequelize } = require("../models");
 const app = require("../app");
 
 describe("get all users", () => {
   it("get /users => success test status(200)", async () => {
     const result = await request(app).get("/users/");
     expect(result.status).toBe(200);
-    expect(result.body).toBeInstanceOf(Array);
-    expect(result.body).toBeInstanceOf(Object);
-    expect(result.body).toHaveProperty("id", expect.any(Number));
-    expect(result.body).toHaveProperty("username", expect.any(String));
-    expect(result.body).toHaveProperty("email", expect.any(String));
+    expect(result.body[0]).toBeInstanceOf(Array);
+    expect(result.body[0]).toBeInstanceOf(Object);
+    expect(result.body[0]).toHaveProperty("id", expect.any(Number));
+    expect(result.body[0]).toHaveProperty("username", expect.any(String));
+    expect(result.body[0]).toHaveProperty("email", expect.any(String));
   });
 });
 
