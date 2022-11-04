@@ -68,11 +68,22 @@ class Controller {
           },
         });
 
+        const user = await User.create({
+          username,
+          email,
+          password,
+          fullName,
+        });
+
+        const url = `http://localhost:3000/users/verify/${user.id}`;
+
+        const text = `please verify your email by clicking this url ${url}`;
+
         const mailOption = {
           from: `nodemailer`,
           to: email,
           subject: `Verification`,
-          text: `send email`,
+          text: `${text}`,
         };
 
         transporter.sendMail(mailOption, (err, info) => {
@@ -81,13 +92,6 @@ class Controller {
           } else {
             return console.log("success");
           }
-        });
-
-        await User.create({
-          username,
-          email,
-          password,
-          fullName,
         });
 
         res.status(201).json({ message: "Check your email" });
