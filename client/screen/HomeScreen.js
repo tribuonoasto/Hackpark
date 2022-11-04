@@ -5,6 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
@@ -30,35 +31,45 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          height: 310,
+          height: 250,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
-          paddingTop: Constants.statusBarHeight,
         }}
       >
         <View>
           <View>
-            <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
-              Your location{" "}
-              <FontAwesome
-                name="chevron-down"
-                color="#A1A9CC"
-                size={16}
-                style={{ marginLeft: 20 }}
-              />
-            </Text>
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginTop: 15,
-              }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Entypo name="location-pin" color="#A1A9CC" size={24} />
-              <Text style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}>
-                Jakarta, Indonesia
-              </Text>
+              <View>
+                <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
+                  Your location{" "}
+                  <FontAwesome name="chevron-down" color="#A1A9CC" size={16} />
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    marginTop: 10,
+                  }}
+                >
+                  <Entypo name="location-pin" color="#A1A9CC" size={24} />
+                  <Text
+                    style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                  >
+                    Jakarta, Indonesia
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("UserScreen")}
+              >
+                <Image
+                  source={require("../assets/user.jpg")}
+                  style={{ width: 50, height: 50, borderRadius: "100%" }}
+                />
+              </TouchableOpacity>
             </View>
             <View>
               <Text
