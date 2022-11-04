@@ -52,6 +52,9 @@ const TabScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="history" color={color} size={size} />
           ),
+          headerStyle: {
+            backgroundColor: "#ededed",
+          },
           headerTitle: "",
           headerShadowVisible: false,
           headerBackTitleVisible: false,

@@ -7,7 +7,7 @@ const Card = ({ navigation }) => {
       style={[styles.container, styles.shadow]}
       onPress={() => navigation.navigate("DetailScreen")}
     >
-      <View style={{ flexDirection: "row", margin: 10 }}>
+      <View style={{ flexDirection: "row", marginBottom: 15 }}>
         <Image
           source={require("../assets/parking-img.jpg")}
           style={{
@@ -21,7 +21,7 @@ const Card = ({ navigation }) => {
           style={{
             marginLeft: 20,
             flexDirection: "row",
-            width: 200,
+            width: 220,
             justifyContent: "space-between",
           }}
         >
@@ -74,13 +74,9 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ededed",
     padding: 5,
     borderRadius: 10,
-    width: "95%",
-    marginVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   shadow: {
     // shadowColor: "#000",

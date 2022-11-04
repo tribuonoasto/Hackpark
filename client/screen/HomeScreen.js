@@ -118,7 +118,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           padding: 20,
           flex: 1,
-          backgroundColor: "#fff",
+          backgroundColor: "#ededed",
         }}
       >
         <Text
