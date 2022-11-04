@@ -75,7 +75,7 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={require("../assets/user.jpg")}
-                  style={{ width: 50, height: 50, borderRadius: 100 }}
+                  style={{ width: 50, height: 50, borderRadius: "100%" }}
                 />
               </TouchableOpacity>
             </View>
