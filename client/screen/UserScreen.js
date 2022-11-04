@@ -5,11 +5,21 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  FlatList,
 } from "react-native";
+import { useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
 import UserList from "../components/UserList";
 
 const UserScreen = ({ navigation }) => {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetch("https://1b9a-110-137-193-158.ap.ngrok.io/users")
+      .then((response) => response.json())
+      .then((json) => setUsers(json));
+  }, []);
+
   return (
     <ScrollView style={styles.container}>
       <View
@@ -25,25 +35,45 @@ const UserScreen = ({ navigation }) => {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <View style={{ flexDirection: "row" }}>
-              <Image
-                source={require("../assets/user.jpg")}
-                style={{
-                  width: 60,
-                  height: 60,
-                  resizeMode: "cover",
-                  borderRadius: "100%",
-                  marginRight: 10,
-                }}
+              <FlatList
+                data={users}
+                renderItem={({ item }) => (
+                  <Image
+                    source={{ uri: item.imgUrl }}
+                    style={{
+                      width: 60,
+                      height: 60,
+                      resizeMode: "cover",
+                      borderRadius: 100,
+                      marginRight: 10,
+                    }}
+                  />
+                )}
+                keyExtractor={(item) => item.id}
               />
               <View>
-                <Text
-                  style={{ fontWeight: "500", fontSize: 18, color: "#404258" }}
-                >
-                  Anto Suprapto
-                </Text>
-                <Text style={{ marginTop: 5, color: "#50577A" }}>
-                  anto@gmail.com
-                </Text>
+                <FlatList
+                  data={users}
+                  renderItem={({ item }) => (
+                    <View>
+                      <Text
+                        style={{
+                          fontWeight: "500",
+                          fontSize: 18,
+                          color: "#404258",
+                        }}
+                      >
+                        {" "}
+                        {item.username}
+                      </Text>
+                      <Text style={{ marginTop: 5, color: "#50577A" }}>
+                        {" "}
+                        {item.email}
+                      </Text>
+                    </View>
+                  )}
+                  keyExtractor={(item) => item.id}
+                />
               </View>
             </View>
             <TouchableOpacity

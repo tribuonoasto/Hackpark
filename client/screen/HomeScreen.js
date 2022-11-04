@@ -9,23 +9,31 @@ import {
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../components/Card";
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
 
+  const [venues, setVenues] = useState([]);
+
+  useEffect(() => {
+    fetch("https://1b9a-110-137-193-158.ap.ngrok.io/venues")
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
+
   // console.log(searchPhrase);
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-  ];
+  // const data = [
+  //   { id: 1 },
+  //   { id: 2 },
+  //   { id: 3 },
+  //   { id: 4 },
+  //   { id: 5 },
+  //   { id: 6 },
+  //   { id: 7 },
+  // ];
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -132,12 +140,14 @@ const HomeScreen = ({ navigation }) => {
           Closest spot
         </Text>
         <FlatList
-          data={data}
+          data={venues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Card item={item} navigation={navigation} />
+            <Card item={item} navigation={navigation} 
+            keyExtractor={(item) => item.id} 
+            />
           )}
         />
       </View>
