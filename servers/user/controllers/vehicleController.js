@@ -62,6 +62,25 @@ class Controller {
       next(err);
     }
   }
+
+  static async create(req, res, next) {
+    try {
+      const { plat, modelName, name } = req.body;
+
+      const { UserId } = req.user;
+
+      await Vehicle.create({
+        UserId,
+        plat,
+        modelName,
+        name,
+      });
+
+      res.status(201).json({ message: "success create" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = Controller;

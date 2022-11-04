@@ -6,4 +6,8 @@ router.get("/", Controller.getVehicle);
 
 router.patch("/", Controller.changeImg);
 
+router.post("/", Controller.create);
+
+router.delete("/", Controller.delete);
+
 module.exports = router;
