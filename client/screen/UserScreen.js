@@ -6,8 +6,8 @@ import {
   TouchableOpacity,
   ScrollView,
 } from "react-native";
-import { Entypo, FontAwesome5, Feather } from "react-native-vector-icons";
-import Constants from "expo-constants";
+import { FontAwesome5 } from "react-native-vector-icons";
+import UserList from "../components/UserList";
 
 const UserScreen = ({ navigation }) => {
   return (
@@ -56,58 +56,18 @@ const UserScreen = ({ navigation }) => {
             <Text style={{ fontWeight: "500", fontSize: 18, color: "#404258" }}>
               Account
             </Text>
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 10,
-              }}
-            >
-              <FontAwesome5 name="history" size={20} color="#404258" />
-              <View
-                style={{
-                  width: "93%",
-                  marginLeft: 10,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text
-                  style={{ fontWeight: "500", fontSize: 18, color: "#404258" }}
-                >
-                  My orders
-                </Text>
-                <FontAwesome5 name="chevron-right" size={20} color="#404258" />
-              </View>
-            </View>
-            <View
-              style={{
-                marginTop: 20,
-                flexDirection: "row",
-                alignItems: "center",
-                marginBottom: 10,
-              }}
-            >
-              <FontAwesome5 name="car-alt" size={20} color="#404258" />
-              <View
-                style={{
-                  width: "93%",
-                  marginLeft: 10,
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <Text
-                  style={{ fontWeight: "500", fontSize: 18, color: "#404258" }}
-                >
-                  My vehicles
-                </Text>
-                <FontAwesome5 name="chevron-right" size={20} color="#404258" />
-              </View>
-            </View>
+            <UserList
+              iconName={"history"}
+              text={"My orders"}
+              screen={"Orders"}
+              navigation={navigation}
+            />
+            <UserList
+              iconName={"car-alt"}
+              text={"My vehicles"}
+              screen={"MyVehicle"}
+              navigation={navigation}
+            />
           </View>
         </View>
 

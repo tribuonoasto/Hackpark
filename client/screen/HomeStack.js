@@ -3,6 +3,8 @@ import HomeScreen from "./HomeScreen";
 import DetailScreen from "./DetailScreen";
 import UserScreen from "./UserScreen";
 import EditUserScreen from "./EditUserScreen";
+import Orders from "./Orders";
+import MyVehicle from "./MyVehicle";
 
 const Stack = createNativeStackNavigator();
 const HomeStack = () => {
@@ -43,6 +45,36 @@ const HomeStack = () => {
         options={{
           headerShown: true,
           headerTitle: "Edit Profile",
+          headerStyle: {
+            backgroundColor: "#EDEDED",
+          },
+          headerTitleStyle: {
+            color: "#404258",
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="Orders"
+        component={Orders}
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "#EDEDED",
+          },
+          headerTitleStyle: {
+            color: "#404258",
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="MyVehicle"
+        component={MyVehicle}
+        options={{
+          headerShown: true,
+          headerTitle: "My Vehicle",
           headerStyle: {
             backgroundColor: "#EDEDED",
           },

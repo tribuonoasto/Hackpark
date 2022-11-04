@@ -11,7 +11,6 @@ import {
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useState } from "react";
 import Card from "../components/Card";
-import Constants from "expo-constants";
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);

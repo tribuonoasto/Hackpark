@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SearchScreen from "./SearchScreen";
 import HomeStack from "./HomeStack";
 import Orders from "./Orders";
+import { Button, TouchableOpacity } from "react-native";
 
 const Tab = createBottomTabNavigator();
 

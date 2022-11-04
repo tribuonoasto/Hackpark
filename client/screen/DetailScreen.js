@@ -4,10 +4,7 @@ import {
   StyleSheet,
   Image,
   ScrollView,
-  Button,
   TouchableOpacity,
-  TouchableNativeFeedback,
-  SafeAreaView,
 } from "react-native";
 
 const DetailScreen = () => {
