@@ -2,6 +2,7 @@
   "expo": {
     "name": "client",
     "slug": "client",
+    "owner": "p4rley",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,9 +16,7 @@
       "fallbackToCacheTimeout": 0,
       "url": "https://u.expo.dev/10db8d37-f102-4951-af45-6c4889171e8c"
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.p4rley.client"

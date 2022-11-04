@@ -5,12 +5,10 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ScrollView,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useState } from "react";
-import Search from "../components/Search";
 import Card from "../components/Card";
 import Constants from "expo-constants";
 
@@ -32,12 +30,11 @@ const HomeScreen = ({ navigation }) => {
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          backgroundColor: "#2E3049",
           height: 310,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
-          paddingTop: Constants.statusBarHeight + 20,
+          paddingTop: Constants.statusBarHeight,
         }}
       >
         <View>
@@ -110,6 +107,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           padding: 20,
           flex: 1,
+          backgroundColor: "#fff",
         }}
       >
         <Text
@@ -140,10 +138,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // position: "absolute",
-    // right: 0,
-    // left: 0,
-    // top: -60,
+    backgroundColor: "#2E3049",
   },
   searchWrapper: {
     marginTop: 15,
