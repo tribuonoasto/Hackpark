@@ -4,6 +4,7 @@ const env = {
   user: process.env.email,
   pass: process.env.nodemailerpass,
   secret: process.env.secret,
+  AbstractKey: process.env.AbstractKey,
 };
 
 module.exports = env;

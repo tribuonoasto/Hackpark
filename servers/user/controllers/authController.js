@@ -2,6 +2,7 @@ const { compare } = require("../helpers/bcrypt");
 const env = require("../helpers/env");
 const { createToken } = require("../helpers/jwt");
 const { User } = require("../models");
+const axios = require("axios");
 
 class Controller {
   static async login(req, res, next) {
@@ -41,43 +42,56 @@ class Controller {
     try {
       const { username, email, password, fullName } = req.body;
 
-      const nodemailer = require("nodemailer");
-
-      const transporter = nodemailer.createTransport({
-        host: env.host,
-        port: env.port,
-        auth: {
-          user: env.user,
-          pass: env.pass,
-        },
-        tls: {
-          rejectUnauthorized: false,
+      const valid = await axios({
+        method: "get",
+        url: `https://emailvalidation.abstractapi.com/v1/`,
+        params: {
+          api_key: env.AbstractKey,
+          email: email,
         },
       });
 
-      const mailOption = {
-        from: `nodemailer`,
-        to: email,
-        subject: `Verification`,
-        text: `send email`,
-      };
+      if (!valid) {
+        throw { name: `invalid_email` };
+      } else if (valid.data.is_smtp_valid.value == true) {
+        const nodemailer = require("nodemailer");
 
-      transporter.sendMail(mailOption, (err, info) => {
-        if (err) {
-          return console.log(err);
-        } else {
-          return console.log("success");
-        }
-      });
+        const transporter = nodemailer.createTransport({
+          host: env.host,
+          port: env.port,
+          auth: {
+            user: env.user,
+            pass: env.pass,
+          },
+          tls: {
+            rejectUnauthorized: false,
+          },
+        });
 
-      await User.create({
-        username,
-        email,
-        password,
-        fullName,
-      });
+        const mailOption = {
+          from: `nodemailer`,
+          to: email,
+          subject: `Verification`,
+          text: `send email`,
+        };
 
-      res.status(201).json({ message: "Check your email" });
+        transporter.sendMail(mailOption, (err, info) => {
+          if (err) {
+            return console.log(err);
+          } else {
+            return console.log("success");
+          }
+        });
+
+        await User.create({
+          username,
+          email,
+          password,
+          fullName,
+        });
+
+        res.status(201).json({ message: "Check your email" });
+      }
     } catch (err) {
       next(err);
     }
