@@ -64,6 +64,45 @@ class Controller {
       next(err);
     }
   }
+
+  static async verify(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const user = User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      const isVerified = true;
+
+      await User.update(
+        { isVerified },
+        {
+          where: {
+            id: user.id,
+          },
+        }
+      );
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async changeImg(req, res, next) {
+    try {
+      const { id } = req.user;
+
+      const { imgUrl } = req.body;
+
+      await User.update({ imgUrl }, { where: { id } });
+
+      res.status(201).json({ message: "success change image" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = Controller;

@@ -65,6 +65,30 @@ module.exports = (sequelize, DataTypes) => {
           },
         },
       },
+      fullName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        validate: {
+          notNull: {
+            msg: "fullName is required",
+          },
+          notEmpty: {
+            msg: "fullName is required",
+          },
+        },
+      },
+      balance: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      isRegis: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false,
+      },
+      imgUrl: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
     },
     {
       sequelize,

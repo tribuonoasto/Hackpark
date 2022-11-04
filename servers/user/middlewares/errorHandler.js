@@ -22,6 +22,9 @@ const errorHandler = (err, req, res, next) => {
     message = `Invalid Token`;
   } else if (err.name == "email not send") {
     status = 501;
+  } else if (err.name == `invalid_email`) {
+    status = 400;
+    message = "use real email";
   }
 
   res.status(status).json({ message });
