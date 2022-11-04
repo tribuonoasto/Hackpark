@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
 import { Rating, AirbnbRating } from "react-native-ratings";
 
 const OrderDetail = () => {
+  const [status, setStatus] = useState("ongoing");
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
   };
@@ -11,7 +13,7 @@ const OrderDetail = () => {
         style={{
           borderBottomWidth: 1,
           borderBottomColor: "rgba(0, 0, 0, 0.1)",
-          paddingBottom: 20,
+          padding: 20,
         }}
       >
         <View>
@@ -48,6 +50,7 @@ const OrderDetail = () => {
               <Text style={{ color: "#474E68", fontSize: 12 }}>
                 31 February 2022, 11.11
               </Text>
+
               <Text style={{ color: "#474E68", fontSize: 12 }}>
                 Booking ID ABCDE12345FGHI
               </Text>
@@ -55,7 +58,12 @@ const OrderDetail = () => {
           </View>
         </View>
       </View>
-      <ScrollView style={{ marginTop: 20 }}>
+      <ScrollView
+        style={{
+          backgroundColor: "#fff",
+          padding: 20,
+        }}
+      >
         <View
           style={{
             marginBottom: 30,
@@ -63,25 +71,33 @@ const OrderDetail = () => {
             alignItems: "center",
           }}
         >
-          <Text style={{ fontSize: 18, color: "#2C2D3E", fontWeight: "700" }}>
-            How was the parking spot?
-          </Text>
-          <View
-            style={{
-              height: 150,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <AirbnbRating
-              reviewColor="#2C2D3E"
-              count={5}
-              reviews={["Bad", "Meh", "OK", "Good", "Amazing"]}
-              defaultRating={0}
-              size={35}
-              onFinishRating={ratingCompleted}
-            />
-          </View>
+          {status === "ongoing" ? (
+            <Image source={require("../assets/qrcode.png")} />
+          ) : (
+            <View>
+              <Text
+                style={{ fontSize: 18, color: "#2C2D3E", fontWeight: "700" }}
+              >
+                How was the parking spot?
+              </Text>
+              <View
+                style={{
+                  height: 150,
+                  justifyContent: "center",
+                  alignItems: "center",
+                }}
+              >
+                <AirbnbRating
+                  reviewColor="#2C2D3E"
+                  count={5}
+                  reviews={["Bad", "Meh", "OK", "Good", "Amazing"]}
+                  defaultRating={0}
+                  size={35}
+                  onFinishRating={ratingCompleted}
+                />
+              </View>
+            </View>
+          )}
         </View>
         <View
           style={{
@@ -101,9 +117,15 @@ const OrderDetail = () => {
           <Text style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}>
             Check-out date
           </Text>
-          <Text style={{ fontSize: 14, fontWeight: "300", color: "#474E68" }}>
-            31 February 2022, 14.11
-          </Text>
+          {status === "ongoing" ? (
+            <Text style={{ fontSize: 18, fontWeight: "600", color: "#474E68" }}>
+              -
+            </Text>
+          ) : (
+            <Text style={{ fontSize: 14, fontWeight: "300", color: "#474E68" }}>
+              31 February 2022, 14.11
+            </Text>
+          )}
         </View>
 
         <View style={{ marginTop: 20 }}>
@@ -125,7 +147,15 @@ const OrderDetail = () => {
             }}
           >
             <Text style={{ color: "#404258" }}>Parking fee</Text>
-            <Text style={{ color: "#404258" }}>Rp30.000</Text>
+            {status === "ongoing" ? (
+              <Text
+                style={{ fontSize: 18, fontWeight: "600", color: "#474E68" }}
+              >
+                -
+              </Text>
+            ) : (
+              <Text style={{ color: "#404258" }}>Rp30.000</Text>
+            )}
           </View>
           <View
             style={{
@@ -152,6 +182,5 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#ededed",
-    padding: 20,
   },
 });
