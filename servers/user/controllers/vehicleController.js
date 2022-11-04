@@ -5,9 +5,11 @@ class Controller {
     try {
       const { id } = req.user;
 
-      const vehicle = await Vehicle.findAll();
-
-      console.log(vehicle);
+      const vehicle = await Vehicle.findAll({
+        where: {
+          UserId: id,
+        },
+      });
 
       res.status(200).json(vehicle);
     } catch (err) {
