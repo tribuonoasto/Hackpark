@@ -39,7 +39,7 @@ class Controller {
 
   static async register(req, res, next) {
     try {
-      const { username, email, password } = req.body;
+      const { username, email, password, fullName } = req.body;
 
       const nodemailer = require("nodemailer");
 
@@ -66,7 +66,7 @@ class Controller {
         if (err) {
           return console.log(err);
         } else {
-          console.log("success");
+          return console.log("success");
         }
       });
 
@@ -74,9 +74,10 @@ class Controller {
         username,
         email,
         password,
+        fullName,
       });
 
-      res.status(201).json({ message: "Success register" });
+      res.status(201).json({ message: "Check your email" });
     } catch (err) {
       next(err);
     }

@@ -102,6 +102,6 @@ describe("post register customer", () => {
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(201);
     expect(result.body).toBeInstanceOf(Object);
-    expect(result.body).toHaveProperty("message", "Success register");
+    expect(result.body).toHaveProperty("message", "Check your email");
   });
 });
