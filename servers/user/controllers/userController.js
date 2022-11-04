@@ -72,22 +72,23 @@ class Controller {
     try {
       const { id } = req.params;
 
-      const user = User.findOne({
+      const user = await User.findOne({
         where: { id },
       });
 
       if (!user) throw { name: "User not found" };
 
-      const isVerified = true;
+      const isRegis = true;
 
       await User.update(
-        { isVerified },
+        { isRegis },
         {
           where: {
             id: user.id,
           },
         }
       );
+      res.status(201).json({ message: "Verified" });
     } catch (err) {
       next(err);
     }
