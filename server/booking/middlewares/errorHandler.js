@@ -7,9 +7,15 @@ const errorHandler = (err, req, res, next) => {
   if (err.name === "invalid_validation") {
     code = 400;
     message = err.msg;
-  } else if (err.name === "user_not_found") {
+  } else if (err.name === "invalid_Book") {
+    code = 400;
+    message = err.msg;
+  } else if (err.name === "venue_not_found") {
     code = 404;
-    message = "User Not Found";
+    message = "Venue Not Found";
+  } else if (err.name === "slot_not_found") {
+    code = 404;
+    message = "Slot Not Found";
   }
 
   res.status(code).json({ message });

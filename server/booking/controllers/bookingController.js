@@ -1,5 +1,7 @@
 "use strict";
 const Book = require("../models/booking");
+const Slot = require("../models/slot");
+const Venue = require("../models/venue");
 const format = require("date-fns/format");
 const { baseUrlLocal } = require("../helpers/baseUrl");
 const axios = require("axios");
@@ -10,9 +12,34 @@ class BookingController {
     try {
       const { UserId, SlotId, bookingDate } = req.body;
 
+      if (!UserId || !SlotId) {
+        throw {
+          name: "invalid_validation",
+          msg: "Invalid Input",
+        };
+      }
+
+      //// AXIOS CEK USER ID
+
+      //// CEK SLOT
+      const checkSlot = await Slot.findOne(SlotId);
+      if (!checkSlot) {
+        throw { name: "slot_not_found" };
+      }
+
+      //// CEK VENUE
+      const venueId = checkSlot.VenueId.toString();
+      const checkVenue = await Venue.findOne(venueId);
+      if (!checkVenue) {
+        throw { name: "venue_not_found" };
+      }
+
+      //// BOOKING
       const bookDate = bookingDate ? new Date(bookingDate) : new Date();
-      const expiredDate = bookDate;
+      const expiredDate = bookingDate ? new Date(bookingDate) : new Date();
       expiredDate.setHours(expiredDate.getHours() + 1);
+      bookDate.toLocaleString("id-Id");
+      expiredDate.toLocaleString("id-Id");
 
       const currentDay = format(bookDate, "EEEE");
       let priceAdjuster = 0;
@@ -27,6 +54,10 @@ class BookingController {
         priceAdjuster = 2;
       }
 
+      const venuePrice = checkVenue.bookingPrice;
+      const multiplierPrice = await Venue.findOnePrice(priceAdjuster);
+      const bookPrice = venuePrice * multiplierPrice.value;
+
       const resp = await Book.insertOne({
         UserId,
         SlotId,
@@ -35,9 +66,9 @@ class BookingController {
         checkinDate: null,
         checkoutDate: null,
         transactionStatus: "Booked",
-        paymentStatus: "Booked paid",
+        paymentStatus: "Book paid",
         PriceAdjusterId: priceAdjuster,
-        totalPrice: 1000,
+        totalPrice: bookPrice,
         imgQrCode: "qrcode url",
       });
 
@@ -47,6 +78,7 @@ class BookingController {
           msg: "Error when booking parking slot",
         };
 
+      //// QR CODE
       const newBookingId = resp.insertedId.toString();
 
       const qrCode = await axios({
