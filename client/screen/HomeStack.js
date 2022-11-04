@@ -42,8 +42,14 @@ const HomeStack = () => {
         component={EditUserScreen}
         options={{
           headerShown: true,
-          headerTransparent: true,
-          headerTitle: "",
+          headerTitle: "Edit Profile",
+          headerStyle: {
+            backgroundColor: "#EDEDED",
+          },
+          headerTitleStyle: {
+            color: "#404258",
+          },
+          headerShadowVisible: false,
         }}
       />
     </Stack.Navigator>

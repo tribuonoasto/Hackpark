@@ -35,6 +35,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
+          paddingTop: 20,
         }}
       >
         <View>

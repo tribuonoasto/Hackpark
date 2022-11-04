@@ -38,11 +38,7 @@ const TabScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome name="search" color={color} size={size} />
           ),
-          headerShown: false,
           headerTitle: "",
-          headerStyle: {
-            backgroundColor: "#2E3049",
-          },
           headerShadowVisible: false,
           headerBackTitleVisible: false,
         }}
@@ -55,11 +51,7 @@ const TabScreen = () => {
           tabBarIcon: ({ color, size }) => (
             <FontAwesome5 name="history" color={color} size={size} />
           ),
-          headerShown: false,
           headerTitle: "",
-          headerStyle: {
-            backgroundColor: "#2E3049",
-          },
           headerShadowVisible: false,
           headerBackTitleVisible: false,
         }}
