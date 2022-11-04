@@ -5,7 +5,7 @@ class Controller {
     try {
       const { id } = req.user;
 
-      const vehicle = await Vehicle.findOne({
+      const vehicle = await Vehicle.findAll({
         where: {
           UserId: id,
         },
@@ -41,11 +41,11 @@ class Controller {
 
   static async delete(req, res, next) {
     try {
-      const { id } = req.user;
+      const { id } = req.params;
 
       const vehicle = await Vehicle.findOne({
         where: {
-          UserId: id,
+          id,
         },
       });
 
@@ -53,7 +53,7 @@ class Controller {
 
       await Vehicle.destroy({
         where: {
-          UserId: id,
+          id,
         },
       });
 
@@ -67,7 +67,7 @@ class Controller {
     try {
       const { plat, modelName, name } = req.body;
 
-      const { UserId } = req.user;
+      const UserId = req.user.id;
 
       await Vehicle.create({
         UserId,
