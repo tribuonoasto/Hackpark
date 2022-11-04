@@ -96,12 +96,16 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         defaultValue: null,
       },
+      role: DataTypes.STRING,
     },
     {
       sequelize,
       modelName: "User",
     }
   );
-  User.beforeCreate((el) => (el.password = hash(el.password)));
+  User.beforeCreate((el) => {
+    el.password = hash(el.password);
+    if (!el.role) el.role = "user";
+  });
   return User;
 };
