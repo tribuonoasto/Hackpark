@@ -9,6 +9,9 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      BalanceHistory.belongsTo(models.User, {
+        foreignKey: "UserId",
+      });
     }
   }
   BalanceHistory.init(
