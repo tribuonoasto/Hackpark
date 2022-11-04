@@ -11,7 +11,7 @@ const UserScreen = () => {
             width: 60,
             height: 60,
             resizeMode: "cover",
-            borderRadius: "100%",
+            borderRadius: 100,
             marginRight: 10,
           }}
         />

@@ -1,0 +1,76 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "Customer",
+      "email": "customer@mail.com",
+      "password": "customer",
+      "saldo": 100000,
+      "isRegis": true,
+      "fullName": "Kang Customer",
+      "imgUrl": "https://klikhukum.id/wp-content/uploads/2022/05/Kang-park-ir.jpg"
+    }
+  ],
+  "vehicles": [
+    {
+      "id": 1,
+      "UserId": 1,
+      "plat": "B 1234 XYZ",
+      "modelName": "Suzuki Ertiga"
+    }
+  ],
+  "saldoHistories": [
+    {
+      "id": 1,
+      "UserId": 1,
+      "dateTransaction": "2022-10-31 17:35:38.808 +0700",
+      "type": "kredit",
+      "amount": 20000
+    }
+  ],
+  "ratings": [
+    {
+      "id": 1,
+      "UserId": 1,
+      "VenueId": 1,
+      "ratings": 5
+    }
+  ],
+  "venues": [
+    {
+      "id": 1,
+      "name": "PIM",
+      "slot": 10,
+      "address": "Jalan Metro Pondok Indah Kav. IV, Pd. Pinang, Kec. Kby. Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta",
+      "lat": "",
+      "lng": "",
+      "parkingPrice": 10000,
+      "bookingPrice": 10000,
+      "imgVenue": "https://awsimages.detik.net.id/visual/2021/05/03/dok-pondok-indah-mall_169.jpeg?w=650",
+      "description": "ini tempat parkir"
+    }
+  ],
+  "priceAdjusters": [
+    {
+      "id": 1,
+      "name": "total bayar user 1",
+      "value": 10000
+    }
+  ],
+  "bookings": [
+    {
+      "id": 1,
+      "UserId": 1,
+      "VenueId": 1,
+      "bookingDate": "2022-10-31 15:35:38.808 +0700",
+      "expiredDate": "2022-10-31 16:35:38.808 +0700",
+      "checkinDate": "2022-10-31 16:00:38.808 +0700",
+      "checkoutDate": "2022-10-31 17:35:38.808 +0700",
+      "transactionStatus": "Done",
+      "paymentStatus": false,
+      "PriceAdjustersId": 1,
+      "totalPrice": 20000,
+      "imgQrCdoe": "ini qr code"
+    }
+  ]
+}

@@ -30,7 +30,7 @@ const Login = ({ navigation }) => {
             style={{
               width: 250,
               height: 250,
-              borderRadius: "200%",
+              borderRadius: 200,
               resizeMode: "cover",
             }}
             source={require("../assets/login-img.jpg")}
