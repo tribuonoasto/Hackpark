@@ -66,7 +66,7 @@ const MyVehicle = ({ navigation }) => {
               style={{
                 width: 150,
                 height: 150,
-                borderRadius: "100%",
+                borderRadius: 100,
                 resizeMode: "cover",
               }}
             />
@@ -76,7 +76,7 @@ const MyVehicle = ({ navigation }) => {
               style={{
                 width: 150,
                 height: 150,
-                borderRadius: "100%",
+                borderRadius: 100,
                 resizeMode: "cover",
               }}
             />
@@ -98,7 +98,7 @@ const MyVehicle = ({ navigation }) => {
                 position: "absolute",
                 right: 5,
                 bottom: 5,
-                borderRadius: "100%",
+                borderRadius: 100,
               }}
             ></View>
             <Ionicons name="ios-add-circle" size={30} color="#2192FF" />

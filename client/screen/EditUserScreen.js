@@ -31,7 +31,7 @@ const EditUserScreen = ({ navigation }) => {
             style={{
               width: 150,
               height: 150,
-              borderRadius: "100%",
+              borderRadius: 100,
               justifyContent: "center",
               alignItems: "center",
             }}
@@ -51,7 +51,7 @@ const EditUserScreen = ({ navigation }) => {
                 position: "absolute",
                 right: 5,
                 bottom: 5,
-                borderRadius: "100%",
+                borderRadius: 100,
               }}
             ></View>
             <Ionicons name="ios-add-circle" size={30} color="#2192FF" />
