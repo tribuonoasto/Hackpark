@@ -1,6 +1,6 @@
 import { Text, View, Image, TouchableOpacity } from "react-native";
 
-const BookList = ({ img, navigation }) => {
+const BookList = ({ item, navigation }) => {
   return (
     <TouchableOpacity
       style={{
@@ -15,15 +15,15 @@ const BookList = ({ img, navigation }) => {
     >
       <View style={{ flexDirection: "row" }}>
         <Image
-          source={img}
+          source={{ uri: item.venue.imgVenue }}
           style={{ width: 70, height: 70, borderRadius: 10 }}
         />
 
         <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
           <View>
-            <Text style={{ fontSize: 18, fontWeight: "500", color: "#404258" }}>
-              Indomaret
-            </Text>
+            <Text
+              style={{ fontSize: 18, fontWeight: "500", color: "#404258" }}
+            ></Text>
             <Text
               style={{
                 fontSize: 14,
@@ -32,11 +32,11 @@ const BookList = ({ img, navigation }) => {
                 marginTop: 5,
               }}
             >
-              Book completed
+              {item.transactionStatus}
             </Text>
           </View>
           <Text style={{ color: "#6B728E", fontSize: 10, fontWeight: "300" }}>
-            31 February 2022, 11.11
+            {item.checkoutDate}
           </Text>
         </View>
       </View>

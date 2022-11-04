@@ -14,7 +14,7 @@
   "vehicles": [
     {
       "id": 1,
-      "UserId": 1,
+      "userId": 1,
       "plat": "B 1234 XYZ",
       "modelName": "Suzuki Ertiga"
     }
@@ -22,17 +22,18 @@
   "saldoHistories": [
     {
       "id": 1,
-      "UserId": 1,
+      "userId": 1,
       "dateTransaction": "2022-10-31 17:35:38.808 +0700",
       "type": "kredit",
-      "amount": 20000
+      "amount": 20000,
+      "status": "debit"
     }
   ],
   "ratings": [
     {
       "id": 1,
-      "UserId": 1,
-      "VenueId": 1,
+      "userId": 1,
+      "venueId": 1,
       "ratings": 5
     }
   ],
@@ -40,7 +41,6 @@
     {
       "id": 1,
       "name": "PIM",
-      "slot": 10,
       "address": "Jakarta Selatan",
       "lat": "",
       "lng": "",
@@ -52,7 +52,6 @@
     {
       "id": 2,
       "name": "PIK Avenue",
-      "slot": 10,
       "address": "Jakarta Utara",
       "lat": "",
       "lng": "",
@@ -60,6 +59,20 @@
       "bookingPrice": 10000,
       "imgVenue": "https://cdn2.pikavenue.com/wp-content/uploads/2020/11/1280px-PIK_Avenue_tampak_depan.jpg",
       "description": "ini tempat parkir"
+    }
+  ],
+  "slots": [
+    {
+      "id": 1,
+      "venueId": 1,
+      "slot": 10,
+      "row": 3
+    },
+    {
+      "id": 2,
+      "venueId": 2,
+      "slot": 10,
+      "row": 3
     }
   ],
   "priceAdjusters": [
@@ -72,13 +85,27 @@
   "bookings": [
     {
       "id": 1,
-      "UserId": 1,
-      "VenueId": 1,
+      "userId": 1,
+      "venueId": 1,
+      "bookingDate": "2022-10-30 15:35:38.808 +0700",
+      "expiredDate": "2022-10-30 16:35:38.808 +0700",
+      "checkinDate": "2022-10-30 16:00:38.808 +0700",
+      "checkoutDate": "2022-10-30 17:35:38.808 +0700",
+      "transactionStatus": "Book Complited",
+      "paymentStatus": true,
+      "PriceAdjustersId": 1,
+      "totalPrice": 20000,
+      "imgQrCdoe": "ini qr code"
+    },
+    {
+      "id": 2,
+      "userId": 1,
+      "venueId": 2,
       "bookingDate": "2022-10-31 15:35:38.808 +0700",
       "expiredDate": "2022-10-31 16:35:38.808 +0700",
       "checkinDate": "2022-10-31 16:00:38.808 +0700",
       "checkoutDate": "2022-10-31 17:35:38.808 +0700",
-      "transactionStatus": "Done",
+      "transactionStatus": "On Progress",
       "paymentStatus": false,
       "PriceAdjustersId": 1,
       "totalPrice": 20000,
