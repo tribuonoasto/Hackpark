@@ -8,9 +8,9 @@ const errorHandler = (err, req, res, next) => {
   ) {
     status = 400;
     message = err.errors[0].message;
-  } else if (err.name == "User not found") {
+  } else if (err.name == "User not found" || err.name == "Vehicle not found") {
     status = 404;
-    message = "User not found";
+    message = err.name;
   } else if (err.name == "invalid_credentials") {
     status = 401;
     message = "Invalid email/password";
