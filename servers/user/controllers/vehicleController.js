@@ -67,7 +67,7 @@ class Controller {
     try {
       const { plat, modelName, name } = req.body;
 
-      const { UserId } = req.user;
+      const UserId = req.user.id;
 
       await Vehicle.create({
         UserId,
