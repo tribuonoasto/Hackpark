@@ -6,7 +6,7 @@ import {
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SearchScreen from "./SearchScreen";
 import HomeStack from "./HomeStack";
-import UserScreen from "./UserScreen";
+import Orders from "./Orders";
 
 const Tab = createBottomTabNavigator();
 
@@ -48,12 +48,12 @@ const TabScreen = () => {
         }}
       />
       <Tab.Screen
-        name="UserScreen"
-        component={UserScreen}
+        name="Orders"
+        component={Orders}
         options={{
-          tabBarLabel: "User",
+          tabBarLabel: "Orders",
           tabBarIcon: ({ color, size }) => (
-            <FontAwesome5 name="user-alt" color={color} size={size} />
+            <FontAwesome5 name="history" color={color} size={size} />
           ),
           headerShown: false,
           headerTitle: "",

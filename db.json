@@ -41,12 +41,24 @@
       "id": 1,
       "name": "PIM",
       "slot": 10,
-      "address": "Jalan Metro Pondok Indah Kav. IV, Pd. Pinang, Kec. Kby. Lama, Kota Jakarta Selatan, Daerah Khusus Ibukota Jakarta",
+      "address": "Jakarta Selatan",
       "lat": "",
       "lng": "",
       "parkingPrice": 10000,
       "bookingPrice": 10000,
       "imgVenue": "https://awsimages.detik.net.id/visual/2021/05/03/dok-pondok-indah-mall_169.jpeg?w=650",
+      "description": "ini tempat parkir"
+    },
+    {
+      "id": 2,
+      "name": "PIK Avenue",
+      "slot": 10,
+      "address": "Jakarta Utara",
+      "lat": "",
+      "lng": "",
+      "parkingPrice": 10000,
+      "bookingPrice": 10000,
+      "imgVenue": "https://cdn2.pikavenue.com/wp-content/uploads/2020/11/1280px-PIK_Avenue_tampak_depan.jpg",
       "description": "ini tempat parkir"
     }
   ],

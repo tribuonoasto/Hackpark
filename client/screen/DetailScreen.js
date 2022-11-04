@@ -8,9 +8,20 @@ import {
   TouchableOpacity,
   TouchableNativeFeedback,
   SafeAreaView,
+  FlatList,
 } from "react-native";
+import { useEffect, useState } from "react";
 
-const DetailScreen = () => {
+const DetailScreen = ({ route }) => {
+  // const [venues, setVenues] = useState([]);
+  // const id = route.params;
+
+  // useEffect(() => {
+  //   fetch(`https://1b9a-110-137-193-158.ap.ngrok.io/venues/${id}`)
+  //     .then((response) => response.json())
+  //     .then((json) => setVenues(json));
+  // }, []);
+
   return (
     <View style={{ flex: 1 }}>
       <Image
@@ -45,22 +56,30 @@ const DetailScreen = () => {
             alignItems: "center",
           }}
         >
-          <View>
-            <Text style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}>
-              Indomaret
-            </Text>
+          {/* <FlatList
+            data={venues}
+            renderItem={({ item }) => ( */}
+              <View>
+                <Text
+                  style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}
+                >
+                  Indomaret
+                </Text>
 
-            <Text
-              style={{
-                fontSize: 14,
-                color: "#85B6FF",
-                fontWeight: "500",
-                marginTop: 5,
-              }}
-            >
-              IDR 20.000
-            </Text>
-          </View>
+                <Text
+                  style={{
+                    fontSize: 14,
+                    color: "#85B6FF",
+                    fontWeight: "500",
+                    marginTop: 5,
+                  }}
+                >
+                  IDR 20.000
+                </Text>
+              </View>
+            {/* )}
+            keyExtractor={(item) => item.id}
+          /> */}
           <View
             style={{
               backgroundColor: "lightgreen",

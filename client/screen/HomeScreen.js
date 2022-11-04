@@ -5,10 +5,11 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
+  Image,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Constants from "expo-constants";
 
@@ -16,49 +17,67 @@ const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
 
+  const [venues, setVenues] = useState([]);
+
+  useEffect(() => {
+    fetch("https://1b9a-110-137-193-158.ap.ngrok.io/venues")
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
+
   // console.log(searchPhrase);
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-  ];
+  // const data = [
+  //   { id: 1 },
+  //   { id: 2 },
+  //   { id: 3 },
+  //   { id: 4 },
+  //   { id: 5 },
+  //   { id: 6 },
+  //   { id: 7 },
+  // ];
   return (
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          height: 310,
+          height: 250,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
-          paddingTop: Constants.statusBarHeight,
         }}
       >
         <View>
           <View>
-            <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
-              Your location{" "}
-              <FontAwesome
-                name="chevron-down"
-                color="#A1A9CC"
-                size={16}
-                style={{ marginLeft: 20 }}
-              />
-            </Text>
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginTop: 15,
-              }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Entypo name="location-pin" color="#A1A9CC" size={24} />
-              <Text style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}>
-                Jakarta, Indonesia
-              </Text>
+              <View>
+                <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
+                  Your location{" "}
+                  <FontAwesome name="chevron-down" color="#A1A9CC" size={16} />
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    marginTop: 10,
+                  }}
+                >
+                  <Entypo name="location-pin" color="#A1A9CC" size={24} />
+                  <Text
+                    style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                  >
+                    Jakarta, Indonesia
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("UserScreen")}
+              >
+                <Image
+                  source={require("../assets/user.jpg")}
+                  style={{ width: 50, height: 50, borderRadius: 100 }}
+                />
+              </TouchableOpacity>
             </View>
             <View>
               <Text
@@ -121,12 +140,14 @@ const HomeScreen = ({ navigation }) => {
           Closest spot
         </Text>
         <FlatList
-          data={data}
+          data={venues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Card item={item} navigation={navigation} />
+            <Card item={item} navigation={navigation} 
+            keyExtractor={(item) => item.id} 
+            />
           )}
         />
       </View>
