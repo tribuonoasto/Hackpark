@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
-    fetch("https://1b9a-110-137-193-158.ap.ngrok.io/venues")
+    fetch("https://96f4-114-122-7-141.ap.ngrok.io/venues")
       .then((response) => response.json())
       .then((json) => setVenues(json));
   }, []);
@@ -145,8 +145,10 @@ const HomeScreen = ({ navigation }) => {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Card item={item} navigation={navigation} 
-            keyExtractor={(item) => item.id} 
+            <Card
+              item={item}
+              navigation={navigation}
+              keyExtractor={(item) => item.id}
             />
           )}
         />
