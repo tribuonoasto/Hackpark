@@ -6,6 +6,7 @@ import EditUserScreen from "./EditUserScreen";
 import Orders from "./Orders";
 import MyVehicle from "./MyVehicle";
 import SaldoDetail from "./SaldoDetail";
+import OrderDetail from "../components/OrderDetail";
 
 const Stack = createNativeStackNavigator();
 const HomeStack = () => {
@@ -91,6 +92,21 @@ const HomeStack = () => {
         options={{
           headerShown: true,
           headerTitle: "Saldo History",
+          headerStyle: {
+            backgroundColor: "#EDEDED",
+          },
+          headerTitleStyle: {
+            color: "#404258",
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="OrderDetail"
+        component={OrderDetail}
+        options={{
+          headerShown: true,
+          headerTitle: "",
           headerStyle: {
             backgroundColor: "#EDEDED",
           },

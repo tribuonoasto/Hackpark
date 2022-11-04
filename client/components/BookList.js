@@ -9,6 +9,9 @@ const BookList = ({ img, navigation }) => {
         paddingBottom: 20,
         marginBottom: 25,
       }}
+      onPress={() => {
+        navigation.navigate("OrderDetail");
+      }}
     >
       <View style={{ flexDirection: "row" }}>
         <Image
