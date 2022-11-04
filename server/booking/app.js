@@ -20,7 +20,6 @@ mongoConnect().then(() => {
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
   });
-  // console.log("asd");
 });
 
-module.exports = app;
+// module.exports = app;
