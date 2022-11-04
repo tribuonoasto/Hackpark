@@ -51,7 +51,7 @@ class Controller {
         },
       });
 
-      if (!valid) {
+      if (valid.data.is_smtp_valid.value === false) {
         throw { name: `invalid_email` };
       } else if (valid.data.is_smtp_valid.value == true) {
         const nodemailer = require("nodemailer");

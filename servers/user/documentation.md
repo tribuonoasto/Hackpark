@@ -7,6 +7,8 @@ List of available endpoints:
 
 &nbsp;
 
+1. `POST /login`
+
 Request:
 
 - body:
@@ -37,6 +39,10 @@ _Response (400 - Bad Request)_
 }
 ```
 
+&nbsp;
+
+2. `POST /register`
+
 Request:
 
 - body:
@@ -45,7 +51,8 @@ Request:
 {
   "username": "string",
   "email": "string",
-  "password": "string"
+  "password": "string",
+  "fullName": "string"
 }
 ```
 
@@ -53,7 +60,7 @@ _Response (201 - Created)_
 
 ```json
 {
-  "message": "OK"
+  "message": "Check your email"
 }
 ```
 
@@ -85,6 +92,10 @@ OR
 OR
 {
   "message":"password minimum character is 5"
+}
+OR
+{
+  "message":"use real email"
 }
 ```
 

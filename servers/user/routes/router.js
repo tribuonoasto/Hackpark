@@ -1,6 +1,8 @@
 const authController = require("../controllers/authController");
-const Controller = require("../controllers/userController");
 const authentication = require("../middlewares/authentication");
+const userRouter = require("./userRouter");
+const balanceRouter = require("./balanceRouter");
+const vehicleRouter = require("./vehicleRouter");
 
 const router = require("express").Router();
 
@@ -8,18 +10,10 @@ router.post("/login", authController.login);
 
 router.post("/register", authController.register);
 
-router.get("/users", Controller.getAllUsers);
+router.use("/users", userRouter);
 
-router.patch("/users/verify/:id", Controller.verify);
+router.use("/balances", authentication, balanceRouter);
 
-router.use(authentication);
-
-router.delete("/users", Controller.delete);
-
-router.patch("/users/changeusername", Controller.changeUsername);
-
-router.patch("/users/changeImg", Controller.changeImg);
-
-router.get("/users/:id", Controller.getUser);
+router.use("/vehicles", authentication, vehicleRouter);
 
 module.exports = router;
