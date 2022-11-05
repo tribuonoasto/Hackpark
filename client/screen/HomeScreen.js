@@ -11,7 +11,7 @@ import {
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
-const ngrok = require('./../config/apollo');
+const ngrok = require("./../config/apollo");
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);

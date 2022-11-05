@@ -64,12 +64,7 @@ const EditUserScreen = ({ navigation }) => {
           <Text style={styles.label}>
             Name <Text style={{ color: "red" }}>*</Text>
           </Text>
-          <TextInput
-            req
-            style={styles.input}
-            value={name}
-            onChangeText={setName}
-          />
+          <TextInput style={styles.input} value={name} onChangeText={setName} />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>
