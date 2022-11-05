@@ -5,16 +5,16 @@ const SaldoList = ({ item }) => {
     <View style={styles.container}>
       {item.type === "credit" ? (
         <Text style={{ color: "#B73E3E", fontSize: 18, fontWeight: "500" }}>
-          -Rp 20.000
+          - IDR {item.amount}
         </Text>
       ) : (
         <Text style={{ color: "#54B435", fontSize: 18, fontWeight: "500" }}>
-          Rp 20.000
+          IDR {item.amount}
         </Text>
       )}
 
       <Text style={{ fontSize: 12, color: "#6B728E" }}>
-        31 February 2022, 11.11
+      {item.dateTransaction}
       </Text>
     </View>
   );
