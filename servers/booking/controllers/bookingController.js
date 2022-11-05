@@ -3,14 +3,14 @@ const Book = require("../models/booking");
 const Slot = require("../models/slot");
 const Venue = require("../models/venue");
 const format = require("date-fns/format");
-const { baseUrlLocal } = require("../helpers/baseUrl");
+const { baseUrlLocal, baseUrlLocalUser } = require("../helpers/baseUrl");
 const axios = require("axios");
 const ImageKit = require("imagekit");
 
 class BookingController {
   static async createBooking(req, res, next) {
     try {
-      const { UserId, SlotId, bookingDate } = req.body;
+      const { UserId, SlotId, bookingDate, access_token } = req.body;
 
       if (!UserId || !SlotId) {
         throw {
@@ -20,6 +20,17 @@ class BookingController {
       }
 
       //// AXIOS CEK USER ID
+      const checkUser = await axios({
+        method: "get",
+        url: `${baseUrlLocalUser}/users/${UserId}`,
+        headers: {
+          access_token,
+        },
+      });
+
+      if (!checkUser) {
+        throw { name: "user_not_found" };
+      }
 
       //// CEK SLOT
       const checkSlot = await Slot.findOne(SlotId);
@@ -59,7 +70,7 @@ class BookingController {
       const bookPrice = venuePrice * multiplierPrice.value;
 
       const resp = await Book.insertOne({
-        UserId,
+        UserId: +UserId,
         SlotId,
         bookingDate: bookDate,
         expiredDate: expiredDate,
@@ -91,9 +102,9 @@ class BookingController {
       const bookingQrCode = qrCode.data.qrcode;
 
       const imagekit = new ImageKit({
-        publicKey: "public_bXQ7uTQf2/6T6321VRr80OJVjW8=",
-        privateKey: "private_urjFImwY9MuKMsyuLsratYMWjYU=",
-        urlEndpoint: "https://ik.imagekit.io/qjbbuf38o/",
+        publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+        urlEndpoint: process.env.IMAGEKIT_URL,
       });
 
       const result = await imagekit.upload({
@@ -103,7 +114,7 @@ class BookingController {
 
       const urlQr = result.url;
 
-      const newQr = await Book.editQr(newBookingId, urlQr);
+      const newQr = await Book.editQr(newBookingId, { imgQrCode: urlQr });
 
       if (!newQr.acknowledged)
         throw {
@@ -119,6 +130,12 @@ class BookingController {
 
   static async checkBooking(req, res, next) {
     try {
+      const { bookingId } = req.params;
+
+      const checkBooking = await Book.findOne(bookingId);
+
+      if (!checkBooking) throw { name: "booking_not_found" };
+
       res.status(201).json({ message: "asd" });
     } catch (error) {
       next(error);
