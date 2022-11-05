@@ -12,8 +12,16 @@ import {
 } from "react-native";
 
 import Constants from "expo-constants";
+import { useState } from "react";
 
 const Login = ({ navigation }) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = () => {
+    console.log(email, password);
+    navigation.navigate("TabScreen");
+  };
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -30,7 +38,7 @@ const Login = ({ navigation }) => {
             style={{
               width: 250,
               height: 250,
-              borderRadius: "200%",
+              borderRadius: 200,
               resizeMode: "cover",
             }}
             source={require("../assets/login-img.jpg")}
@@ -53,7 +61,12 @@ const Login = ({ navigation }) => {
             </View>
             <View>
               <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.input} placeholder="Enter your email" />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+              />
             </View>
             <View style={{ marginTop: 15 }}>
               <Text style={styles.label}>Password</Text>
@@ -62,11 +75,13 @@ const Login = ({ navigation }) => {
                 passwordRules
                 secureTextEntry={true}
                 keyboardType="visible-password"
+                value={password}
+                onChangeText={setPassword}
                 placeholder="Password"
               />
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("TabScreen")}
+              onPress={handleLogin}
               style={{
                 marginTop: 15,
                 height: 40,

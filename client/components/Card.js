@@ -1,15 +1,15 @@
 import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "react-native-vector-icons";
 
-const Card = ({ navigation }) => {
+const Card = ({ navigation, item }) => {
   return (
     <TouchableOpacity
       style={[styles.container, styles.shadow]}
-      onPress={() => navigation.navigate("DetailScreen")}
+      onPress={() => navigation.navigate("DetailScreen", item.id)}
     >
-      <View style={{ flexDirection: "row", margin: 10 }}>
+      <View style={{ flexDirection: "row", marginBottom: 15 }}>
         <Image
-          source={require("../assets/parking-img.jpg")}
+          source={{ uri: item.imgVenue }}
           style={{
             width: 70,
             height: 70,
@@ -21,7 +21,7 @@ const Card = ({ navigation }) => {
           style={{
             marginLeft: 20,
             flexDirection: "row",
-            width: 200,
+            width: 220,
             justifyContent: "space-between",
           }}
         >
@@ -30,19 +30,19 @@ const Card = ({ navigation }) => {
               <Text
                 style={{ fontWeight: "500", color: "#474E68", fontSize: 16 }}
               >
-                Indomaret
+                {item.name}
               </Text>
               <Text
                 style={{ fontWeight: "400", fontSize: 10, color: "#6B728E" }}
               >
-                Jln. in aja dulu
+                {item.address}
               </Text>
             </View>
             <View>
               <Text
                 style={{ fontWeight: "500", fontSize: 14, color: "#50577A" }}
               >
-                Rp. 20,000
+                IDR {item.parkingPrice} /jam
               </Text>
             </View>
           </View>
@@ -74,22 +74,18 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#ededed",
     padding: 5,
     borderRadius: 10,
-    width: "95%",
-    marginVertical: 10,
-    alignItems: "center",
-    justifyContent: "center",
   },
   shadow: {
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 4,
-      height: 4,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    // shadowColor: "#000",
+    // shadowOffset: {
+    //   width: 4,
+    //   height: 4,
+    // },
+    // shadowOpacity: 0.25,
+    // shadowRadius: 3.84,
+    // elevation: 5,
   },
 });
