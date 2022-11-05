@@ -13,7 +13,7 @@ class Book {
     }
   }
 
-  static async editQr(id, payload) {
+  static async editBooking(id, payload) {
     try {
       const collection = getDB().collection("bookings");
       const _id = ObjectId(id);

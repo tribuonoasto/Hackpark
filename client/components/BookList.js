@@ -18,14 +18,14 @@ const BookList = ({ img, navigation, item }) => {
     >
       <View style={{ flexDirection: "row" }}>
         <Image
-          source={img}
+          source={item.venue.imgVenue}
           style={{ width: 70, height: 70, borderRadius: 10 }}
         />
 
         <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
           <View>
             <Text style={{ fontSize: 18, fontWeight: "500", color: "#404258" }}>
-              Indomaret
+              {item.venue.name}
             </Text>
             <Text
               style={{
@@ -35,11 +35,11 @@ const BookList = ({ img, navigation, item }) => {
                 marginTop: 5,
               }}
             >
-              Book {item.status}
+              {item.transactionStatus}
             </Text>
           </View>
           <Text style={{ color: "#6B728E", fontSize: 10, fontWeight: "300" }}>
-            31 February 2022, 11.11
+          {item.checkoutDate}
           </Text>
         </View>
       </View>

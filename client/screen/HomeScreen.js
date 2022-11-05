@@ -11,6 +11,7 @@ import {
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
+const ngrok = require("./../config/apollo");
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
@@ -19,7 +20,7 @@ const HomeScreen = ({ navigation }) => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
-    fetch("https://96f4-114-122-7-141.ap.ngrok.io/venues")
+    fetch(`${ngrok}/venues`)
       .then((response) => response.json())
       .then((json) => setVenues(json));
   }, []);
