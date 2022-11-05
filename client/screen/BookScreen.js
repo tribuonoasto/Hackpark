@@ -8,12 +8,29 @@ import {
   ScrollView,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import ModalScreen from "../components/ModalScreen";
 
-const BookScreen = ({ route }) => {
+const BookScreen = ({ route, navigation }) => {
+  const [modalVisible, setModalVisible] = useState(false);
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("");
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
+
+  const [saldo, setSaldo] = useState(9000);
+
+  const handleSubmit = (answer) => {
+    setModalVisible(true);
+
+    if (answer === "no") {
+      return setModalVisible(false);
+    }
+
+    if (answer === "sure") {
+      setModalVisible(false);
+      navigation.navigate("OrderDetail", { id: 1 });
+    }
+  };
 
   const onChangeDate = (e, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -46,15 +63,13 @@ const BookScreen = ({ route }) => {
     setMode(currentMode);
   };
 
-  console.log(textTime, textDate);
-
   return (
     <View style={styles.container}>
       <ScrollView
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ height: 250 }}>
+        <View style={{ height: 250, paddingHorizontal: 20 }}>
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
               Date <Text style={{ color: "red" }}>*</Text>
@@ -96,7 +111,7 @@ const BookScreen = ({ route }) => {
             <View></View>
           )}
         </View>
-        <View>
+        <View style={{ paddingHorizontal: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: "600", color: "#404258" }}>
             Venue
           </Text>
@@ -173,27 +188,90 @@ const BookScreen = ({ route }) => {
           </View>
         </View>
 
-        <TouchableOpacity
+        <View
           style={{
-            marginVertical: 20,
-            backgroundColor: "#404258",
-            paddingVertical: 15,
-            paddingHorizontal: 10,
-            borderRadius: 40,
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexDirection: "row",
+            paddingHorizontal: 20,
+            marginTop: 10,
           }}
         >
-          <Text
+          <Text style={{ fontWeight: "600", fontSize: 16, color: "#404258" }}>
+            Total payment
+          </Text>
+          <Text style={{ fontWeight: "600", fontSize: 16, color: "#404258" }}>
+            Rp10.000
+          </Text>
+        </View>
+      </ScrollView>
+
+      <View>
+        {saldo < 10000 ? (
+          <View
             style={{
-              textAlign: "center",
-              fontSize: 24,
-              fontWeight: "600",
-              color: "#ededed",
+              backgroundColor: "#282C3D",
+              paddingHorizontal: 20,
+              paddingVertical: 7,
+              flexDirection: "row",
+              alignItems: "center",
             }}
           >
-            Continue
-          </Text>
-        </TouchableOpacity>
-      </ScrollView>
+            <Text style={{ color: "#ededed", fontWeight: "600", fontSize: 16 }}>
+              Top up your balance
+            </Text>
+            <TouchableOpacity
+              style={{
+                borderWidth: 1,
+                borderColor: "#ededed",
+                marginLeft: 100,
+                padding: 10,
+                paddingHorizontal: 20,
+                borderRadius: 20,
+              }}
+            >
+              <Text
+                style={{ color: "#ededed", fontWeight: "600", fontSize: 16 }}
+              >
+                Top up
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View></View>
+        )}
+
+        <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#404258",
+              paddingVertical: 13,
+              paddingHorizontal: 10,
+              borderRadius: 40,
+            }}
+            onPress={handleSubmit}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                fontSize: 24,
+                fontWeight: "600",
+                color: "#ededed",
+              }}
+            >
+              Place your booking
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {modalVisible && (
+          <ModalScreen
+            modalVisible={modalVisible}
+            setModalVisible={setModalVisible}
+            handleSubmit={handleSubmit}
+          />
+        )}
+      </View>
     </View>
   );
 };
@@ -201,7 +279,6 @@ export default BookScreen;
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
     backgroundColor: "#ededed",
   },

@@ -17,7 +17,7 @@ const DetailScreen = ({ route, navigation }) => {
   console.log(id);
 
   useEffect(() => {
-    fetch(`https://397d-36-71-141-191.ap.ngrok.io/venues/${id}`)
+    fetch(`https://3f20-36-71-140-185.ap.ngrok.io/venues/${id}`)
       .then((response) => response.json())
       .then((res) => {
         setVenues(res);

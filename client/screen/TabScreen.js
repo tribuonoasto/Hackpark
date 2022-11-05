@@ -9,6 +9,7 @@ import HomeStack from "./HomeStack";
 import Orders from "./Orders";
 import { Button, TouchableOpacity } from "react-native";
 import OrderStack from "./OrderStack";
+import ModalScreen from "../components/ModalScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -41,6 +42,8 @@ const TabScreen = () => {
             <FontAwesome name="search" color={color} size={size} />
           ),
           headerTitle: "",
+          headerShowN: false,
+          headerTransparent: true,
           headerShadowVisible: false,
           headerBackTitleVisible: false,
         }}
