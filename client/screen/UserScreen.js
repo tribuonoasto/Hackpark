@@ -10,12 +10,13 @@ import {
 import { useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
 import UserList from "../components/UserList";
+const ngrok = require('./../config/apollo');
 
 const UserScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("https://4445-36-71-141-191.ap.ngrok.io/users")
+    fetch(`${ngrok}/users`)
       .then((response) => response.json())
       .then((json) => setUsers(json));
   }, []);
@@ -63,11 +64,9 @@ const UserScreen = ({ navigation }) => {
                           color: "#404258",
                         }}
                       >
-                        {" "}
                         {item.username}
                       </Text>
                       <Text style={{ marginTop: 5, color: "#50577A" }}>
-                        {" "}
                         {item.email}
                       </Text>
                     </View>

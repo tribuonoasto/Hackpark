@@ -1,6 +1,14 @@
-import { useState } from "react";
-import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
+import { useState, useEffect } from "react";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  FlatList,
+} from "react-native";
 import { AirbnbRating } from "react-native-ratings";
+const ngrok = require("./../config/apollo");
 
 const OrderDetail = ({ route }) => {
   const { id, status } = route.params;
@@ -9,6 +17,17 @@ const OrderDetail = ({ route }) => {
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
   };
+
+  // const [bookings, setBookings] = useState([]);
+
+  // useEffect(() => {
+  //   fetch(`${ngrok}/bookings/${id}?_expand=venue`)
+  //     .then((response) => response.json())
+  //     .then((json) => setBookings(json));
+  // }, []);
+
+  // console.log(bookings, "bookings");
+  // console.log(setBookings, "set");
 
   return (
     <View style={styles.container}>
