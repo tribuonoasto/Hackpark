@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
-import { Rating, AirbnbRating } from "react-native-ratings";
+import { AirbnbRating } from "react-native-ratings";
 
-const OrderDetail = () => {
-  const [status, setStatus] = useState("ongoing");
+const OrderDetail = ({ route }) => {
+  const { id, status } = route.params;
+  console.log(id, status);
+  // const [status, setStatus] = useState("ongoing");
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
   };
+
   return (
     <View style={styles.container}>
       <View

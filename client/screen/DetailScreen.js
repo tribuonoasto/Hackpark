@@ -56,25 +56,23 @@ const DetailScreen = ({ route }) => {
           {/* <FlatList
             data={venues}
             renderItem={({ item }) => ( */}
-              <View>
-                <Text
-                  style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}
-                >
-                  Indomaret
-                </Text>
+          <View>
+            <Text style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}>
+              Indomaret
+            </Text>
 
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: "#85B6FF",
-                    fontWeight: "500",
-                    marginTop: 5,
-                  }}
-                >
-                  IDR 20.000
-                </Text>
-              </View>
-            {/* )}
+            <Text
+              style={{
+                fontSize: 14,
+                color: "#85B6FF",
+                fontWeight: "500",
+                marginTop: 5,
+              }}
+            >
+              IDR 20.000
+            </Text>
+          </View>
+          {/* )}
             keyExtractor={(item) => item.id}
           /> */}
           <View
@@ -82,6 +80,7 @@ const DetailScreen = ({ route }) => {
               backgroundColor: "lightgreen",
               padding: 7,
               borderRadius: 5,
+              alignItems: "center",
             }}
           >
             <Text
@@ -90,9 +89,13 @@ const DetailScreen = ({ route }) => {
               Available{" "}
             </Text>
             <Text
-              style={{ color: "darkgreen", fontWeight: "500", fontSize: 14 }}
+              style={{
+                color: "darkgreen",
+                fontWeight: "700",
+                fontSize: 18,
+              }}
             >
-              200 / 300
+              10
             </Text>
           </View>
         </View>
