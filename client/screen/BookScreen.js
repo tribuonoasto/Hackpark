@@ -12,8 +12,8 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 const BookScreen = ({ route }) => {
   const [date, setDate] = useState(new Date());
   const [mode, setMode] = useState("");
-  const [textDate, setTextDate] = useState("Choose date");
-  const [textTime, setTextTime] = useState("Choose time");
+  const [textDate, setTextDate] = useState("Date");
+  const [textTime, setTextTime] = useState("Time");
 
   const onChangeDate = (e, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -50,8 +50,11 @@ const BookScreen = ({ route }) => {
 
   return (
     <View style={styles.container}>
-      <ScrollView>
-        <View style={{ height: 280 }}>
+      <ScrollView
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={{ height: 250 }}>
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
               Date <Text style={{ color: "red" }}>*</Text>
@@ -105,8 +108,8 @@ const BookScreen = ({ route }) => {
             <Image
               source={require("../assets/parking-img.jpg")}
               style={{
-                width: 150,
-                height: 150,
+                width: 100,
+                height: 100,
                 borderRadius: 100,
                 resizeMode: "cover",
                 alignSelf: "center",
@@ -133,6 +136,7 @@ const BookScreen = ({ route }) => {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: 10,
               }}
             >
@@ -142,7 +146,7 @@ const BookScreen = ({ route }) => {
                 Booking date
               </Text>
               <Text
-                style={{ fontSize: 14, fontWeight: "300", color: "#474E68" }}
+                style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
               >
                 {`${textDate}, ${textTime}`}
               </Text>
@@ -151,6 +155,7 @@ const BookScreen = ({ route }) => {
               style={{
                 flexDirection: "row",
                 justifyContent: "space-between",
+                alignItems: "center",
                 marginBottom: 10,
               }}
             >
@@ -160,7 +165,7 @@ const BookScreen = ({ route }) => {
                 Booking price
               </Text>
               <Text
-                style={{ fontSize: 14, fontWeight: "300", color: "#474E68" }}
+                style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
               >
                 Rp10.000
               </Text>
