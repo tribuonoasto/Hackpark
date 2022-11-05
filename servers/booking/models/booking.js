@@ -31,7 +31,7 @@ class Book {
     }
   }
 
-  static async findOne(id, session) {
+  static async findOne(id) {
     try {
       const collection = getDB().collection("bookings");
 
@@ -39,7 +39,7 @@ class Book {
 
       const _id = ObjectId(id);
 
-      const booking = await collection.findOne({ _id }, options, session);
+      const booking = await collection.findOne({ _id }, options);
       return booking;
     } catch (error) {
       if (error.name === "BSONTypeError") {

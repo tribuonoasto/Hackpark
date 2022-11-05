@@ -36,14 +36,14 @@ class BookingController {
         }
 
         //// CEK SLOT
-        const checkSlot = await Slot.findOne(SlotId, { session });
+        const checkSlot = await Slot.findOne(SlotId);
         if (!checkSlot) {
           throw { name: "slot_not_found" };
         }
 
         //// CEK VENUE
         const venueId = checkSlot.VenueId.toString();
-        const checkVenue = await Venue.findOne(venueId, { session });
+        const checkVenue = await Venue.findOne(venueId);
         if (!checkVenue) {
           throw { name: "venue_not_found" };
         }
@@ -167,7 +167,7 @@ class BookingController {
         const { bookingId } = req.params;
         const { access_token } = req.body;
 
-        const checkBooking = await Book.findOne(bookingId, { session });
+        const checkBooking = await Book.findOne(bookingId);
 
         if (!checkBooking) throw { name: "booking_not_found" };
 
@@ -205,25 +205,21 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when check-out" };
           }
 
-          const newBookingData = await Book.findOne(bookingId, { session });
-
-          const userCheckout = newBookingData.checkoutDate;
-          const userCheckin = newBookingData.checkinDate;
+          const userCheckout = new Date();
+          const userCheckin = checkBooking.checkinDate;
           const checkHour = Math.floor(
             (userCheckout - userCheckin) / (1000 * 60 * 60)
           );
 
           //// CEK SLOT
-          const checkSlot = await Slot.findOne(newBookingData.SlotId, {
-            session,
-          });
+          const checkSlot = await Slot.findOne(checkBooking.SlotId);
           if (!checkSlot) {
             throw { name: "slot_not_found" };
           }
 
           //// CEK VENUE
           const venueId = checkSlot.VenueId.toString();
-          const checkVenue = await Venue.findOne(venueId, { session });
+          const checkVenue = await Venue.findOne(venueId);
           if (!checkVenue) {
             throw { name: "venue_not_found" };
           }

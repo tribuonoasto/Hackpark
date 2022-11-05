@@ -1,4 +1,4 @@
-const { User, BalanceHistory, Vehicle } = require("../models");
+const { User, BalanceHistory, Vehicle, sequelize } = require("../models");
 const ImageKit = require("imagekit");
 const fs = require("fs");
 class Controller {
@@ -124,6 +124,7 @@ class Controller {
   }
 
   static async changeBalancePayment(req, res, next) {
+    const t = await sequelize.transaction();
     try {
       const { id } = req.user;
       const { price } = req.body;
@@ -149,36 +150,41 @@ class Controller {
 
       const resp = await User.update(
         { balance: newBalance },
-        { where: { id } }
+        { where: { id } },
+        { transaction: t }
       );
 
       if (resp[0] === 0) {
+        await BalanceHistory.create(
+          {
+            UserId: id,
+            dateTransaction: new Date(),
+            type: "kredit",
+            amount: price,
+            status: "Failed",
+          },
+          { transaction: t }
+        );
+
         throw { name: "payment_error" };
       }
 
-      const writeBalanceHistory = await BalanceHistory.create({
-        UserId: id,
-        dateTransaction: new Date(),
-        type: "kredit",
-        amount: price,
-        status: "Success",
-      });
-
-      if (!writeBalanceHistory) {
-        await BalanceHistory.create({
+      await BalanceHistory.create(
+        {
           UserId: id,
           dateTransaction: new Date(),
           type: "kredit",
           amount: price,
-          status: "Failed",
-        });
-
-        throw { name: "payment_error" };
-      }
+          status: "Success",
+        },
+        { transaction: t }
+      );
+      await t.commit();
 
       res.status(200).json({ message: "success change saldo" });
     } catch (err) {
       next(err);
+      await t.rollback();
     }
   }
 }
