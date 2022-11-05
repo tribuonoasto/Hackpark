@@ -45,7 +45,7 @@ class BookingController {
         throw { name: "venue_not_found" };
       }
 
-      //// BOOKINGg
+      //// BOOKING
       const bookDate = bookingDate ? new Date(bookingDate) : new Date();
       const expiredDate = bookingDate ? new Date(bookingDate) : new Date();
       expiredDate.setHours(expiredDate.getHours() + 1);
