@@ -9,20 +9,20 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 
-const DetailScreen = ({ route }) => {
-  // const [venues, setVenues] = useState([]);
-  // const id = route.params;
+const DetailScreen = ({ route, navigation }) => {
+  const [venues, setVenues] = useState({});
+  const id = route.params;
 
-  // useEffect(() => {
-  //   fetch(`https://1b9a-110-137-193-158.ap.ngrok.io/venues/${id}`)
-  //     .then((response) => response.json())
-  //     .then((json) => setVenues(json));
-  // }, []);
+  useEffect(() => {
+    fetch(`https://397d-36-71-141-191.ap.ngrok.io/venues/${id}`)
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
       <Image
-        source={require("../assets/detail.jpg")}
+        source={{ uri: venues.imgVenue }}
         style={{
           width: "100%",
           height: "100%",
@@ -53,12 +53,9 @@ const DetailScreen = ({ route }) => {
             alignItems: "center",
           }}
         >
-          {/* <FlatList
-            data={venues}
-            renderItem={({ item }) => ( */}
           <View>
             <Text style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}>
-              Indomaret
+              {venues.name}
             </Text>
 
             <Text
@@ -69,12 +66,9 @@ const DetailScreen = ({ route }) => {
                 marginTop: 5,
               }}
             >
-              IDR 20.000
+              IDR{venues.bookingPrice}
             </Text>
           </View>
-          {/* )}
-            keyExtractor={(item) => item.id}
-          /> */}
           <View
             style={{
               backgroundColor: "lightgreen",
@@ -112,9 +106,7 @@ const DetailScreen = ({ route }) => {
               lineHeight: 13 * 1.5,
             }}
           >
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Adipisci,
-            quisquam? Enim nihil sapiente facilis est sunt dolores. Ad, fugit
-            sint.
+            {venues.description}
           </Text>
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "500", color: "#474E68" }}>
@@ -122,7 +114,7 @@ const DetailScreen = ({ route }) => {
               <Text
                 style={{ fontSize: 12, color: "#6B728E", fontWeight: "400" }}
               >
-                Jln. in aja dulu
+                {venues.address}
               </Text>
             </Text>
 
@@ -149,7 +141,7 @@ const DetailScreen = ({ route }) => {
                 >
                   First hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR 20.000
+                    IDR {venues.bookingPrice}
                   </Text>
                 </Text>
                 <Text
@@ -157,7 +149,7 @@ const DetailScreen = ({ route }) => {
                 >
                   Next hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR 10.000
+                    IDR {venues.parkingPrice}
                   </Text>
                 </Text>
               </View>
@@ -175,6 +167,7 @@ const DetailScreen = ({ route }) => {
             paddingVertical: 15,
             borderRadius: 40,
           }}
+          onPress={() => navigation.navigate("BookScreen", { id: venues.id })}
         >
           <Text style={{ color: "#EDEDED", fontSize: 24, fontWeight: "600" }}>
             Book Now

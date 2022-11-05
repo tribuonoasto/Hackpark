@@ -19,7 +19,7 @@ const HomeScreen = ({ navigation }) => {
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
-    fetch("https://96f4-114-122-7-141.ap.ngrok.io/venues")
+    fetch("https://397d-36-71-141-191.ap.ngrok.io/venues")
       .then((response) => response.json())
       .then((json) => setVenues(json));
   }, []);
