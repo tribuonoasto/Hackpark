@@ -114,7 +114,7 @@ class BookingController {
 
       const urlQr = result.url;
 
-      const newQr = await Book.editQr(newBookingId, { imgQrCode: urlQr });
+      const newQr = await Book.editBooking(newBookingId, { imgQrCode: urlQr });
 
       if (!newQr.acknowledged)
         throw {
@@ -135,6 +135,31 @@ class BookingController {
       const checkBooking = await Book.findOne(bookingId);
 
       if (!checkBooking) throw { name: "booking_not_found" };
+
+      // console.log(checkBooking);
+
+      //// CHECK IN
+      if (checkBooking.transactionStatus === "Booked") {
+        const newBooking = await Book.editBooking(bookingId, {
+          transactionStatus: "Inprogress",
+          checkinDate: new Date(),
+        });
+
+        if (!newBooking.acknowledged) {
+          throw { name: "invalid_Book", msg: "Error when check-in" };
+        }
+      } else if (checkBooking.transactionStatus === "Inprogress") {
+        const newBooking = await Book.editBooking(bookingId, {
+          transactionStatus: "Done",
+          checkoutDate: new Date(),
+        });
+
+        if (!newBooking.acknowledged) {
+          throw { name: "invalid_Book", msg: "Error when check-out" };
+        }
+      }
+
+      //// PAYMENT WITH BALANCE
 
       res.status(201).json({ message: "asd" });
     } catch (error) {

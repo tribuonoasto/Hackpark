@@ -107,6 +107,27 @@ class Controller {
       next(err);
     }
   }
+
+  static async changeBalance(req, res, next) {
+    try {
+      const { id } = req.user;
+      const { price } = req.body;
+
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      const newBalance = user.balance - price;
+
+      await User.update({ balance: newBalance }, { where: { id } });
+
+      res.status(201).json({ message: "success change saldo" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = Controller;
