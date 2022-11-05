@@ -107,6 +107,65 @@ class Controller {
       next(err);
     }
   }
+
+  static async changeBalancePayment(req, res, next) {
+    try {
+      const { id } = req.user;
+      const { price } = req.body;
+
+      if (!id) {
+        throw { name: "invalid_input", msg: "Invalid ID" };
+      }
+
+      if (!price) {
+        throw { name: "invalid_input", msg: "Invalid Price" };
+      }
+
+      const user = await User.findOne({
+        where: { id },
+      });
+
+      if (!user) throw { name: "User not found" };
+
+      if (user.balance < price) {
+        throw { name: "not_enough_balance" };
+      }
+      const newBalance = user.balance - price;
+
+      const resp = await User.update(
+        { balance: newBalance },
+        { where: { id } }
+      );
+
+      if (resp[0] === 0) {
+        throw { name: "payment_error" };
+      }
+
+      const writeBalanceHistory = await BalanceHistory.create({
+        UserId: id,
+        dateTransaction: new Date(),
+        type: "kredit",
+        amount: price,
+        status: "Success",
+      });
+
+      if (!writeBalanceHistory) {
+        await BalanceHistory.create({
+          UserId: id,
+          dateTransaction: new Date(),
+          type: "kredit",
+          amount: price,
+          status: "Failed",
+        });
+
+        throw { name: "payment_error" };
+      }
+
+      res.status(200).json({ message: "success change saldo" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = Controller;
