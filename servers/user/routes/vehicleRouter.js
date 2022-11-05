@@ -1,10 +1,11 @@
 const Controller = require("../controllers/vehicleController");
+const upload = require("../middlewares/multer");
 
 const router = require("express").Router();
 
 router.get("/", Controller.getVehicle);
 
-router.patch("/", Controller.changeImg);
+router.patch("/:vehicleId", upload.single("image"), Controller.changeImg);
 
 router.post("/", Controller.create);
 

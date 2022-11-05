@@ -37,6 +37,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name == `payment_error`) {
     status = 500;
     message = "Failed to pay";
+  } else if (err.name == `upload_error`) {
+    status = 500;
+    message = "Failed to upload image";
   }
 
   res.status(status).json({ message });

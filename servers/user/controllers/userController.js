@@ -112,7 +112,10 @@ class Controller {
         fileName: filename, //required
       });
 
-      await User.update({ imgUrl: result.url }, { where: { id } });
+      const resp = await User.update({ imgUrl: result.url }, { where: { id } });
+      if (resp[0] === 0) {
+        throw { name: "upload_error" };
+      }
 
       res.status(201).json({ message: "success change image" });
     } catch (err) {
