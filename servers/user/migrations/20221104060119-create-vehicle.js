@@ -16,9 +16,14 @@ module.exports = {
           },
           key: "id",
         },
+        onDelete: "cascade",
+        onUpdate: "cascade",
+        truncate: true,
+        restartIdentity: true,
       },
       plat: {
         type: Sequelize.STRING,
+        unique: true,
       },
       modelName: {
         type: Sequelize.STRING,

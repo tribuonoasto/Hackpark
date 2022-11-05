@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       plat: {
         type: DataTypes.STRING,
         allowNull: false,
+        unique: {
+          name: true,
+          msg: "plat is already on list",
+        },
         validate: {
           notNull: {
             msg: "plat is required",

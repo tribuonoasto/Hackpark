@@ -31,7 +31,7 @@ describe("get user by id", () => {
     const result = await request(app).get(`/users/${id}`);
     expect(result.status).toBe(404);
     expect(result.body).toBeInstanceOf(Object);
-    expect(result.body).toHaveProperty("message", expect.any(Number));
+    expect(result.body).toHaveProperty("message", expect.any(String));
   });
 });
 
