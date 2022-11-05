@@ -143,7 +143,6 @@ class Controller {
 
       const writeBalanceHistory = await BalanceHistory.create({
         UserId: id,
-        dateTransaction: new Date(),
         type: "kredit",
         amount: price,
         status: "Success",
@@ -152,7 +151,6 @@ class Controller {
       if (!writeBalanceHistory) {
         await BalanceHistory.create({
           UserId: id,
-          dateTransaction: new Date(),
           type: "kredit",
           amount: price,
           status: "Failed",
@@ -161,7 +159,7 @@ class Controller {
         throw { name: "payment_error" };
       }
 
-      res.status(200).json({ message: "success change saldo" });
+      res.status(201).json({ message: "success change saldo" });
     } catch (err) {
       next(err);
     }
