@@ -9,26 +9,17 @@ import {
 import { FontAwesome5 } from "react-native-vector-icons";
 import BookList from "../components/BookList";
 import img from "../assets/parking-img.jpg";
-import { useEffect, useState } from "react";
 
 const Orders = ({ navigation }) => {
-  const [bookings, setBooking] = useState([]);
-
-  useEffect(() => {
-    fetch("https://3616-110-137-193-158.ap.ngrok.io/bookings?_expand=venue")
-      .then((response) => response.json())
-      .then((json) => setBooking(json));
-  }, []);
-
-  // const data = [
-  //   { id: 1 },
-  //   { id: 2 },
-  //   { id: 3 },
-  //   { id: 4 },
-  //   { id: 5 },
-  //   { id: 6 },
-  //   { id: 7 },
-  // ];
+  const data = [
+    { id: 1, status: "ongoing" },
+    { id: 2, status: "done" },
+    { id: 3, status: "done" },
+    { id: 4, status: "done" },
+    { id: 5, status: "done" },
+    { id: 6, status: "done" },
+    { id: 7, status: "done" },
+  ];
   return (
     <View style={styles.container}>
       <Text style={{ fontSize: 24, fontWeight: "600", color: "#404258" }}>
@@ -66,16 +57,12 @@ const Orders = ({ navigation }) => {
       </TouchableOpacity>
 
       <FlatList
-        data={bookings}
+        data={data}
         scrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
-        renderItem={({item}) => (
-          <BookList
-            item={item}
-            navigation={navigation}
-            keyExtractor={(item) => item.id}
-          />
+        renderItem={({ item }) => (
+          <BookList item={item} img={img} navigation={navigation} />
         )}
         style={{ marginTop: 40 }}
       />

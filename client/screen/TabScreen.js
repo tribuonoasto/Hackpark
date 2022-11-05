@@ -8,6 +8,7 @@ import SearchScreen from "./SearchScreen";
 import HomeStack from "./HomeStack";
 import Orders from "./Orders";
 import { Button, TouchableOpacity } from "react-native";
+import OrderStack from "./OrderStack";
 
 const Tab = createBottomTabNavigator();
 
@@ -45,8 +46,8 @@ const TabScreen = () => {
         }}
       />
       <Tab.Screen
-        name="Orders"
-        component={Orders}
+        name="OrderStack"
+        component={OrderStack}
         options={{
           tabBarLabel: "Orders",
           tabBarIcon: ({ color, size }) => (
