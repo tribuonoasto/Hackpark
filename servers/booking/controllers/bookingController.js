@@ -69,6 +69,24 @@ class BookingController {
       const multiplierPrice = await Venue.findOnePrice(priceAdjuster);
       const bookPrice = venuePrice * multiplierPrice.value;
 
+      // PAYMENT WITH BALANCE
+      const payment = await axios({
+        method: "patch",
+        url: `${baseUrlLocalUser}/users/changeBalancePayment`,
+        headers: {
+          access_token,
+        },
+        data: {
+          price: bookPrice,
+        },
+      });
+
+      if (!payment) {
+        throw { name: "invaid_Book", msg: "Payment error" };
+      }
+
+      //// CREATE BOOKING
+
       const resp = await Book.insertOne({
         UserId: +UserId,
         SlotId,
@@ -77,7 +95,7 @@ class BookingController {
         checkinDate: null,
         checkoutDate: null,
         transactionStatus: "Booked",
-        paymentStatus: "Book paid",
+        paymentStatus: "Book Paid",
         PriceAdjusterId: priceAdjuster,
         totalPrice: bookPrice,
         imgQrCode: "qrcode url",
@@ -121,22 +139,6 @@ class BookingController {
           name: "invalid_Book",
           msg: "Error when booking parking slot",
         };
-
-      // PAYMENT WITH BALANCE
-      const payment = await axios({
-        method: "patch",
-        url: `${baseUrlLocalUser}/users/changeBalancePayment`,
-        headers: {
-          access_token,
-        },
-        data: {
-          price: bookPrice,
-        },
-      });
-
-      if (!payment) {
-        throw { name: "invaid_Book", msg: "Error when changin user balance" };
-      }
 
       res.status(201).json({ message: "slot booked" });
     } catch (error) {
@@ -225,11 +227,12 @@ class BookingController {
         });
 
         if (!payment) {
-          throw { name: "invaid_Book", msg: "Error when changin user balance" };
+          throw { name: "invaid_Book", msg: "Payment error" };
         }
 
         const newBooking = await Book.editBooking(bookingId, {
           transactionStatus: "Done",
+          paymentStatus: "Paid",
         });
 
         if (!newBooking.acknowledged) {
