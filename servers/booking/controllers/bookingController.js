@@ -122,6 +122,22 @@ class BookingController {
           msg: "Error when booking parking slot",
         };
 
+      // PAYMENT WITH BALANCE
+      const payment = await axios({
+        method: "patch",
+        url: `${baseUrlLocalUser}/users/changeBalancePayment`,
+        headers: {
+          access_token,
+        },
+        data: {
+          price: bookPrice,
+        },
+      });
+
+      if (!payment) {
+        throw { name: "invaid_Book", msg: "Error when changin user balance" };
+      }
+
       res.status(201).json({ message: "slot booked" });
     } catch (error) {
       next(error);
@@ -199,7 +215,7 @@ class BookingController {
         // PAYMENT WITH BALANCE
         const payment = await axios({
           method: "patch",
-          url: `${baseUrlLocalUser}/users/changeBalance`,
+          url: `${baseUrlLocalUser}/users/changeBalancePayment`,
           headers: {
             access_token,
           },

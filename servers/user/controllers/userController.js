@@ -108,7 +108,7 @@ class Controller {
     }
   }
 
-  static async changeBalance(req, res, next) {
+  static async changeBalancePayment(req, res, next) {
     try {
       const { id } = req.user;
       const { price } = req.body;
@@ -138,6 +138,26 @@ class Controller {
       );
 
       if (resp[0] === 0) {
+        throw { name: "payment_error" };
+      }
+
+      const writeBalanceHistory = await BalanceHistory.create({
+        UserId: id,
+        dateTransaction: new Date(),
+        type: "kredit",
+        amount: price,
+        status: "Success",
+      });
+
+      if (!writeBalanceHistory) {
+        await BalanceHistory.create({
+          UserId: id,
+          dateTransaction: new Date(),
+          type: "kredit",
+          amount: price,
+          status: "Failed",
+        });
+
         throw { name: "payment_error" };
       }
 

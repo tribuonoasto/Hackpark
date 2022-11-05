@@ -14,7 +14,7 @@ router.patch("/changeusername", Controller.changeUsername);
 
 router.patch("/changeImg", Controller.changeImg);
 
-router.patch("/changeBalance", Controller.changeBalance);
+router.patch("/changeBalancePayment", Controller.changeBalancePayment);
 
 router.get("/:id", Controller.getUser);
 

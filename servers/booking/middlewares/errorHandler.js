@@ -19,8 +19,8 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "user_not_found") {
     code = 404;
     message = "User Not Found";
-  } else if (err.response?.statusText === "Unauthorized") {
-    code = 401;
+  } else if (err.response) {
+    code = err.response.status;
     message = err.response.data.message;
   } else if (err.name === "booking_not_found") {
     code = 404;
