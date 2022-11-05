@@ -5,63 +5,79 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ScrollView,
+  Image,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
-import { useState } from "react";
-import Search from "../components/Search";
+import { useEffect, useState } from "react";
 import Card from "../components/Card";
-import Constants from "expo-constants";
 
 const HomeScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
 
+  const [venues, setVenues] = useState([]);
+
+  useEffect(() => {
+    fetch("https://96f4-114-122-7-141.ap.ngrok.io/venues")
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
+
   // console.log(searchPhrase);
-  const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
-  ];
+  // const data = [
+  //   { id: 1 },
+  //   { id: 2 },
+  //   { id: 3 },
+  //   { id: 4 },
+  //   { id: 5 },
+  //   { id: 6 },
+  //   { id: 7 },
+  // ];
   return (
     <SafeAreaView style={styles.container}>
       <View
         style={{
-          backgroundColor: "#2E3049",
-          height: 310,
+          height: 250,
           width: "100%",
           paddingLeft: 20,
           paddingRight: 20,
-          paddingTop: Constants.statusBarHeight + 20,
+          paddingTop: 20,
         }}
       >
         <View>
           <View>
-            <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
-              Your location{" "}
-              <FontAwesome
-                name="chevron-down"
-                color="#A1A9CC"
-                size={16}
-                style={{ marginLeft: 20 }}
-              />
-            </Text>
             <View
-              style={{
-                flexDirection: "row",
-                alignItems: "flex-end",
-                marginTop: 15,
-              }}
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              <Entypo name="location-pin" color="#A1A9CC" size={24} />
-              <Text style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}>
-                Jakarta, Indonesia
-              </Text>
+              <View>
+                <Text style={{ fontSize: 16, color: "#A1A9CC" }}>
+                  Your location{" "}
+                  <FontAwesome name="chevron-down" color="#A1A9CC" size={16} />
+                </Text>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "flex-end",
+                    marginTop: 10,
+                  }}
+                >
+                  <Entypo name="location-pin" color="#A1A9CC" size={24} />
+                  <Text
+                    style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                  >
+                    Jakarta, Indonesia
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("UserScreen")}
+              >
+                <Image
+                  source={require("../assets/user.jpg")}
+                  style={{ width: 50, height: 50, borderRadius: 100 }}
+                />
+              </TouchableOpacity>
             </View>
             <View>
               <Text
@@ -110,6 +126,7 @@ const HomeScreen = ({ navigation }) => {
           width: "100%",
           padding: 20,
           flex: 1,
+          backgroundColor: "#ededed",
         }}
       >
         <Text
@@ -123,12 +140,16 @@ const HomeScreen = ({ navigation }) => {
           Closest spot
         </Text>
         <FlatList
-          data={data}
+          data={venues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
           renderItem={({ item }) => (
-            <Card item={item} navigation={navigation} />
+            <Card
+              item={item}
+              navigation={navigation}
+              keyExtractor={(item) => item.id}
+            />
           )}
         />
       </View>
@@ -140,10 +161,7 @@ export default HomeScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    // position: "absolute",
-    // right: 0,
-    // left: 0,
-    // top: -60,
+    backgroundColor: "#2E3049",
   },
   searchWrapper: {
     marginTop: 15,

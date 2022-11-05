@@ -1,5 +1,6 @@
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { StatusBar } from "react-native";
 import First from "./screen/First";
 import Login from "./screen/Login";
 import Register from "./screen/Register";
