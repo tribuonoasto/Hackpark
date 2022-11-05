@@ -5,7 +5,7 @@ class Controller {
     try {
       const { id } = req.user;
 
-      const balanceHistory = await BalanceHistory.findOne({
+      const balanceHistory = await BalanceHistory.findAll({
         where: {
           UserId: id,
         },
