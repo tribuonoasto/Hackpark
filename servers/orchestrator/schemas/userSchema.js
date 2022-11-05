@@ -58,6 +58,8 @@ type Vehicle{
 type Query {
     getUsers:[User]
     getUserById(id:ID, access_token:String):User
+    getBalance(access_token:String):BalanceHistories
+    getVehicle(access_token:String):[Vehicle]
 }
 
 type Mutation {
@@ -93,6 +95,38 @@ const resolvers = {
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/users/${id}`,
+          headers: {
+            access_token: `${access_token}`,
+          },
+        });
+        //   await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getBalance: async (_, args) => {
+      try {
+        const { access_token } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlUser}/balances`,
+          headers: {
+            access_token: `${access_token}`,
+          },
+        });
+        //   await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getVehicle: async (_, args) => {
+      try {
+        const { access_token } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlUser}/vehicles`,
           headers: {
             access_token: `${access_token}`,
           },
