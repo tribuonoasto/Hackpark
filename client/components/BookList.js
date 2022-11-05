@@ -10,7 +10,7 @@ const BookList = ({ item, navigation }) => {
         marginBottom: 25,
       }}
       onPress={() => {
-        navigation.navigate("OrderDetail");
+        navigation.navigate("OrderDetail", item.VenueId);
       }}
     >
       <View style={{ flexDirection: "row" }}>
