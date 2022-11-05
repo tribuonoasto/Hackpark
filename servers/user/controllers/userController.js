@@ -1,5 +1,6 @@
 const { User, BalanceHistory, Vehicle } = require("../models");
-
+const ImageKit = require("imagekit");
+const fs = require("fs");
 class Controller {
   static async getAllUsers(req, res, next) {
     try {
@@ -94,13 +95,24 @@ class Controller {
     }
   }
 
-  static async changeImg(req, res, next) {
+  static async changeImgUser(req, res, next) {
     try {
       const { id } = req.user;
+      const { path, filename, originalname } = req.file;
 
-      const { imgUrl } = req.body;
+      const imagekit = new ImageKit({
+        publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
+        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
+        urlEndpoint: process.env.IMAGEKIT_URL,
+      });
 
-      await User.update({ imgUrl }, { where: { id } });
+      const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
+      const result = await imagekit.upload({
+        file: fileUploaded, //required
+        fileName: filename, //required
+      });
+
+      await User.update({ imgUrl: result.url }, { where: { id } });
 
       res.status(201).json({ message: "success change image" });
     } catch (err) {
