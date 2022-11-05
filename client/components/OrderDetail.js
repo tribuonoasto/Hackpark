@@ -1,12 +1,29 @@
-import { useState } from "react";
-import { Text, View, StyleSheet, ScrollView, Image } from "react-native";
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  Image,
+  FlatList,
+} from "react-native";
 import { Rating, AirbnbRating } from "react-native-ratings";
+import { useEffect, useState } from "react";
 
-const OrderDetail = () => {
+const OrderDetail = ({ route }) => {
   const [status, setStatus] = useState("ongoing");
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
   };
+
+  const id = route.params;
+  const [venues, setVenues] = useState([]);
+
+  useEffect(() => {
+    fetch(`https://3616-110-137-193-158.ap.ngrok.io/venues/${id}`)
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
+  }, []);
+
   return (
     <View style={styles.container}>
       <View
@@ -29,9 +46,19 @@ const OrderDetail = () => {
               alignItems: "flex-end",
             }}
           >
+            {/* <FlatList
+              data={venues}
+              scrollEnabled={true}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              renderItem={({ item }) => ( */}
             <View>
               <Text
-                style={{ fontSize: 20, color: "#474E68", fontWeight: "500" }}
+                style={{
+                  fontSize: 20,
+                  color: "#474E68",
+                  fontWeight: "500",
+                }}
               >
                 Indomaret
               </Text>
@@ -46,6 +73,9 @@ const OrderDetail = () => {
                 Booking completed
               </Text>
             </View>
+            {/* //   )}
+            //   keyExtractor={(item) => item.id}
+            // /> */}
             <View>
               <Text style={{ color: "#474E68", fontSize: 12 }}>
                 31 February 2022, 11.11
