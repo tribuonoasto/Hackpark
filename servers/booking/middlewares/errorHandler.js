@@ -2,7 +2,7 @@ const errorHandler = (err, req, res, next) => {
   let code = 500;
   let message = "Internal Server Error";
 
-  // console.log(err);
+  console.log(err);
 
   if (err.name === "invalid_validation") {
     code = 400;
@@ -25,6 +25,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "booking_not_found") {
     code = 404;
     message = "Book Not Found";
+  } else if (err.name === "already_paid") {
+    code = 404;
+    message = "This transaction is already paid";
   }
 
   res.status(code).json({ message });

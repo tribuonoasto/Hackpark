@@ -28,6 +28,15 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name == "Forbidden") {
     status = 403;
     message = err.name;
+  } else if (err.name == `not_enough_balance`) {
+    status = 400;
+    message = "You don't have enough balance. please top-up";
+  } else if (err.name == `invalid_input`) {
+    status = 400;
+    message = err.msg;
+  } else if (err.name == `payment_error`) {
+    status = 500;
+    message = "Failed to pay";
   }
 
   res.status(status).json({ message });

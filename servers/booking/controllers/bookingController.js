@@ -131,12 +131,17 @@ class BookingController {
   static async checkBooking(req, res, next) {
     try {
       const { bookingId } = req.params;
+      const { access_token } = req.body;
 
       const checkBooking = await Book.findOne(bookingId);
 
       if (!checkBooking) throw { name: "booking_not_found" };
 
       // console.log(checkBooking);
+
+      if (checkBooking.transactionStatus === "Done") {
+        throw { name: "already_paid" };
+      }
 
       //// CHECK IN
       if (checkBooking.transactionStatus === "Booked") {
@@ -148,20 +153,75 @@ class BookingController {
         if (!newBooking.acknowledged) {
           throw { name: "invalid_Book", msg: "Error when check-in" };
         }
+        res.status(200).json({ message: "Checkin Success" });
       } else if (checkBooking.transactionStatus === "Inprogress") {
+        const checkOutBooking = await Book.editBooking(bookingId, {
+          checkoutDate: new Date(),
+        });
+
+        if (!checkOutBooking.acknowledged) {
+          throw { name: "invalid_Book", msg: "Error when check-out" };
+        }
+
+        const newBookingData = await Book.findOne(bookingId);
+
+        const userCheckout = newBookingData.checkoutDate;
+        const userCheckin = newBookingData.checkinDate;
+        const checkHour = Math.floor(
+          (userCheckout - userCheckin) / (1000 * 60 * 60)
+        );
+
+        //// CEK SLOT
+        const checkSlot = await Slot.findOne(newBookingData.SlotId);
+        if (!checkSlot) {
+          throw { name: "slot_not_found" };
+        }
+
+        //// CEK VENUE
+        const venueId = checkSlot.VenueId.toString();
+        const checkVenue = await Venue.findOne(venueId);
+        if (!checkVenue) {
+          throw { name: "venue_not_found" };
+        }
+
+        const checkoutPrice =
+          checkVenue.parkingPrice * (checkHour ? checkHour : 1);
+        const newPrice = checkBooking.totalPrice + checkoutPrice;
+
+        const payBooking = await Book.editBooking(bookingId, {
+          totalPrice: newPrice,
+        });
+
+        if (!payBooking.acknowledged) {
+          throw { name: "invalid_Book", msg: "Error when totalling price" };
+        }
+
+        // PAYMENT WITH BALANCE
+        const payment = await axios({
+          method: "patch",
+          url: `${baseUrlLocalUser}/users/changeBalance`,
+          headers: {
+            access_token,
+          },
+          data: {
+            price: checkoutPrice,
+          },
+        });
+
+        if (!payment) {
+          throw { name: "invaid_Book", msg: "Error when changin user balance" };
+        }
+
         const newBooking = await Book.editBooking(bookingId, {
           transactionStatus: "Done",
-          checkoutDate: new Date(),
         });
 
         if (!newBooking.acknowledged) {
           throw { name: "invalid_Book", msg: "Error when check-out" };
         }
+
+        res.status(200).json({ message: "Checkout Success" });
       }
-
-      //// PAYMENT WITH BALANCE
-
-      res.status(201).json({ message: "asd" });
     } catch (error) {
       next(error);
     }

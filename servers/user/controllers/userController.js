@@ -113,17 +113,35 @@ class Controller {
       const { id } = req.user;
       const { price } = req.body;
 
+      if (!id) {
+        throw { name: "invalid_input", msg: "Invalid ID" };
+      }
+
+      if (!price) {
+        throw { name: "invalid_input", msg: "Invalid Price" };
+      }
+
       const user = await User.findOne({
         where: { id },
       });
 
       if (!user) throw { name: "User not found" };
 
+      if (user.balance < price) {
+        throw { name: "not_enough_balance" };
+      }
       const newBalance = user.balance - price;
 
-      await User.update({ balance: newBalance }, { where: { id } });
+      const resp = await User.update(
+        { balance: newBalance },
+        { where: { id } }
+      );
 
-      res.status(201).json({ message: "success change saldo" });
+      if (resp[0] === 0) {
+        throw { name: "payment_error" };
+      }
+
+      res.status(200).json({ message: "success change saldo" });
     } catch (err) {
       next(err);
     }
