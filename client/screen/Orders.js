@@ -12,13 +12,13 @@ import img from "../assets/parking-img.jpg";
 
 const Orders = ({ navigation }) => {
   const data = [
-    { id: 1 },
-    { id: 2 },
-    { id: 3 },
-    { id: 4 },
-    { id: 5 },
-    { id: 6 },
-    { id: 7 },
+    { id: 1, status: "ongoing" },
+    { id: 2, status: "done" },
+    { id: 3, status: "done" },
+    { id: 4, status: "done" },
+    { id: 5, status: "done" },
+    { id: 6, status: "done" },
+    { id: 7, status: "done" },
   ];
   return (
     <View style={styles.container}>

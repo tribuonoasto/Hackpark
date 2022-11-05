@@ -1,6 +1,6 @@
 import { Text, View, Image, TouchableOpacity } from "react-native";
 
-const BookList = ({ img, navigation }) => {
+const BookList = ({ img, navigation, item }) => {
   return (
     <TouchableOpacity
       style={{
@@ -10,7 +10,10 @@ const BookList = ({ img, navigation }) => {
         marginBottom: 25,
       }}
       onPress={() => {
-        navigation.navigate("OrderDetail");
+        navigation.navigate("OrderDetail", {
+          id: item.id,
+          status: item.status,
+        });
       }}
     >
       <View style={{ flexDirection: "row" }}>
@@ -32,7 +35,7 @@ const BookList = ({ img, navigation }) => {
                 marginTop: 5,
               }}
             >
-              Book completed
+              Book {item.status}
             </Text>
           </View>
           <Text style={{ color: "#6B728E", fontSize: 10, fontWeight: "300" }}>

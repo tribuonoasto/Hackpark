@@ -15,7 +15,7 @@ const UserScreen = ({ navigation }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch("https://1b9a-110-137-193-158.ap.ngrok.io/users")
+    fetch("https://4445-36-71-141-191.ap.ngrok.io/users")
       .then((response) => response.json())
       .then((json) => setUsers(json));
   }, []);
