@@ -1,6 +1,6 @@
 const axios = require("axios");
 const baseUrlUser = "http://localhost:3000";
-// const redis = require('./../config/redis');
+const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
 
@@ -68,6 +68,7 @@ type Mutation {
     verify(id:ID): User
     delete(access_token:String): User
     changeUsername(access_token:String, username:String): User
+    changeBalance(access_token:String, price:Int): BalanceHistories
 }
 `;
 
@@ -75,19 +76,19 @@ const resolvers = {
   Query: {
     getUsers: async () => {
       try {
-        // const itemsCache = await redis.get("app:users");
-        // if (itemsCache) {
-        //   console.log("data dari cache");
-        //   return JSON.parse(itemsCache);
-        // } else {
-        //   console.log("data dari service");
-        const { data } = await axios({
-          method: "GET",
-          url: `${baseUrlUser}/users/`,
-        });
-        //   await redis.set("app:users", JSON.stringify(data));
-        return data;
-        // }
+        const itemsCache = await redis.get("app:users");
+        if (itemsCache) {
+          console.log("data dari cache");
+          return JSON.parse(itemsCache);
+        } else {
+          console.log("data dari service");
+          const { data } = await axios({
+            method: "GET",
+            url: `${baseUrlUser}/users/`,
+          });
+          await redis.set("app:users", JSON.stringify(data));
+          return data;
+        }
       } catch (error) {
         console.log(error);
       }
@@ -102,7 +103,7 @@ const resolvers = {
             access_token: `${access_token}`,
           },
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -118,7 +119,7 @@ const resolvers = {
             access_token: `${access_token}`,
           },
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -134,7 +135,7 @@ const resolvers = {
             access_token: `${access_token}`,
           },
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -150,7 +151,7 @@ const resolvers = {
           url: `${baseUrlUser}/register`,
           data: register,
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -164,7 +165,7 @@ const resolvers = {
           url: `${baseUrlUser}/login`,
           data: login,
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -177,8 +178,7 @@ const resolvers = {
           method: "PATCH",
           url: `${baseUrlUser}/users/verify/${id}`,
         });
-        //   await redis.del("app:users");
-        // return data;
+        await redis.del("app:users");
       } catch (error) {
         console.log(error);
       }
@@ -193,8 +193,7 @@ const resolvers = {
             access_token: `${access_token}`,
           },
         });
-        //   await redis.del("app:users");
-        // return data;
+        await redis.del("app:users");
       } catch (error) {
         console.log(error);
       }
@@ -215,7 +214,29 @@ const resolvers = {
           },
           data: params,
         });
-        //   await redis.del("app:users");
+        await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    changeBalance: async (_, args) => {
+      try {
+        const { access_token, price } = args;
+
+        const params = new URLSearchParams();
+        params.append("price", price);
+
+        const { data } = await axios({
+          method: "PATCH",
+          url: `${baseUrlUser}/users/changeBalancePayment`,
+          headers: {
+            access_token: `${access_token}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          data: params,
+        });
+        await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
