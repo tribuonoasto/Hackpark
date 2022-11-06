@@ -11,12 +11,9 @@ import {
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
-const ngrok = require("./../config/apollo");
+import ngrok from "../config/apollo";
 
 const HomeScreen = ({ navigation }) => {
-  const [clicked, setClicked] = useState(false);
-  const [searchPhrase, setSearchPhrase] = useState("");
-
   const [venues, setVenues] = useState([]);
 
   useEffect(() => {
@@ -25,16 +22,6 @@ const HomeScreen = ({ navigation }) => {
       .then((json) => setVenues(json));
   }, []);
 
-  // console.log(searchPhrase);
-  // const data = [
-  //   { id: 1 },
-  //   { id: 2 },
-  //   { id: 3 },
-  //   { id: 4 },
-  //   { id: 5 },
-  //   { id: 6 },
-  //   { id: 7 },
-  // ];
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -91,13 +78,6 @@ const HomeScreen = ({ navigation }) => {
               >
                 Let's find the best parking spot for you
               </Text>
-              {/* <Search
-                clicked={clicked}
-                setClicked={setClicked}
-                searchPhrase={searchPhrase}
-                setSearchPhrase={setSearchPhrase}
-                navigation={navigation}
-              /> */}
               <TouchableOpacity
                 style={styles.searchWrapper}
                 onPress={() => navigation.navigate("SearchScreen")}

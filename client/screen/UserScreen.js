@@ -5,21 +5,33 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
-  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
 import UserList from "../components/UserList";
-const ngrok = require('./../config/apollo');
+const ngrok = require("./../config/apollo");
 
 const UserScreen = ({ navigation }) => {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${ngrok}/users`)
       .then((response) => response.json())
-      .then((json) => setUsers(json));
+      .then((json) => {
+        setUsers(json);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#404258" />
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={styles.container}>
@@ -36,43 +48,31 @@ const UserScreen = ({ navigation }) => {
             style={{ flexDirection: "row", justifyContent: "space-between" }}
           >
             <View style={{ flexDirection: "row" }}>
-              <FlatList
-                data={users}
-                renderItem={({ item }) => (
-                  <Image
-                    source={{ uri: item.imgUrl }}
-                    style={{
-                      width: 60,
-                      height: 60,
-                      resizeMode: "cover",
-                      borderRadius: 100,
-                      marginRight: 10,
-                    }}
-                  />
-                )}
-                keyExtractor={(item) => item.id}
+              <Image
+                source={{ uri: users[0].imgUrl }}
+                style={{
+                  width: 60,
+                  height: 60,
+                  resizeMode: "cover",
+                  borderRadius: 100,
+                  marginRight: 10,
+                }}
               />
               <View>
-                <FlatList
-                  data={users}
-                  renderItem={({ item }) => (
-                    <View>
-                      <Text
-                        style={{
-                          fontWeight: "500",
-                          fontSize: 18,
-                          color: "#404258",
-                        }}
-                      >
-                        {item.username}
-                      </Text>
-                      <Text style={{ marginTop: 5, color: "#50577A" }}>
-                        {item.email}
-                      </Text>
-                    </View>
-                  )}
-                  keyExtractor={(item) => item.id}
-                />
+                <View>
+                  <Text
+                    style={{
+                      fontWeight: "500",
+                      fontSize: 18,
+                      color: "#404258",
+                    }}
+                  >
+                    {users[0].username}
+                  </Text>
+                  <Text style={{ marginTop: 5, color: "#50577A" }}>
+                    {users[0].email}
+                  </Text>
+                </View>
               </View>
             </View>
             <TouchableOpacity

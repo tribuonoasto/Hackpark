@@ -1,4 +1,4 @@
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, View, StyleSheet } from "react-native";
 
 const SaldoList = ({ item }) => {
   return (
@@ -14,7 +14,7 @@ const SaldoList = ({ item }) => {
       )}
 
       <Text style={{ fontSize: 12, color: "#6B728E" }}>
-      {item.dateTransaction}
+        {item.dateTransaction}
       </Text>
     </View>
   );
