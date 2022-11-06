@@ -3,17 +3,17 @@ const { getDB } = require("../config/mongo");
 const { ObjectId } = require("mongodb");
 
 class Book {
-  static async insertOne(payload) {
+  static async insertOne(payload, session) {
     try {
       const collection = getDB().collection("bookings");
-      const resp = await collection.insertOne(payload);
+      const resp = await collection.insertOne(payload, session);
       return resp;
     } catch (error) {
       throw error;
     }
   }
 
-  static async editBooking(id, payload) {
+  static async editBooking(id, payload, session) {
     try {
       const collection = getDB().collection("bookings");
       const _id = ObjectId(id);
@@ -22,7 +22,8 @@ class Book {
         { _id },
         {
           $set: payload,
-        }
+        },
+        session
       );
       return resp;
     } catch (error) {
@@ -49,7 +50,7 @@ class Book {
     }
   }
 
-  static async editStatus(id, payload) {
+  static async editStatus(id, payload, session) {
     try {
       const collection = getDB().collection("bookings");
       const _id = ObjectId(id);
@@ -58,7 +59,8 @@ class Book {
         { _id },
         {
           $set: payload,
-        }
+        },
+        session
       );
       return resp;
     } catch (error) {

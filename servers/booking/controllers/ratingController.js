@@ -5,6 +5,12 @@ class RatingController {
     try {
       const { UserId, VenueId, rating } = req.body;
 
+      const checkUserRating = await Rating.findAll({ UserId, VenueId });
+
+      if (checkUserRating.length > 0) {
+        throw { name: "already_rate" };
+      }
+
       const resp = await Rating.insertOne({
         UserId,
         VenueId,

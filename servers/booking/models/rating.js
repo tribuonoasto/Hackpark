@@ -13,13 +13,11 @@ class Rating {
     }
   }
 
-  static async findAll() {
+  static async findAll(query) {
     try {
       const collection = getDB().collection("ratings");
 
-      const options = {};
-
-      const ratings = await collection.find({}, options).toArray();
+      const ratings = await collection.find(query).toArray();
       return ratings;
     } catch (error) {
       throw error;
