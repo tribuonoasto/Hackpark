@@ -75,7 +75,7 @@ class Controller {
           fullName,
         });
 
-        const url = `http://localhost:3000/users/verify/${user.id}`;
+        const url = `https://hackpark-service-user.herokuapp.com/users/verify/${user.id}`;
 
         const text = `please verify your email by clicking this url ${url}`;
 

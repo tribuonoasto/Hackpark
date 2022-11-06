@@ -6,8 +6,6 @@ router.get("/", Controller.getBalance);
 
 router.post("/payment", Controller.midTransRequest);
 
-router.post("/payment/check", Controller.checkTransactionStatus);
-
 router.post("/notification/handling", Controller.notification);
 
 module.exports = router;
