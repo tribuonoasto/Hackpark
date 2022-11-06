@@ -15,7 +15,7 @@ class BookingController {
       await session.withTransaction(async () => {
         const { UserId, SlotId, bookingDate, access_token } = req.body;
 
-        if (!UserId || !SlotId) {
+        if (!UserId || !SlotId || !access_token) {
           throw {
             name: "invalid_validation",
             msg: "Invalid Input",
@@ -23,17 +23,13 @@ class BookingController {
         }
 
         //// AXIOS CEK USER ID
-        const checkUser = await axios({
+        await axios({
           method: "get",
           url: `${baseUrlLocalUser}/users/${UserId}`,
           headers: {
             access_token,
           },
         });
-
-        if (!checkUser) {
-          throw { name: "user_not_found" };
-        }
 
         //// CEK SLOT
         const checkSlot = await Slot.findOne(SlotId);
@@ -73,7 +69,7 @@ class BookingController {
         const bookPrice = venuePrice * multiplierPrice.value;
 
         // PAYMENT WITH BALANCE
-        const payment = await axios({
+        await axios({
           method: "patch",
           url: `${baseUrlLocalUser}/users/changeBalancePayment`,
           headers: {
@@ -83,10 +79,6 @@ class BookingController {
             price: bookPrice,
           },
         });
-
-        if (!payment) {
-          throw { name: "invaid_Book", msg: "Payment error" };
-        }
 
         //// CREATE BOOKING
 
@@ -171,10 +163,21 @@ class BookingController {
 
         if (!checkBooking) throw { name: "booking_not_found" };
 
-        // console.log(checkBooking);
-
         if (checkBooking.transactionStatus === "Done") {
           throw { name: "already_paid" };
+        }
+
+        //// CEK SLOT
+        const checkSlot = await Slot.findOne(checkBooking.SlotId);
+        if (!checkSlot) {
+          throw { name: "slot_not_found" };
+        }
+
+        //// CEK VENUE
+        const venueId = checkSlot.VenueId.toString();
+        const checkVenue = await Venue.findOne(venueId);
+        if (!checkVenue) {
+          throw { name: "venue_not_found" };
         }
 
         //// CHECK IN
@@ -211,19 +214,6 @@ class BookingController {
             (userCheckout - userCheckin) / (1000 * 60 * 60)
           );
 
-          //// CEK SLOT
-          const checkSlot = await Slot.findOne(checkBooking.SlotId);
-          if (!checkSlot) {
-            throw { name: "slot_not_found" };
-          }
-
-          //// CEK VENUE
-          const venueId = checkSlot.VenueId.toString();
-          const checkVenue = await Venue.findOne(venueId);
-          if (!checkVenue) {
-            throw { name: "venue_not_found" };
-          }
-
           const checkoutPrice =
             checkVenue.parkingPrice * (checkHour ? checkHour : 1);
           const newPrice = checkBooking.totalPrice + checkoutPrice;
@@ -241,7 +231,7 @@ class BookingController {
           }
 
           // PAYMENT WITH BALANCE
-          const payment = await axios({
+          await axios({
             method: "patch",
             url: `${baseUrlLocalUser}/users/changeBalancePayment`,
             headers: {
@@ -251,10 +241,6 @@ class BookingController {
               price: checkoutPrice,
             },
           });
-
-          if (!payment) {
-            throw { name: "invaid_Book", msg: "Payment error" };
-          }
 
           const newBooking = await Book.editBooking(
             bookingId,
