@@ -1,6 +1,7 @@
 const { User, BalanceHistory, Vehicle, sequelize } = require("../models");
 const ImageKit = require("imagekit");
 const fs = require("fs");
+const env = require("../helpers/env");
 class Controller {
   static async getAllUsers(req, res, next) {
     try {
@@ -101,9 +102,9 @@ class Controller {
       const { path, filename, originalname } = req.file;
 
       const imagekit = new ImageKit({
-        publicKey: process.env.IMAGEKIT_PUBLIC_KEY,
-        privateKey: process.env.IMAGEKIT_PRIVATE_KEY,
-        urlEndpoint: process.env.IMAGEKIT_URL,
+        publicKey: env.publicKey,
+        privateKey: env.privateKey,
+        urlEndpoint: env.urlEndpoint,
       });
 
       const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
@@ -169,19 +170,27 @@ class Controller {
         throw { name: "payment_error" };
       }
 
-      await BalanceHistory.create(
-        {
-          UserId: id,
-          dateTransaction: new Date(),
-          type: "kredit",
-          amount: price,
-          status: "Success",
-        },
-        { transaction: t }
-      );
-      await t.commit();
+      const writeBalanceHistory = await BalanceHistory.create({
+        UserId: id,
+        type: "kredit",
+        amount: price,
+        status: "Success",
+      });
 
-      res.status(200).json({ message: "success change saldo" });
+      if (!writeBalanceHistory) {
+        await BalanceHistory.create(
+          {
+            UserId: id,
+            type: "kredit",
+            amount: price,
+            status: "Success",
+          },
+          { transaction: t }
+        );
+        await t.commit();
+
+        res.status(201).json({ message: "success change saldo" });
+      }
     } catch (err) {
       next(err);
       await t.rollback();
