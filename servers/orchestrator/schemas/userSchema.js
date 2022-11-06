@@ -65,6 +65,9 @@ type Query {
 type Mutation {
     login(login: InputLogin): Payload
     register(register: InputRegister): User
+    verify(id:ID): User
+    delete(access_token:String): User
+    changeUsername(access_token:String, username:String): User
 }
 `;
 
@@ -147,7 +150,7 @@ const resolvers = {
           url: `${baseUrlUser}/register`,
           data: register,
         });
-        //   await redis.del("app:items");
+        //   await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -161,7 +164,58 @@ const resolvers = {
           url: `${baseUrlUser}/login`,
           data: login,
         });
-        //   await redis.del("app:items");
+        //   await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    verify: async (_, args) => {
+      try {
+        const { id } = args;
+        await axios({
+          method: "PATCH",
+          url: `${baseUrlUser}/users/verify/${id}`,
+        });
+        //   await redis.del("app:users");
+        // return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    delete: async (_, args) => {
+      try {
+        const { access_token } = args;
+        await axios({
+          method: "DELETE",
+          url: `${baseUrlUser}/users/`,
+          headers: {
+            access_token: `${access_token}`,
+          },
+        });
+        //   await redis.del("app:users");
+        // return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    changeUsername: async (_, args) => {
+      try {
+        const { access_token, username } = args;
+
+        const params = new URLSearchParams();
+        params.append("username", username);
+
+        const { data } = await axios({
+          method: "PATCH",
+          url: `${baseUrlUser}/users/changeusername`,
+          headers: {
+            access_token: `${access_token}`,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          data: params,
+        });
+        //   await redis.del("app:users");
         return data;
       } catch (error) {
         console.log(error);
@@ -169,5 +223,4 @@ const resolvers = {
     },
   },
 };
-
 module.exports = { typeDefs, resolvers };
