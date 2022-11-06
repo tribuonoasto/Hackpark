@@ -2,7 +2,7 @@ const errorHandler = (err, req, res, next) => {
   let code = 500;
   let message = "Internal Server Error";
 
-  console.log(err);
+  // console.log(err);
 
   if (err.name === "invalid_validation") {
     code = 400;
@@ -34,6 +34,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "rating_not_found") {
     code = 404;
     message = "Rating Not Found";
+  } else if (err.name === "already_rate") {
+    code = 400;
+    message = "You already rate this venue";
   }
 
   res.status(code).json({ message });
