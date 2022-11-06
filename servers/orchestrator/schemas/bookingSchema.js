@@ -4,6 +4,12 @@ const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
 
+input InputRating {
+    UserId: Int,
+    VenueId: String
+    rating: String
+}
+
 type Venue {
     _id: String
     name: String
@@ -18,11 +24,22 @@ type Venue {
 }
 
 type Slot {
-    _id: String,
-    VenueId: String,
-    slot: Int,
-    floor: Int,
+    _id: String
+    VenueId: String
+    slot: Int
+    floor: Int
     name: String
+}
+
+type Rating {
+    _id: String
+    UserId: Int
+    VenueId: String
+    rating: String
+}
+
+type Data {
+  message: String
 }
 
 type Query {
@@ -30,6 +47,12 @@ type Query {
     getVenueById(id:String): Venue
     getSlots:[Slot]
     getSlotById(id:String): Slot
+    getRatings:[Rating]
+    getRatingById(id:String): Rating
+}
+
+type Mutation {
+    rating(rating: InputRating): Data
 }
 `;
 
@@ -99,8 +122,55 @@ const resolvers = {
         console.log(error);
       }
     },
+    getRatings: async () => {
+      try {
+        const itemsCache = await redis.get("app:ratings");
+        if (itemsCache) {
+          console.log("data dari cache");
+          return JSON.parse(itemsCache);
+        } else {
+          console.log("data dari service");
+          const { data } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/ratings/`,
+          });
+          await redis.set("app:ratings", JSON.stringify(data));
+          return data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getRatingById: async (_, args) => {
+      try {
+        const { id } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/ratings/${id}`,
+        });
+        await redis.del("app:ratings");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
-  Mutation: {},
+  Mutation: {
+    rating: async (_, args) => {
+      try {
+        const { rating } = args;
+        const { data } = await axios({
+          method: "POST",
+          url: `${baseUrlBooking}/ratings`,
+          data: rating,
+        });
+        await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
 };
 
 module.exports = { typeDefs, resolvers };
