@@ -26,7 +26,7 @@ class Controller {
 
   static async midTransRequest(req, res, next) {
     try {
-      const { totalPrice, paymentStatus } = req.body;
+      const { totalPrice, paymentStatus, bank } = req.body;
       const { id, email, username } = req.user;
 
       const parameter = {
@@ -52,6 +52,18 @@ class Controller {
             merchant_name: "HackPark",
           },
         ],
+        bank_transfer: {
+          bank,
+          va_number: "12345678901",
+          free_text: {
+            inquiry: [
+              {
+                id: "text indonesia",
+                en: "text english",
+              },
+            ],
+          },
+        },
       };
 
       const data = await core.charge(parameter);
