@@ -42,60 +42,47 @@ class Controller {
     try {
       const { username, email, password, fullName } = req.body;
 
-      const valid = await axios({
-        method: "get",
-        url: `https://emailvalidation.abstractapi.com/v1/`,
-        params: {
-          api_key: env.AbstractKey,
-          email: email,
+      const nodemailer = require("nodemailer");
+
+      const transporter = nodemailer.createTransport({
+        host: env.host,
+        port: env.port,
+        auth: {
+          user: env.user,
+          pass: env.pass,
+        },
+        tls: {
+          rejectUnauthorized: false,
         },
       });
 
-      if (valid.data.is_smtp_valid.value === false) {
-        throw { name: `invalid_email` };
-      } else if (valid.data.is_smtp_valid.value == true) {
-        const nodemailer = require("nodemailer");
+      const user = await User.create({
+        username,
+        email,
+        password,
+        fullName,
+      });
 
-        const transporter = nodemailer.createTransport({
-          host: env.host,
-          port: env.port,
-          auth: {
-            user: env.user,
-            pass: env.pass,
-          },
-          tls: {
-            rejectUnauthorized: false,
-          },
-        });
+      const url = `https://hackpark-service-user.herokuapp.com/users/verify/${user.id}`;
 
-        const user = await User.create({
-          username,
-          email,
-          password,
-          fullName,
-        });
+      const text = `please verify your email by clicking this url ${url}`;
 
-        const url = `http://localhost:3000/users/verify/${user.id}`;
+      const mailOption = {
+        from: `nodemailer`,
+        to: email,
+        subject: `Verification`,
+        text: `${text}`,
+      };
 
-        const text = `please verify your email by clicking this url ${url}`;
+      transporter.sendMail(mailOption, (err, info) => {
+        if (err) {
+          return console.log(err);
+        } else {
+          return console.log("success");
+        }
+      });
 
-        const mailOption = {
-          from: `nodemailer`,
-          to: email,
-          subject: `Verification`,
-          text: `${text}`,
-        };
-
-        transporter.sendMail(mailOption, (err, info) => {
-          if (err) {
-            return console.log(err);
-          } else {
-            return console.log("success");
-          }
-        });
-
-        res.status(201).json({ message: "Check your email" });
-      }
+      res.status(201).json({ message: "Check your email" });
     } catch (err) {
       next(err);
     }

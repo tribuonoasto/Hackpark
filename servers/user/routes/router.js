@@ -1,4 +1,5 @@
 const authController = require("../controllers/authController");
+const Controller = require("../controllers/balanceController");
 const authentication = require("../middlewares/authentication");
 const userRouter = require("./userRouter");
 const balanceRouter = require("./balanceRouter");
@@ -10,6 +11,8 @@ const router = require("express").Router();
 router.post("/login", authController.login);
 
 router.post("/register", authController.register);
+
+router.post("/notification", Controller.paymentNotif);
 
 router.use("/users", userRouter);
 
