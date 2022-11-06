@@ -6,6 +6,4 @@ router.get("/", Controller.getBalance);
 
 router.post("/payment", Controller.midTransRequest);
 
-router.post("/notification/handling", Controller.notification);
-
 module.exports = router;

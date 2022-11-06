@@ -33,7 +33,7 @@ class Controller {
         payment_type: "bank_transfer",
         transaction_details: {
           gross_amount: totalPrice,
-          order_id: "order-id-" + Math.round(new Date().getTime() / 1000),
+          order_id: "order-id-" + id + Math.round(new Date().getTime() / 1000),
         },
         customer_details: {
           email: email,
@@ -57,11 +57,9 @@ class Controller {
     }
   }
 
-  static async notification(req, res, next) {
+  static async paymentNotif(req, res, next) {
     try {
-      const { transaction_id } = req.body;
-
-      const data = await core.transaction.status(transaction_id);
+      const data = await core.transaction.notification(req.body);
 
       if (data.transaction_status == "settlement") {
         res.status(200).json({ message: `${data.transaction_status}` });
