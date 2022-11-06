@@ -35,6 +35,7 @@ const SearchScreen = ({ navigation }) => {
 
   function fitMap() {
     const coordinates = pin;
+    setClicked(false);
 
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
 
@@ -91,8 +92,6 @@ const SearchScreen = ({ navigation }) => {
       setCity(regionName[0]);
     })();
   }, []);
-
-  console.log(city);
 
   const handleVenue = (id, coordinates) => {
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
@@ -182,7 +181,7 @@ const SearchScreen = ({ navigation }) => {
                   longitude: venue.lng,
                 })
               }
-              pinColor="#54B435"
+              image={require("../assets/pin-icon.png")}
             >
               <Callout>
                 <View

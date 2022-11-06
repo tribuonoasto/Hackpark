@@ -17,7 +17,7 @@ const BookScreen = ({ route, navigation }) => {
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
 
-  const [saldo, setSaldo] = useState(9000);
+  const [saldo, setSaldo] = useState(10000);
 
   const handleSubmit = (answer) => {
     setModalVisible(true);
@@ -244,12 +244,13 @@ const BookScreen = ({ route, navigation }) => {
         <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
           <TouchableOpacity
             style={{
-              backgroundColor: "#404258",
+              backgroundColor: saldo < 10000 ? "#dedede" : "#404258",
               paddingVertical: 13,
               paddingHorizontal: 10,
               borderRadius: 40,
             }}
             onPress={handleSubmit}
+            disabled={saldo < 10000 ? true : false}
           >
             <Text
               style={{
