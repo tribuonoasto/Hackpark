@@ -7,7 +7,7 @@ const Card = ({ navigation, item }) => {
       style={[styles.container, styles.shadow]}
       onPress={() => navigation.navigate("DetailScreen", { id: item.id })}
     >
-      <View style={{ flexDirection: "row", marginBottom: 15 }}>
+      <View style={{ flexDirection: "row", padding: 10 }}>
         <Image
           source={{ uri: item.imgVenue }}
           style={{
@@ -21,14 +21,14 @@ const Card = ({ navigation, item }) => {
           style={{
             marginLeft: 20,
             flexDirection: "row",
-            width: 220,
+            width: 240,
             justifyContent: "space-between",
           }}
         >
           <View style={{ height: 70, justifyContent: "space-between" }}>
             <View>
               <Text
-                style={{ fontWeight: "500", color: "#474E68", fontSize: 16 }}
+                style={{ fontWeight: "500", color: "#474E68", fontSize: 14 }}
               >
                 {item.name}
               </Text>
@@ -40,7 +40,7 @@ const Card = ({ navigation, item }) => {
             </View>
             <View>
               <Text
-                style={{ fontWeight: "500", fontSize: 14, color: "#50577A" }}
+                style={{ fontWeight: "500", fontSize: 12, color: "#50577A" }}
               >
                 IDR {item.parkingPrice} /jam
               </Text>
@@ -74,9 +74,11 @@ export default Card;
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
     backgroundColor: "#ededed",
     padding: 5,
     borderRadius: 10,
+    marginBottom: 20,
   },
   shadow: {
     // shadowColor: "#000",

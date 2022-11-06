@@ -8,6 +8,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
+import ngrok from "../config/apollo";
 
 const DetailScreen = ({ route, navigation }) => {
   const [venues, setVenues] = useState({});
@@ -17,7 +18,7 @@ const DetailScreen = ({ route, navigation }) => {
   console.log(id);
 
   useEffect(() => {
-    fetch(`https://3f20-36-71-140-185.ap.ngrok.io/venues/${id}`)
+    fetch(`${ngrok}/venues/${id}`)
       .then((response) => response.json())
       .then((res) => {
         setVenues(res);
