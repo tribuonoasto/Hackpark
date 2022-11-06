@@ -1,6 +1,7 @@
 const { BalanceHistory, User } = require("../models");
 const env = require("../helpers/env");
 const midtransClient = require("midtrans-client");
+const Bank = require("../helpers/bank");
 const core = new midtransClient.CoreApi({
   isProduction: false,
   serverKey: env.serverKey,
@@ -29,44 +30,16 @@ class Controller {
       const { totalPrice, paymentStatus, bank } = req.body;
       const { id, email, username } = req.user;
 
-      const parameter = {
-        payment_type: "bank_transfer",
-        transaction_details: {
-          gross_amount: totalPrice,
-          order_id:
-            "order-id-" +
-            "$" +
-            id +
-            "-" +
-            Math.round(new Date().getTime() / 1000),
-        },
-        customer_details: {
-          email: email,
-          first_name: username,
-        },
-        item_details: [
-          {
-            price: totalPrice,
-            quantity: 1,
-            name: paymentStatus,
-            merchant_name: "HackPark",
-          },
-        ],
-        bank_transfer: {
-          bank,
-          va_number: "12345678901",
-          free_text: {
-            inquiry: [
-              {
-                id: "text indonesia",
-                en: "text english",
-              },
-            ],
-          },
-        },
-      };
+      const transfer = new Bank(
+        totalPrice,
+        paymentStatus,
+        bank,
+        id,
+        email,
+        username
+      ).body();
 
-      const data = await core.charge(parameter);
+      const data = await core.charge(transfer);
 
       res.status(200).json(data);
     } catch (err) {
