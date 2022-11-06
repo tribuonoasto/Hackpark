@@ -17,9 +17,19 @@ type Venue {
     description: String
 }
 
+type Slot {
+    _id: String,
+    VenueId: String,
+    slot: Int,
+    floor: Int,
+    name: String
+}
+
 type Query {
     getVenues:[Venue]
     getVenueById(id:String): Venue
+    getSlots:[Slot]
+    getSlotById(id:String): Slot
 }
 `;
 
@@ -45,18 +55,50 @@ const resolvers = {
       }
     },
     getVenueById: async (_, args) => {
-        try {
-          const { id } = args;
+      try {
+        const { id } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/venues/${id}`,
+        });
+        await redis.del("app:venues");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getSlots: async () => {
+      try {
+        const itemsCache = await redis.get("app:slots");
+        if (itemsCache) {
+          console.log("data dari cache");
+          return JSON.parse(itemsCache);
+        } else {
+          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
-            url: `${baseUrlBooking}/venues/${id}`,
+            url: `${baseUrlBooking}/slots/`,
           });
-          await redis.del("app:venues");
+          await redis.set("app:slots", JSON.stringify(data));
           return data;
-        } catch (error) {
-          console.log(error);
         }
-      },
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getSlotById: async (_, args) => {
+      try {
+        const { id } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/slots/${id}`,
+        });
+        await redis.del("app:slots");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
   },
   Mutation: {},
 };
