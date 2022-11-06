@@ -4,13 +4,13 @@ if (process.env.NODE_ENV !== 'production'){
   
   const { ApolloServer } = require("@apollo/server");
   const { startStandaloneServer } = require("@apollo/server/standalone");
-//   const bookingSchema = require("./schemas/bookingSchema");
+  const bookingSchema = require("./schemas/bookingSchema");
   const userSchema = require("./schemas/userSchema");
   const PORT = process.env.PORT || 4000;
   
   const server = new ApolloServer({
-    typeDefs: [userSchema.typeDefs],
-    resolvers: [userSchema.resolvers],
+    typeDefs: [userSchema.typeDefs, bookingSchema.typeDefs],
+    resolvers: [userSchema.resolvers, bookingSchema.resolvers],
     introspection: true,
     playground: true
   });

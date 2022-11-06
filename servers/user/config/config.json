@@ -1,14 +1,14 @@
 {
   "development": {
     "username": "postgres",
-    "password": "qwertyui",
+    "password": "postgres",
     "database": "HackPark",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
-    "password": "qwertyui",
+    "password": "postgres",
     "database": "HackPark-test",
     "host": "127.0.0.1",
     "dialect": "postgres"
