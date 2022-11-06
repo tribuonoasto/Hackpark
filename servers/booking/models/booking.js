@@ -49,5 +49,18 @@ class Book {
       }
     }
   }
+
+  static async findAll() {
+    try {
+      const collection = getDB().collection("bookings");
+
+      const options = {};
+
+      const bookings = await collection.find({}, options).toArray();
+      return bookings;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 module.exports = Book;

@@ -264,6 +264,31 @@ class BookingController {
       await session.endSession();
     }
   }
+
+  static async showAllBookings(req, res, next) {
+    try {
+      const bookings = await Book.findAll();
+
+      if (!bookings || bookings.length <= 0) throw { name: "book_not_found" };
+      res.status(200).json(bookings);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  static async showOneBooking(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const book = await Book.findOne(id);
+
+      if (!book) throw { name: "book_not_found" };
+
+      res.status(200).json(book);
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 module.exports = BookingController;
