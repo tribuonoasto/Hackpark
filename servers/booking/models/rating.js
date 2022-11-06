@@ -36,7 +36,7 @@ class Rating {
       return rating;
     } catch (error) {
       if (error.name === "BSONTypeError") {
-        throw { name: "slot_not_found" };
+        throw { name: "rating_not_found" };
       } else {
         throw error;
       }

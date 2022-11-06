@@ -50,19 +50,14 @@ class Book {
     }
   }
 
-  static async editStatus(id, payload, session) {
+  static async findAll() {
     try {
       const collection = getDB().collection("bookings");
-      const _id = ObjectId(id);
 
-      const resp = await collection.updateOne(
-        { _id },
-        {
-          $set: payload,
-        },
-        session
-      );
-      return resp;
+      const options = {};
+
+      const bookings = await collection.find({}, options).toArray();
+      return bookings;
     } catch (error) {
       throw error;
     }
