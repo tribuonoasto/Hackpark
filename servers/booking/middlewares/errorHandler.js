@@ -37,6 +37,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "already_rate") {
     code = 400;
     message = "You already rate this venue";
+  } else if (err.name === "invalid_input") {
+    code = 400;
+    message = "Invalid Input";
   }
 
   res.status(code).json({ message });
