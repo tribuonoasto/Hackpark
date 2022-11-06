@@ -1,4 +1,7 @@
 const { Vehicle } = require("../models");
+const ImageKit = require("imagekit");
+const fs = require("fs");
+const env = require("../helpers/env");
 
 class Controller {
   static async getVehicle(req, res, next) {
@@ -19,19 +22,29 @@ class Controller {
 
   static async changeImg(req, res, next) {
     try {
-      const { imgUrl } = req.body;
-
       const { id } = req.user;
+      const { vehicleId } = req.params;
+      const { path, filename, originalname } = req.file;
 
-      const vehicle = await Vehicle.findOne({
-        where: {
-          UserId: id,
-        },
+      const imagekit = new ImageKit({
+        publicKey: env.publicKey,
+        privateKey: env.privateKey,
+        urlEndpoint: env.urlEndpoint,
       });
 
-      if (!vehicle) throw { name: "Vehicle not found" };
+      const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
+      const result = await imagekit.upload({
+        file: fileUploaded, //required
+        fileName: filename, //required
+      });
 
-      await Vehicle.update({ imgUrl }, { where: { UserId: id } });
+      const resp = await Vehicle.update(
+        { imgUrl: result.url },
+        { where: { UserId: id, id: vehicleId } }
+      );
+      if (resp[0] === 0) {
+        throw { name: "upload_error" };
+      }
 
       res.status(200).json({ message: "Success" });
     } catch (err) {
