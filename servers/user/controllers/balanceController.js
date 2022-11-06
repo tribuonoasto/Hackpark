@@ -1,4 +1,4 @@
-const { BalanceHistory } = require("../models");
+const { BalanceHistory, User } = require("../models");
 const env = require("../helpers/env");
 const midtransClient = require("midtrans-client");
 const core = new midtransClient.CoreApi({
@@ -33,7 +33,12 @@ class Controller {
         payment_type: "bank_transfer",
         transaction_details: {
           gross_amount: totalPrice,
-          order_id: "order-id-" + id + Math.round(new Date().getTime() / 1000),
+          order_id:
+            "order-id-" +
+            "$" +
+            id +
+            "-" +
+            Math.round(new Date().getTime() / 1000),
         },
         customer_details: {
           email: email,
@@ -61,7 +66,21 @@ class Controller {
     try {
       const data = await core.transaction.notification(req.body);
 
+      const id = +data.order_id.split("-")[2].replace("$", "");
+
       if (data.transaction_status == "settlement") {
+        const user = await User.findOne({
+          where: {
+            id,
+          },
+        });
+
+        if (!user) throw { name: "User not found" };
+
+        const balance = +data.gross_amount + user.balance;
+
+        await User.update({ balance }, { where: { id } });
+
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (
         data.transaction_status == "cancel" ||
@@ -75,6 +94,7 @@ class Controller {
         res.status(200).json({ message: `${data.transaction_status}` });
       }
     } catch (err) {
+      console.log(err);
       next(err);
     }
   }

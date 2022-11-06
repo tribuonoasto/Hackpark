@@ -2,7 +2,6 @@ const { compare } = require("../helpers/bcrypt");
 const env = require("../helpers/env");
 const { createToken } = require("../helpers/jwt");
 const { User } = require("../models");
-const axios = require("axios");
 
 class Controller {
   static async login(req, res, next) {
