@@ -16,6 +16,12 @@ input InputLogin {
     password: String
 }
 
+input InputVehicle{
+  plat: String
+  modelName: String
+  name: String
+}
+
 type Payload {
     access_token: String
     id: ID
@@ -55,20 +61,26 @@ type Vehicle{
     imgUrl: String
 }
 
+type Data {
+  message: String
+}
+
 type Query {
     getUsers:[User]
     getUserById(id:ID, access_token:String):User
-    getBalance(access_token:String):BalanceHistories
+    getBalance(access_token:String):[BalanceHistories]
     getVehicle(access_token:String):[Vehicle]
 }
 
 type Mutation {
     login(login: InputLogin): Payload
-    register(register: InputRegister): User
-    verify(id:ID): User
-    delete(access_token:String): User
-    changeUsername(access_token:String, username:String): User
-    changeBalance(access_token:String, price:Int): BalanceHistories
+    register(register: InputRegister): Data
+    verify(id:ID): Data
+    delete(access_token:String): Data
+    changeUsername(access_token:String, username:String): Data
+    changeBalance(access_token:String, price:Int): Data
+    vehicle(access_token:String, vehicle: InputVehicle ): Data
+    deleteVehicle(access_token:String, id:ID): Data
 }
 `;
 
@@ -174,11 +186,12 @@ const resolvers = {
     verify: async (_, args) => {
       try {
         const { id } = args;
-        await axios({
+        const {data} = await axios({
           method: "PATCH",
           url: `${baseUrlUser}/users/verify/${id}`,
         });
         await redis.del("app:users");
+        return data
       } catch (error) {
         console.log(error);
       }
@@ -186,7 +199,7 @@ const resolvers = {
     delete: async (_, args) => {
       try {
         const { access_token } = args;
-        await axios({
+        const {data} = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/users/`,
           headers: {
@@ -194,6 +207,7 @@ const resolvers = {
           },
         });
         await redis.del("app:users");
+        return data
       } catch (error) {
         console.log(error);
       }
@@ -238,6 +252,39 @@ const resolvers = {
         });
         await redis.del("app:users");
         return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    vehicle: async (_, args) => {
+      try {
+        const { access_token, vehicle } = args;
+        const { data } = await axios({
+          method: "POST",
+          url: `${baseUrlUser}/vehicles`,
+          headers: {
+            access_token: `${access_token}`,
+          },
+          data: vehicle,
+        });
+        await redis.del("app:users");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    deleteVehicle: async (_, args) => {
+      try {
+        const { access_token , id} = args;
+        const {data} = await axios({
+          method: "DELETE",
+          url: `${baseUrlUser}/vehicles/${id}`,
+          headers: {
+            access_token: `${access_token}`,
+          },
+        });
+        await redis.del("app:users");
+        return data
       } catch (error) {
         console.log(error);
       }
