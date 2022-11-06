@@ -5,9 +5,16 @@ const redis = require("./../config/redis");
 const typeDefs = `#graphql
 
 input InputRating {
-    UserId: Int,
+    UserId: Int
     VenueId: String
     rating: String
+}
+
+input InputBooking {
+    UserId: Int
+    SlotId: String
+    bookingDate: String
+    access_token: String
 }
 
 type Venue {
@@ -53,6 +60,7 @@ type Query {
 
 type Mutation {
     rating(rating: InputRating): Data
+    booking(booking: InputBooking): Data
 }
 `;
 
@@ -164,7 +172,21 @@ const resolvers = {
           url: `${baseUrlBooking}/ratings`,
           data: rating,
         });
-        await redis.del("app:users");
+        await redis.del("app:ratings");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    booking: async (_, args) => {
+      try {
+        const { booking } = args;
+        const { data } = await axios({
+          method: "POST",
+          url: `${baseUrlBooking}/bookings`,
+          data: booking,
+        });
+        await redis.del("app:bookings");
         return data;
       } catch (error) {
         console.log(error);
