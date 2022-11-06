@@ -5,7 +5,7 @@ const upload = require("../middlewares/multer");
 
 router.get("/", Controller.getAllUsers);
 
-router.patch("/verify/:id", Controller.verify);
+router.get("/verify/:id", Controller.verify);
 
 router.use(authentication);
 

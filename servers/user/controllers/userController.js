@@ -90,7 +90,7 @@ class Controller {
           },
         }
       );
-      res.status(201).json({ message: "Verified" });
+      res.status(200).json({ message: "Verified" });
     } catch (err) {
       next(err);
     }
