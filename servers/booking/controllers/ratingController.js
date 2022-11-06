@@ -51,7 +51,6 @@ class RatingController {
 
       res.status(200).json(rating);
     } catch (error) {
-      console.log(error, "<<<<<<<<<<<<<<<<<<<<<<<<");
       next(error);
     }
   }

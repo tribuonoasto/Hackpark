@@ -49,23 +49,5 @@ class Book {
       }
     }
   }
-
-  static async editStatus(id, payload, session) {
-    try {
-      const collection = getDB().collection("bookings");
-      const _id = ObjectId(id);
-
-      const resp = await collection.updateOne(
-        { _id },
-        {
-          $set: payload,
-        },
-        session
-      );
-      return resp;
-    } catch (error) {
-      throw error;
-    }
-  }
 }
 module.exports = Book;

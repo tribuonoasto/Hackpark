@@ -1,6 +1,7 @@
 const app = require("../app");
 const request = require("supertest");
 const { mongoClear, getDB } = require("../config/mongo");
+jest.setTimeout(10000);
 
 const docsSlots = [
   {
@@ -80,6 +81,19 @@ const docRating = {
   rating: 5,
 };
 
+const docPri = [
+  {
+    _id: 1,
+    name: "Weekdays",
+    value: 1,
+  },
+  {
+    _id: 2,
+    name: "Weekend",
+    value: 1.5,
+  },
+];
+
 afterEach(async () => await mongoClear());
 
 describe("GET /slots", () => {
@@ -127,7 +141,7 @@ describe("GET /slots", () => {
 
 describe("GET /slots/:id", () => {
   test("GET /slots/:id - Fail test bsonTypeError", async () => {
-    const id = null;
+    const id = 123;
     const result = await request(app).get(`/slots/${id}`);
     expect(result.status).toBe(404);
     expect(result.body).toBeInstanceOf(Object);
@@ -198,7 +212,7 @@ describe("GET /venues", () => {
 
 describe("GET /venues/:id", () => {
   test("GET /venues/:id - Fail test bsonTypeError ", async () => {
-    const id = null;
+    const id = 123;
     const result = await request(app).get(`/venues/${id}`);
     expect(result.status).toBe(404);
     expect(result.body).toBeInstanceOf(Object);
@@ -262,7 +276,7 @@ describe("GET /ratings", () => {
 
 describe("GET /ratings/:id", () => {
   test("GET /ratings/:id - Fail test bsonTypeError ", async () => {
-    const id = null;
+    const id = 123;
     const result = await request(app).get(`/ratings/${id}`);
     expect(result.status).toBe(404);
     expect(result.body).toBeInstanceOf(Object);
@@ -297,7 +311,7 @@ describe("POST /ratings", () => {
 });
 
 describe("POST /ratings", () => {
-  test("POST /ratings - fail test ", async () => {
+  test("POST /ratings - fail test invalid UserId", async () => {
     const payload = {
       UserId: null,
       VenueId: "636462e35953fbd7317fad88",
@@ -311,7 +325,7 @@ describe("POST /ratings", () => {
 });
 
 describe("POST /ratings", () => {
-  test("POST /ratings - fail test ", async () => {
+  test("POST /ratings - fail test invalid VenueId ", async () => {
     const payload = {
       UserId: 1,
       VenueId: null,
@@ -325,9 +339,9 @@ describe("POST /ratings", () => {
 });
 
 describe("POST /ratings", () => {
-  test("POST /ratings - fail test ", async () => {
+  test("POST /ratings - fail test invalid rating ", async () => {
     const payload = {
-      UserId: null,
+      UserId: 1,
       VenueId: "636462e35953fbd7317fad88",
       rating: null,
     };
@@ -339,7 +353,7 @@ describe("POST /ratings", () => {
 });
 
 describe("POST /ratings", () => {
-  test("POST /ratings - success test ", async () => {
+  test("POST /ratings - fail test user already rate ", async () => {
     const payload = {
       UserId: 1,
       VenueId: "636462e35953fbd7317fad88",
@@ -353,5 +367,727 @@ describe("POST /ratings", () => {
       "message",
       "You already rate this venue"
     );
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - success test weekend ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(201);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "slot booked");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - success test weekdays ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: "November 02, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(201);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "slot booked");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - success test without date booking ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: null,
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(201);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "slot booked");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - failt test invalid UserId", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: null,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(400);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Input");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - failt test invalid SlotId", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: null,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(400);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Input");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - fail test invalid access token ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token: null,
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(400);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Input");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - fail test user not found", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 10000,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "User not found");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - fail test slot not found", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: 123,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Slot Not Found");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - fail test venue not found bsonTypeError", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: 123,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Venue Not Found");
+  });
+});
+
+describe("POST /bookings", () => {
+  test("POST /bookings - fail test venue not found", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: "636462e35953fbd7317fad86",
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: "November 04, 2022 04:24:00",
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    };
+    const result = await request(app).post(`/bookings`).send(payload);
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Venue Not Found");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - success test check in  ", async () => {
+    jest.setTimeout(30000);
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667724712258",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667728312258",
+        },
+      },
+      checkinDate: null,
+      checkoutDate: null,
+      transactionStatus: "Booked",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_nj4kxdUbn",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(200);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Checkin Success");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - success test check out  ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667728491549",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667732091549",
+        },
+      },
+      checkinDate: {
+        $date: {
+          $numberLong: "1667728505766",
+        },
+      },
+      checkoutDate: null,
+      transactionStatus: "Inprogress",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_iXCf00BeR",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(200);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Checkout Success");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - fail test check in already paid  ", async () => {
+    jest.setTimeout(30000);
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667726482853",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667730082853",
+        },
+      },
+      checkinDate: {
+        $date: {
+          $numberLong: "1667726501282",
+        },
+      },
+      checkoutDate: {
+        $date: {
+          $numberLong: "1667726516067",
+        },
+      },
+      transactionStatus: "Done",
+      paymentStatus: "Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 10500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_Dd_91Ro9j",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(400);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty(
+      "message",
+      "This transaction is already paid"
+    );
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - fail test check out slot not found ", async () => {
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: "6364c5698b3a2b673173d4e9",
+      bookingDate: {
+        $date: {
+          $numberLong: "1667724712258",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667728312258",
+        },
+      },
+      checkinDate: null,
+      checkoutDate: null,
+      transactionStatus: "Booked",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_nj4kxdUbn",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Slot Not Found");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - fail test check out slot not found  ", async () => {
+    jest.setTimeout(30000);
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: idVen,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: null,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667728491549",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667732091549",
+        },
+      },
+      checkinDate: {
+        $date: {
+          $numberLong: "1667728505766",
+        },
+      },
+      checkoutDate: null,
+      transactionStatus: "Inprogress",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_iXCf00BeR",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Slot Not Found");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - fail test check out venue not found bysonTypeError  ", async () => {
+    jest.setTimeout(30000);
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: 123,
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667728491549",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667732091549",
+        },
+      },
+      checkinDate: {
+        $date: {
+          $numberLong: "1667728505766",
+        },
+      },
+      checkoutDate: null,
+      transactionStatus: "Inprogress",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_iXCf00BeR",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Venue Not Found");
+  });
+});
+
+describe("POST /bookings/check/:bookingId", () => {
+  test("POST /bookings/check/:bookingId - fail test check out venue not found  ", async () => {
+    jest.setTimeout(30000);
+    const collectionPri = getDB().collection("priceAdjuster");
+    await collectionPri.insertMany(docPri);
+
+    const collectionVen = getDB().collection("venues");
+    const respVen = await collectionVen.insertOne(docVenue);
+    const idVen = respVen.insertedId.toString();
+
+    const collection = getDB().collection("slots");
+    const resp = await collection.insertOne({
+      VenueId: "636462155953fbd7317fad82",
+      slot: 100,
+      floor: 1,
+      name: "m2",
+    });
+    const slotId = resp.insertedId.toString();
+
+    const payload = {
+      UserId: 1,
+      SlotId: slotId,
+      bookingDate: {
+        $date: {
+          $numberLong: "1667728491549",
+        },
+      },
+      expiredDate: {
+        $date: {
+          $numberLong: "1667732091549",
+        },
+      },
+      checkinDate: {
+        $date: {
+          $numberLong: "1667728505766",
+        },
+      },
+      checkoutDate: null,
+      transactionStatus: "Inprogress",
+      paymentStatus: "Book Paid",
+      PriceAdjusterId: 2,
+      totalPrice: 7500,
+      imgQrCode: "https://ik.imagekit.io/qjbbuf38o/bookqrcode_iXCf00BeR",
+    };
+    const collectionBook = getDB().collection("bookings");
+    const respBook = await collectionBook.insertOne(payload);
+    const idBook = respBook.insertedId.toString();
+
+    const result = await request(app).post(`/bookings/check/${idBook}`).send({
+      access_token:
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
+    });
+    expect(result.status).toBe(404);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Venue Not Found");
   });
 });

@@ -22,14 +22,6 @@ async function mongoConnect() {
   }
 }
 
-async function mongoClose() {
-  try {
-    return await client.close();
-  } catch (err) {
-    console.log(err);
-  }
-}
-
 async function mongoClear() {
   try {
     const collections = await getDB().collections();
@@ -45,4 +37,4 @@ function getDB() {
   return db;
 }
 
-module.exports = { mongoConnect, getDB, client, mongoClose, mongoClear };
+module.exports = { mongoConnect, getDB, client, mongoClear };
