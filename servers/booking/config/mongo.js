@@ -18,4 +18,4 @@ function getDB() {
   return db;
 }
 
-module.exports = { mongoConnect, getDB };
+module.exports = { mongoConnect, getDB, client };
