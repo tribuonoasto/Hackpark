@@ -33,7 +33,7 @@ class Controller {
 
       await Vehicle.update({ imgUrl }, { where: { UserId: id } });
 
-      res.status(201).json({ message: "Success" });
+      res.status(200).json({ message: "Success" });
     } catch (err) {
       next(err);
     }

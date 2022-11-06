@@ -86,7 +86,22 @@ class Controller {
   static async notification(req, res, next) {
     try {
       const { transaction_id } = req.body;
-      res.status(200).json(transaction_id);
+
+      const data = await core.transaction.status(transaction_id);
+
+      if (data.transaction_status == "settlement") {
+        res.status(200).json({ message: `${data.transaction_status}` });
+      } else if (
+        data.transaction_status == "cancel" ||
+        data.transaction_status == "deny" ||
+        data.transaction_status == "expire"
+      ) {
+        res.status(200).json({ message: `${data.transaction_status}` });
+      } else if (data.transaction_status == "pending") {
+        res.status(200).json({ message: `${data.transaction_status}` });
+      } else if (data.transaction_status == "refund") {
+        res.status(200).json({ message: `${data.transaction_status}` });
+      }
     } catch (err) {
       next(err);
     }
