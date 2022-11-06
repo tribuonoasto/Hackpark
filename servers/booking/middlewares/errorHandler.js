@@ -2,7 +2,7 @@ const errorHandler = (err, req, res, next) => {
   let code = 500;
   let message = "Internal Server Error";
 
-  console.log(err);
+  // console.log(err);
 
   if (err.name === "invalid_validation") {
     code = 400;
@@ -40,6 +40,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "invalid_input") {
     code = 400;
     message = "Invalid Input";
+  } else if (err.name === "slot_empty") {
+    code = 400;
+    message = "This Park Slot is empty";
   }
 
   res.status(code).json({ message });

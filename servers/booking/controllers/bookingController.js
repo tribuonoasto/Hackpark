@@ -37,6 +37,12 @@ class BookingController {
           throw { name: "slot_not_found" };
         }
 
+        if (checkSlot.slot <= 0) {
+          throw { name: "slot_empty" };
+        }
+
+        let currentSlot = checkSlot.slot;
+
         //// CEK VENUE
         const venueId = checkSlot.VenueId.toString();
         const checkVenue = await Venue.findOne(venueId);
@@ -104,6 +110,11 @@ class BookingController {
             name: "invalid_Book",
             msg: "Error when booking parking slot",
           };
+
+        //// DECREASE PARKING SLOT
+        await Slot.editSlot(SlotId, {
+          slot: currentSlot - 1,
+        });
 
         //// QR CODE
         const newBookingId = resp.insertedId.toString();
@@ -254,6 +265,12 @@ class BookingController {
           if (!newBooking.acknowledged) {
             throw { name: "invalid_Book", msg: "Error when check-out" };
           }
+
+          //// DECREASE PARKING SLOT
+          let currentSlot = checkSlot.slot;
+          await Slot.editSlot(checkBooking.SlotId, {
+            slot: currentSlot + 1,
+          });
 
           res.status(200).json({ message: "Checkout Success" });
         }
