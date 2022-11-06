@@ -24,9 +24,7 @@ async function mongoConnect() {
 
 async function mongoClose() {
   try {
-    db = client.db("hackparkBookingTest");
-    db.dropDatabase();
-    return;
+    return await client.close();
   } catch (err) {
     console.log(err);
   }
@@ -34,12 +32,10 @@ async function mongoClose() {
 
 async function mongoClear() {
   try {
-    db = client.db("hackparkBookingTest");
     const collections = await getDB().collections();
     for (const key in collections) {
       await collections[key].deleteMany({});
     }
-    return;
   } catch (err) {
     console.log(err);
   }
