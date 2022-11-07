@@ -96,6 +96,20 @@ const testUser2 = {
   imgUrl: "imgUrl.com",
 };
 
+const seedBalanceHistories = [
+  {
+    UserId: 1,
+    type: "debut",
+    dateTransaction: new Date(),
+    amount: 10000,
+    status: "pending",
+    signatureKey:
+      "cd28f8370b90a909baebfaf4c838bde60dfbd1d7e8a00de5f6e07f9edabd6cad91d67ba7be9c36015d534c9f337aa12dc4eae9945e1515af6baad73f3d15cc0d",
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+];
+
 let access_token;
 let access_token3;
 
@@ -512,19 +526,20 @@ describe("get all balance history", () => {
 
 describe("get all balance history", () => {
   it("get /balances => success test status(200)", async () => {
+    await queryInterface.bulkInsert("BalanceHistories", seedBalanceHistories);
     const payload = {
-      va_numbers: [{ va_number: "66777397639", bank: "bca" }],
-      transaction_time: "2022-11-07 23:39:29",
+      va_numbers: [{ va_number: "66777597948", bank: "bca" }],
+      transaction_time: "2022-11-08 00:04:29",
       transaction_status: "settlement",
-      transaction_id: "0b846920-62e8-410a-bbf6-6567ecc2eac4",
+      transaction_id: "fbb8baae-4841-459e-8c03-aeaefe4cd572",
       status_message: "midtrans payment notification",
       status_code: "200",
       signature_key:
-        "de094733ec494388deb1cadbf825fd4a19cc91157c2335faedd62f42b08d2a35236f2bbac4116bbeef4833e813a565c4a802981a4a1ddf8da01b522706fdb2e7",
-      settlement_time: "2022-11-07 23:40:06",
+        "cd28f8370b90a909baebfaf4c838bde60dfbd1d7e8a00de5f6e07f9edabd6cad91d67ba7be9c36015d534c9f337aa12dc4eae9945e1515af6baad73f3d15cc0d",
+      settlement_time: "2022-11-08 00:05:14",
       payment_type: "bank_transfer",
       payment_amounts: [],
-      order_id: "order-id-$1-1667839170",
+      order_id: "order-id-$1-1667840670",
       merchant_id: "G748966777",
       gross_amount: "10000.00",
       fraud_status: "accept",

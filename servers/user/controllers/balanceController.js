@@ -55,8 +55,6 @@ class Controller {
         order_id + "200" + gross_amount + env.serverKey
       );
 
-      console.log(order_id, status_code, gross_amount, "dari pay");
-
       let resp;
 
       if (bank.toLowerCase() == "permata") {
