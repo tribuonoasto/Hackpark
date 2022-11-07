@@ -75,7 +75,7 @@ class BookingController {
         const bookPrice = venuePrice * multiplierPrice.value;
 
         // PAYMENT WITH BALANCE
-        await axios({
+        const respaxios = await axios({
           method: "patch",
           url: `${baseUrlLocalUser}/users/changeBalancePayment`,
           headers: {
@@ -85,6 +85,8 @@ class BookingController {
             price: bookPrice,
           },
         });
+
+        console.log(respaxios);
 
         //// CREATE BOOKING
 

@@ -170,27 +170,19 @@ class Controller {
         throw { name: "payment_error" };
       }
 
-      const writeBalanceHistory = await BalanceHistory.create({
-        UserId: id,
-        type: "kredit",
-        amount: price,
-        status: "Success",
-      });
+      await BalanceHistory.create(
+        {
+          UserId: id,
+          dateTransaction: new Date(),
+          type: "kredit",
+          amount: price,
+          status: "Success",
+        },
+        { transaction: t }
+      );
+      await t.commit();
 
-      if (!writeBalanceHistory) {
-        await BalanceHistory.create(
-          {
-            UserId: id,
-            type: "kredit",
-            amount: price,
-            status: "Success",
-          },
-          { transaction: t }
-        );
-        await t.commit();
-
-        res.status(201).json({ message: "success change saldo" });
-      }
+      res.status(200).json({ message: "success change saldo" });
     } catch (err) {
       next(err);
       await t.rollback();
