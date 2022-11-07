@@ -9,12 +9,22 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
+import {
+  Entypo,
+  FontAwesome,
+  Feather,
+  FontAwesome5,
+} from "react-native-vector-icons";
 import Card from "../components/Card";
 import { useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
+import { useEffect, useState } from "react";
+import * as Location from "expo-location";
 
 const HomeScreen = ({ navigation }) => {
+  const [venues, setVenues] = useState([]);
+  const [location, setLocation] = useState(null);
+
   const { loading, error, data } = useQuery(GET_VENUES);
   if (loading) {
     return (
@@ -23,6 +33,25 @@ const HomeScreen = ({ navigation }) => {
       </View>
     );
   }
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+
+      let region = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      setLocation(region[0]);
+    })();
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,11 +82,19 @@ const HomeScreen = ({ navigation }) => {
                   }}
                 >
                   <Entypo name="location-pin" color="#A1A9CC" size={24} />
-                  <Text
-                    style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
-                  >
-                    Jakarta, Indonesia
-                  </Text>
+                  {!location ? (
+                    <Text
+                      style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                    >
+                      Jakarta, Indonesia
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                    >
+                      {location.city}, {location.country}
+                    </Text>
+                  )}
                 </View>
               </View>
               <TouchableOpacity
@@ -104,6 +141,82 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
       </View>
+
+      <View
+        style={{
+          marginTop: 20,
+          paddingTop: 20,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ededed",
+        }}
+      >
+        <View
+          style={{
+            backgroundColor: "#5763A4",
+            width: "90%",
+            padding: 20,
+            borderRadius: 10,
+          }}
+        >
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-between" }}
+          >
+            <View
+              style={{
+                backgroundColor: "#ededed",
+                padding: 10,
+                borderRadius: 5,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+              >
+                <FontAwesome5 name="wallet" size={20} color="#50577A" />
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    fontSize: 18,
+                    fontWeight: "500",
+                    color: "#50577A",
+                  }}
+                >
+                  Saldo
+                </Text>
+              </View>
+              <Text
+                style={{ marginTop: 10, color: "#50577A", fontWeight: "600" }}
+              >
+                Rp10.000
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={{ justifyContent: "center", alignItems: "center" }}
+              onPress={() => navigation.navigate("TopupScreen")}
+            >
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: "#ededed",
+                  paddingVertical: 10,
+                  paddingHorizontal: 10,
+                  borderRadius: 20,
+                }}
+              >
+                <Text
+                  style={{ color: "#ededed", fontWeight: "600", fontSize: 14 }}
+                >
+                  Top up
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+
       <View
         style={{
           width: "100%",

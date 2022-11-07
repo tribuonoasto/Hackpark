@@ -9,6 +9,16 @@
       "isRegis": true,
       "fullName": "Kang Customer",
       "imgUrl": "https://klikhukum.id/wp-content/uploads/2022/05/Kang-park-ir.jpg"
+    },
+    {
+      "id": 2,
+      "username": "Customer2",
+      "email": "customer2@mail.com",
+      "password": "customer2",
+      "saldo": 9000,
+      "isRegis": true,
+      "fullName": "Kang Customer",
+      "imgUrl": "https://klikhukum.id/wp-content/uploads/2022/05/Kang-park-ir.jpg"
     }
   ],
   "vehicles": [
@@ -82,6 +92,17 @@
       "parkingPrice": 5000,
       "bookingPrice": 10000,
       "imgVenue": "https://ringroadcitywalks.com/home/images/slide/7.jpg",
+      "description": "ini tempat parkir"
+    },
+    {
+      "id": 4,
+      "name": "Sun Plaza",
+      "address": "Medan",
+      "lat": 3.5835,
+      "lng": 98.6716,
+      "parkingPrice": 5000,
+      "bookingPrice": 7000,
+      "imgVenue": "https://seputarkota.com/wp-content/uploads/2019/10/sun-plaza-medan.jpeg",
       "description": "ini tempat parkir"
     }
   ],

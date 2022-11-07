@@ -9,6 +9,38 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalScreen from "../components/ModalScreen";
+import ModalScreenSlot from "../components/ModalScreenSlot";
+
+const slotData = [
+  {
+    _id: "6364c5698b3a2b673173d4e1",
+    VenueId: 1,
+    slot: 104,
+    floor: 1,
+    name: "A1",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e2",
+    VenueId: 1,
+    slot: 80,
+    floor: 1,
+    name: "A2",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e3",
+    VenueId: 2,
+    slot: 90,
+    floor: 2,
+    name: "B1",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e3",
+    VenueId: 2,
+    slot: 10,
+    floor: 2,
+    name: "B2",
+  },
+];
 
 const BookScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,8 +48,14 @@ const BookScreen = ({ route, navigation }) => {
   const [mode, setMode] = useState("");
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
+  const [name, setName] = useState("Area");
+  const [saldo, setSaldo] = useState(10000);
+  const [showSlot, setShowSlot] = useState(false);
+  const { id } = route.params;
 
-  const [saldo, setSaldo] = useState(9000);
+  const venues = slotData.filter((slot) => slot.VenueId === id);
+
+  const venue = venues.filter((el) => el.name === name);
 
   const handleSubmit = (answer) => {
     setModalVisible(true);
@@ -28,7 +66,24 @@ const BookScreen = ({ route, navigation }) => {
 
     if (answer === "sure") {
       setModalVisible(false);
-      navigation.navigate("OrderDetail", { id: 1 });
+      console.log(date, venue[0]._id);
+    }
+  };
+
+  const onPressDate = () => {
+    let isValidDate = Date.parse(textDate);
+    showMode("date");
+
+    if (isNaN(isValidDate)) {
+      onChangeDate(new Date());
+    }
+  };
+  const onPressTime = () => {
+    let isValidDate = Date.parse(textTime);
+    showMode("time");
+
+    if (isNaN(isValidDate)) {
+      onChangeTime(new Date());
     }
   };
 
@@ -69,12 +124,21 @@ const BookScreen = ({ route, navigation }) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ height: 250, paddingHorizontal: 20 }}>
+        <View style={{ height: 350, paddingHorizontal: 20 }}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>
+              Parking Area <Text style={{ color: "red" }}>*</Text>
+            </Text>
+            <TouchableOpacity onPress={() => setShowSlot(true)}>
+              <Text style={styles.input}>{name}</Text>
+            </TouchableOpacity>
+          </View>
+
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
               Date <Text style={{ color: "red" }}>*</Text>
             </Text>
-            <TouchableOpacity onPress={() => showMode("date")}>
+            <TouchableOpacity onPress={onPressDate}>
               <Text style={styles.input}>{textDate}</Text>
             </TouchableOpacity>
           </View>
@@ -83,7 +147,7 @@ const BookScreen = ({ route, navigation }) => {
             <Text style={styles.label}>
               Time <Text style={{ color: "red" }}>*</Text>
             </Text>
-            <TouchableOpacity onPress={() => showMode("time")}>
+            <TouchableOpacity onPress={onPressTime}>
               <Text style={styles.input}>{textTime}</Text>
             </TouchableOpacity>
           </View>
@@ -107,9 +171,7 @@ const BookScreen = ({ route, navigation }) => {
               display="default"
               onChange={onChangeTime}
             />
-          ) : (
-            <View></View>
-          )}
+          ) : null}
         </View>
         <View style={{ paddingHorizontal: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: "600", color: "#404258" }}>
@@ -145,6 +207,25 @@ const BookScreen = ({ route, navigation }) => {
                 style={{ fontSize: 12, fontWeight: "300", color: "#6B728E" }}
               >
                 Jln. in aja dulu
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 10,
+              }}
+            >
+              <Text
+                style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}
+              >
+                Slot
+              </Text>
+              <Text
+                style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
+              >
+                {name}
               </Text>
             </View>
             <View
@@ -205,7 +286,14 @@ const BookScreen = ({ route, navigation }) => {
           </Text>
         </View>
       </ScrollView>
-
+      {showSlot && (
+        <ModalScreenSlot
+          setShowSlot={setShowSlot}
+          setName={setName}
+          name={name}
+          venues={venues}
+        />
+      )}
       <View>
         {saldo < 10000 ? (
           <View
@@ -229,6 +317,7 @@ const BookScreen = ({ route, navigation }) => {
                 paddingHorizontal: 20,
                 borderRadius: 20,
               }}
+              onPress={() => navigation.navigate("TopupScreen")}
             >
               <Text
                 style={{ color: "#ededed", fontWeight: "600", fontSize: 16 }}
@@ -237,19 +326,48 @@ const BookScreen = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <View></View>
-        )}
+        ) : null}
+
+        {textDate === "Date" || textTime === "Time" || name === "Area" ? (
+          <View
+            style={{
+              backgroundColor: "#282C3D",
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "#ededed", fontWeight: "400", fontSize: 14 }}>
+              Please fill out the form above{" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
+          </View>
+        ) : null}
 
         <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
           <TouchableOpacity
             style={{
-              backgroundColor: "#404258",
+              backgroundColor:
+                saldo < 10000 ||
+                textDate === "Date" ||
+                textTime === "Time" ||
+                name === "Area"
+                  ? "#dedede"
+                  : "#404258",
               paddingVertical: 13,
               paddingHorizontal: 10,
               borderRadius: 40,
             }}
             onPress={handleSubmit}
+            disabled={
+              saldo < 10000 ||
+              textDate === "Date" ||
+              textTime === "Time" ||
+              name === "Area"
+                ? true
+                : false
+            }
           >
             <Text
               style={{

@@ -27,7 +27,7 @@ const ModalScreen = ({ handleSubmit, setModalVisible, modalVisible }) => {
                 style={[styles.button, styles.buttonClose2]}
                 onPress={() => handleSubmit("no")}
               >
-                <Text style={styles.textStyle}>No! Wait</Text>
+                <Text style={styles.textStyle}>No Wait!</Text>
               </Pressable>
             </View>
           </View>

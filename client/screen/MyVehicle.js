@@ -40,7 +40,7 @@ const MyVehicle = ({ navigation }) => {
     // Upload the image using the fetch and FormData APIs
     let formData = new FormData();
     // Assume "photo" is the name of the form field the server expects
-    formData.append("photo", { uri: localUri, name: filename, type });
+    formData.append("image", { uri: localUri, name: filename, type });
     setUploadImage(formData);
   };
 
