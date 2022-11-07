@@ -2,6 +2,7 @@ const { BalanceHistory, User, sequelize } = require("../models");
 const env = require("../helpers/env");
 const midtransClient = require("midtrans-client");
 const Bank = require("../helpers/bank");
+const sha512 = require("js-sha512");
 const core = new midtransClient.CoreApi({
   isProduction: false,
   serverKey: env.serverKey,
@@ -40,6 +41,14 @@ class Controller {
       ).body();
 
       const data = await core.charge(transfer);
+
+      const { order_id, status_code, gross_amount } = data;
+
+      const signatureKey = sha512(
+        order_id + status_code + gross_amount + env.serverKey
+      );
+
+      req.midtrans = signatureKey;
 
       let resp;
 
