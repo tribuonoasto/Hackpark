@@ -9,16 +9,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 
-import {
-  Entypo,
-  FontAwesome,
-  Feather,
-  FontAwesome5,
-} from "react-native-vector-icons";
+import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
 import Card from "../components/Card";
 import { useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
 import { useEffect, useState } from "react";
+import Card from "../components/Card";
+import ngrok from "../config/apollo";
 import * as Location from "expo-location";
 
 const HomeScreen = ({ navigation }) => {
@@ -51,6 +48,12 @@ const HomeScreen = ({ navigation }) => {
 
       setLocation(region[0]);
     })();
+  }, []);
+
+  useEffect(() => {
+    fetch(`${ngrok}/venues`)
+      .then((response) => response.json())
+      .then((json) => setVenues(json));
   }, []);
 
   return (
