@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, FlatList } from "react-native";
 import { useEffect, useState } from "react";
 import SaldoList from "../components/SaldoList";
-const ngrok = require('./../config/apollo');
+const ngrok = require("./../config/apollo");
 
 const SaldoDetail = () => {
   const [clicked, setClicked] = useState(false);
@@ -15,15 +15,6 @@ const SaldoDetail = () => {
       .then((json) => setSaldoHistories(json));
   }, []);
 
-  // const data = [
-  //   { type: "credit" },
-  //   { type: "debit" },
-  //   { type: "credit" },
-  //   { type: "debit" },
-  //   { type: "credit" },
-  //   { type: "credit" },
-  //   { type: "debit" },
-  // ];
   return (
     <View style={styles.container}>
       <FlatList

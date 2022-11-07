@@ -42,27 +42,18 @@ class Book {
       const booking = await collection.findOne({ _id }, options);
       return booking;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "booking_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 
-  static async editStatus(id, payload, session) {
+  static async findAll() {
     try {
       const collection = getDB().collection("bookings");
-      const _id = ObjectId(id);
 
-      const resp = await collection.updateOne(
-        { _id },
-        {
-          $set: payload,
-        },
-        session
-      );
-      return resp;
+      const options = {};
+
+      const bookings = await collection.find({}, options).toArray();
+      return bookings;
     } catch (error) {
       throw error;
     }

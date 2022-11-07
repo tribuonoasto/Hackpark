@@ -27,11 +27,7 @@ class Venue {
       const venue = await collection.findOne({ _id }, options);
       return venue;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "venue_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 

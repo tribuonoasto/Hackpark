@@ -2,7 +2,7 @@ const errorHandler = (err, req, res, next) => {
   let code = 500;
   let message = "Internal Server Error";
 
-  // console.log(err);
+  console.log(err);
 
   if (err.name === "invalid_validation") {
     code = 400;
@@ -16,9 +16,6 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "slot_not_found") {
     code = 404;
     message = "Slot Not Found";
-  } else if (err.name === "user_not_found") {
-    code = 404;
-    message = "User Not Found";
   } else if (err.response) {
     code = err.response.status;
     message = err.response.data.message;
@@ -37,6 +34,15 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "already_rate") {
     code = 400;
     message = "You already rate this venue";
+  } else if (err.name === "invalid_input") {
+    code = 400;
+    message = "Invalid Input";
+  } else if (err.name === "slot_empty") {
+    code = 400;
+    message = "This Park Slot is empty";
+  } else if (err.name === "BSONTypeError") {
+    code = 400;
+    message = "Invalid Id";
   }
 
   res.status(code).json({ message });

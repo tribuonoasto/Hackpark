@@ -5,19 +5,34 @@ import {
   Image,
   ScrollView,
   TouchableOpacity,
-  FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
+import ngrok from "../config/apollo";
 
 const DetailScreen = ({ route, navigation }) => {
   const [venues, setVenues] = useState({});
-  const id = route.params;
+  const [loading, setLoading] = useState(true);
+  const { id } = route.params;
+
+  console.log(id);
 
   useEffect(() => {
-    fetch(`https://397d-36-71-141-191.ap.ngrok.io/venues/${id}`)
+    fetch(`${ngrok}/venues/${id}`)
       .then((response) => response.json())
-      .then((json) => setVenues(json));
+      .then((res) => {
+        setVenues(res);
+        setLoading(false);
+      });
   }, []);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="#404258" />
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1 }}>

@@ -5,25 +5,26 @@ class RatingController {
     try {
       const { UserId, VenueId, rating } = req.body;
 
-      const checkUserRating = await Rating.findAll({ UserId, VenueId });
+      if (!UserId || !VenueId || !rating) {
+        throw { name: "invalid_input" };
+      }
+
+      const checkUserRating = await Rating.findAll({
+        UserId: +UserId,
+        VenueId,
+      });
 
       if (checkUserRating.length > 0) {
         throw { name: "already_rate" };
       }
 
-      const resp = await Rating.insertOne({
-        UserId,
+      await Rating.insertOne({
+        UserId: +UserId,
         VenueId,
         rating,
       });
 
-      if (!resp.acknowledged)
-        throw {
-          name: "invalid_rating",
-          msg: "Error when rating venue",
-        };
-
-      res.status(200).json({ message: "Rating Success" });
+      res.status(201).json({ message: "Rating Success" });
     } catch (error) {
       next(error);
     }

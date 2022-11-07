@@ -27,11 +27,25 @@ class Slot {
       const slot = await collection.findOne({ _id }, options);
       return slot;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "slot_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
+    }
+  }
+
+  static async editSlot(id, payload, session) {
+    try {
+      const collection = getDB().collection("slots");
+      const _id = ObjectId(id);
+
+      const resp = await collection.updateOne(
+        { _id },
+        {
+          $set: payload,
+        },
+        session
+      );
+      return resp;
+    } catch (error) {
+      throw error;
     }
   }
 }
