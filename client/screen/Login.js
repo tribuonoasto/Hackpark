@@ -66,6 +66,7 @@ const Login = ({ navigation }) => {
                 placeholder="Enter your email"
                 value={email}
                 onChangeText={setEmail}
+                onSubmitEditing={Keyboard.dismiss}
               />
             </View>
             <View style={{ marginTop: 15 }}>
@@ -78,6 +79,7 @@ const Login = ({ navigation }) => {
                 value={password}
                 onChangeText={setPassword}
                 placeholder="Password"
+                onSubmitEditing={Keyboard.dismiss}
               />
             </View>
             <TouchableOpacity

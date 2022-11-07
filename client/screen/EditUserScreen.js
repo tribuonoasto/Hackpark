@@ -8,15 +8,47 @@ import {
   TextInput,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
+import * as ImagePicker from "expo-image-picker";
 
 const EditUserScreen = ({ navigation }) => {
   const [name, setName] = useState("Anto Suprapto");
   const [email, setEmail] = useState("anto@mail.com");
+  const [uploadImage, setUploadImage] = useState();
+  const [image, setImage] = useState(null);
 
   const handleEdit = () => {
     console.log(name, email);
     navigation.navigate("UserScreen");
   };
+
+  const pickImage = async () => {
+    // No permissions request is necessary for launching the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setImage(result.uri);
+    }
+
+    let localUri = result.uri;
+    let filename = localUri.split("/").pop();
+
+    // Infer the type of the image
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+
+    // Upload the image using the fetch and FormData APIs
+    let formData = new FormData();
+    // Assume "photo" is the name of the form field the server expects
+    formData.append("image", { uri: localUri, name: filename, type });
+    console.log(formData);
+    setUploadImage(formData);
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity
@@ -24,24 +56,39 @@ const EditUserScreen = ({ navigation }) => {
           justifyContent: "center",
           alignItems: "center",
         }}
+        onPress={pickImage}
       >
         <View style={{ position: "relative" }}>
-          <Image
-            source={require("../assets/user.jpg")}
-            style={{
-              width: 150,
-              height: 150,
-              borderRadius: 100,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          />
+          {image ? (
+            <Image
+              source={{ uri: image }}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 100,
+                resizeMode: "cover",
+              }}
+            />
+          ) : (
+            <Image
+              source={require("../assets/user.jpg")}
+              style={{
+                width: 150,
+                height: 150,
+                borderRadius: 100,
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            />
+          )}
+
           <TouchableOpacity
             style={{
               position: "absolute",
               bottom: 0,
               right: 15,
             }}
+            onPress={pickImage}
           >
             <View
               style={{

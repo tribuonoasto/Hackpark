@@ -44,6 +44,7 @@ const Search = ({ clicked, setClicked, searchPhrase, setSearchPhrase }) => {
             placeholder="Search"
             value={searchPhrase}
             onChangeText={setSearchPhrase}
+            keyboardAppearance="default"
             onFocus={() => {
               setClicked(true);
             }}
