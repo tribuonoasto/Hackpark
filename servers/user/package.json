@@ -7,7 +7,7 @@
     "test": "jest --runInBand --forceExit --coverage",
     "testLogin": "jest login.test.js --runInBand --forceExit --coverage",
     "testRegis": "jest register.test.js --runInBand --forceExit --coverage",
-    "testQuery": "jest query.test.js--runInBand --forceExit --coverage",
+    "testQuery": "jest query.test.js --runInBand --forceExit --coverage",
     "dev": "nodemon ./bin/www.js",
     "start": "node ./bin/www.js"
   },

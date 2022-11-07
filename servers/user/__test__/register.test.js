@@ -1,11 +1,48 @@
 const request = require("supertest");
+const { sequelize, User } = require("../models");
 const app = require("../app");
+const { createToken } = require("../helpers/jwt");
+const { queryInterface } = sequelize;
+
+const testUser = {
+  username: `Lord Feexz`,
+  email: `lordfeexz@gmail.com`,
+  password: `qwertyui`,
+  fullName: `Lord Feexz`,
+};
+
+let access_token;
+
+beforeEach(async () => {
+  const user = await User.create(testUser);
+  const payload = {
+    id: user.id,
+    username: user.username,
+    email: user.email,
+  };
+  access_token = createToken(payload);
+});
+
+async function clearTables(tables) {
+  await queryInterface.bulkDelete(`${tables}`, null, {
+    truncate: true,
+    restartIdentity: true,
+    cascade: true,
+  });
+}
+
+afterEach(async () => {
+  await clearTables("BalanceHistories");
+  await clearTables("Users");
+  await clearTables("Vehicles");
+});
 
 describe("post register customer", () => {
   it("post /register => fail test status(400),no username", async () => {
     const payload = {
       email: `lordfeexz2@gmail.com`,
       password: `qwertyui`,
+      fullName: "Lord Feexz2",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -19,6 +56,7 @@ describe("post register customer", () => {
       username: `Lord Feexz`,
       email: `lordfeexz2@gmail.com`,
       password: `qwertyui`,
+      fullName: "Lord Feexz",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -29,8 +67,9 @@ describe("post register customer", () => {
 describe("post register customer", () => {
   it("post /register => fail test status(400),no email", async () => {
     const payload = {
-      username: `Lord Feexz`,
+      username: `Lord Feexz2`,
       password: `qwertyui`,
+      fullName: "Lord Feexz2",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -44,6 +83,7 @@ describe("post register customer", () => {
       username: `Lord Feexz`,
       email: `lordfeexz2`,
       password: `qwertyui`,
+      fullName: "Lord Feexz2",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -54,9 +94,10 @@ describe("post register customer", () => {
 describe("post register customer", () => {
   it("post /register => fail test status(400),email already use", async () => {
     const payload = {
-      username: `Lord Feexz`,
+      username: `Lord Feexz7`,
       email: `lordfeexz@gmail.com`,
       password: `qwertyui`,
+      fullName: "Lord Feexz7",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -69,6 +110,7 @@ describe("post register customer", () => {
     const payload = {
       username: `Lord Feexz`,
       email: `lordfeexz2@gmail.com`,
+      fullName: "Lord Feexz2",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -82,6 +124,7 @@ describe("post register customer", () => {
       username: `Lord Feexz`,
       email: `lordfeexz2@gmail.com`,
       password: `qwe`,
+      fullName: "Lord Feexz2",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(400);
@@ -95,9 +138,10 @@ describe("post register customer", () => {
 describe("post register customer", () => {
   it("post /register => success test status(201)", async () => {
     const payload = {
-      username: `Lord Feexz`,
+      username: `Lord Feexz4`,
       email: `lordfeexz4@gmail.com`,
       password: `qwertyui`,
+      fullName: "Lord Feexz4",
     };
     const result = await request(app).post("/register").send(payload);
     expect(result.status).toBe(201);
