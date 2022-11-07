@@ -6,21 +6,23 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  ActivityIndicator,
 } from "react-native";
 
 import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
-import { useEffect, useState } from "react";
 import Card from "../components/Card";
-import ngrok from "../config/apollo";
+import { useQuery } from "@apollo/client";
+import { GET_VENUES } from "../queries/bookings";
 
 const HomeScreen = ({ navigation }) => {
-  const [venues, setVenues] = useState([]);
-
-  useEffect(() => {
-    fetch(`${ngrok}/venues`)
-      .then((response) => response.json())
-      .then((json) => setVenues(json));
-  }, []);
+  const { loading, error, data } = useQuery(GET_VENUES);
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#ededed" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -121,7 +123,7 @@ const HomeScreen = ({ navigation }) => {
           Closest spot
         </Text>
         <FlatList
-          data={venues}
+          data={data.getVenues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}

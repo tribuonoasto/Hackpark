@@ -45,6 +45,21 @@ type Rating {
     rating: String
 }
 
+type Booking {
+  _id: String
+  UserId: Int
+  SlotId: String
+  bookingDate: String
+  expiredDate: String
+  checkinDate: String
+  checkoutDate: String
+  transactionStatus: String
+  paymentStatus: String
+  PriceAdjusterId: Int
+  totalPrice: Int
+  imgQrCode: String
+}
+
 type Data {
   message: String
 }
@@ -56,6 +71,8 @@ type Query {
     getSlotById(id:String): Slot
     getRatings:[Rating]
     getRatingById(id:String): Rating
+    getBookings:[Booking]
+    getBookingById(id:String):Booking
 }
 
 type Mutation {
@@ -157,6 +174,38 @@ const resolvers = {
           url: `${baseUrlBooking}/ratings/${id}`,
         });
         await redis.del("app:ratings");
+        return data;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getBookings: async () => {
+      try {
+        const itemsCache = await redis.get("app:bookings");
+        if (itemsCache) {
+          console.log("data dari cache");
+          return JSON.parse(itemsCache);
+        } else {
+          console.log("data dari service");
+          const { data } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/bookings/`,
+          });
+          await redis.set("app:bookings", JSON.stringify(data));
+          return data;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    },
+    getBookingById: async (_, args) => {
+      try {
+        const { id } = args;
+        const { data } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/bookings/${id}`,
+        });
+        await redis.del("app:bookings");
         return data;
       } catch (error) {
         console.log(error);
