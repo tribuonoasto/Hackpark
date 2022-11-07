@@ -286,7 +286,8 @@ class BookingController {
     try {
       const bookings = await Book.findAll();
 
-      if (!bookings || bookings.length <= 0) throw { name: "book_not_found" };
+      if (!bookings || bookings.length <= 0)
+        throw { name: "booking_not_found" };
       res.status(200).json(bookings);
     } catch (error) {
       next(error);
@@ -299,7 +300,7 @@ class BookingController {
 
       const book = await Book.findOne(id);
 
-      if (!book) throw { name: "book_not_found" };
+      if (!book) throw { name: "booking_not_found" };
 
       res.status(200).json(book);
     } catch (error) {

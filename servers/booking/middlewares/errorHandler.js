@@ -16,9 +16,6 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "slot_not_found") {
     code = 404;
     message = "Slot Not Found";
-  } else if (err.name === "user_not_found") {
-    code = 404;
-    message = "User Not Found";
   } else if (err.response) {
     code = err.response.status;
     message = err.response.data.message;
@@ -43,6 +40,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "slot_empty") {
     code = 400;
     message = "This Park Slot is empty";
+  } else if (err.name === "BSONTypeError") {
+    code = 400;
+    message = "Invalid Id";
   }
 
   res.status(code).json({ message });
