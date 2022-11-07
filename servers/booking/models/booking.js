@@ -42,11 +42,7 @@ class Book {
       const booking = await collection.findOne({ _id }, options);
       return booking;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "booking_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 

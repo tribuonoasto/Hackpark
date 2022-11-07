@@ -35,11 +35,7 @@ class Rating {
       const rating = await collection.findOne({ _id }, options);
       return rating;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "rating_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 }

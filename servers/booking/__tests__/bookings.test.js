@@ -208,13 +208,13 @@ describe("GET /slots", () => {
 });
 
 describe("GET /slots/:id", () => {
-  test("GET /slots/:id - Fail test bsonTypeError", async () => {
+  test("GET /slots/:id - Fail test BSONTypeError", async () => {
     const id = 123;
     const result = await request(app).get(`/slots/${id}`);
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Slot Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -279,13 +279,13 @@ describe("GET /venues", () => {
 });
 
 describe("GET /venues/:id", () => {
-  test("GET /venues/:id - Fail test bsonTypeError ", async () => {
+  test("GET /venues/:id - Fail test BSONTypeError ", async () => {
     const id = 123;
     const result = await request(app).get(`/venues/${id}`);
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Venue Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -343,13 +343,13 @@ describe("GET /ratings", () => {
 });
 
 describe("GET /ratings/:id", () => {
-  test("GET /ratings/:id - Fail test bsonTypeError ", async () => {
+  test("GET /ratings/:id - Fail test BSONTypeError ", async () => {
     const id = 123;
     const result = await request(app).get(`/ratings/${id}`);
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Rating Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -694,7 +694,7 @@ describe("POST /bookings", () => {
 });
 
 describe("POST /bookings", () => {
-  test("POST /bookings - fail test venue not found bsonTypeError", async () => {
+  test("POST /bookings - fail test venue not found BSONTypeError", async () => {
     const collectionPri = getDB().collection("priceAdjuster");
     await collectionPri.insertMany(docPri);
 
@@ -719,9 +719,9 @@ describe("POST /bookings", () => {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
     const result = await request(app).post(`/bookings`).send(payload);
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Venue Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -1045,7 +1045,7 @@ describe("POST /bookings/check/:bookingId", () => {
 });
 
 describe("POST /bookings/check/:bookingId", () => {
-  test("POST /bookings/check/:bookingId - fail test check out venue not found bysonTypeError  ", async () => {
+  test("POST /bookings/check/:bookingId - fail test check out venue not found BSONTypeError  ", async () => {
     jest.setTimeout(30000);
     const collectionPri = getDB().collection("priceAdjuster");
     await collectionPri.insertMany(docPri);
@@ -1096,9 +1096,9 @@ describe("POST /bookings/check/:bookingId", () => {
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     });
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Venue Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -1161,7 +1161,7 @@ describe("POST /bookings/check/:bookingId", () => {
 });
 
 describe("POST /bookings/check/:bookingId", () => {
-  test("POST /bookings/check/:bookingId - fail test invalid bookId  ", async () => {
+  test("POST /bookings/check/:bookingId - fail test invalid bookId BSONTypeError  ", async () => {
     jest.setTimeout(30000);
     const collectionPri = getDB().collection("priceAdjuster");
     await collectionPri.insertMany(docPri);
@@ -1208,9 +1208,9 @@ describe("POST /bookings/check/:bookingId", () => {
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     });
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Book Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 
@@ -1378,15 +1378,15 @@ describe("GET /bookings/:id", () => {
 });
 
 describe("GET /bookings/:id", () => {
-  test("GET /bookings/:id - fail test booking id bson type error ", async () => {
+  test("GET /bookings/:id - fail test booking id  BSONTypeError ", async () => {
     const collection = getDB().collection("bookings");
     const resp = await collection.insertOne(docBooking);
     const id = 123;
 
     const result = await request(app).get(`/bookings/${id}`);
-    expect(result.status).toBe(404);
+    expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Book Not Found");
+    expect(result.body).toHaveProperty("message", "Invalid Id");
   });
 });
 

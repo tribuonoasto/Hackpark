@@ -43,6 +43,9 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "slot_empty") {
     code = 400;
     message = "This Park Slot is empty";
+  } else if (err.name === "BSONTypeError") {
+    code = 400;
+    message = "Invalid Id";
   }
 
   res.status(code).json({ message });

@@ -27,11 +27,7 @@ class Slot {
       const slot = await collection.findOne({ _id }, options);
       return slot;
     } catch (error) {
-      if (error.name === "BSONTypeError") {
-        throw { name: "slot_not_found" };
-      } else {
-        throw error;
-      }
+      throw error;
     }
   }
 
