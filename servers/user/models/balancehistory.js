@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       amount: DataTypes.INTEGER,
       status: DataTypes.STRING,
+      signatureKey: DataTypes.STRING,
     },
     {
       sequelize,
