@@ -25,6 +25,38 @@ const seedBalance = [
   },
 ];
 
+const seedVehicles = [
+  {
+    UserId: 1,
+    plat: "B5555HTH",
+    modelName: "Avanza",
+    name: "mobil",
+    imgUrl: null,
+    createdAt: "2022-11-05T12:45:01.129Z",
+    updatedAt: "2022-11-05T12:45:01.129Z",
+  },
+  {
+    UserId: 1,
+    plat: "B1234JKL",
+    modelName: "Avanza",
+    name: "mobil",
+    imgUrl:
+      "https://ik.imagekit.io/qjbbuf38o/1667652365591--Hack_1_E9B1VJClb.png",
+    createdAt: "2022-11-05T12:45:01.129Z",
+    updatedAt: "2022-11-05T12:46:08.078Z",
+  },
+  {
+    UserId: 1,
+    plat: "B3212NM",
+    modelName: "Avanza",
+    name: "mobil",
+    imgUrl:
+      "https://ik.imagekit.io/qjbbuf38o/1667652797930--Hack_1_dh9PuTKD4.png",
+    createdAt: "2022-11-05T12:45:01.129Z",
+    updatedAt: "2022-11-05T12:53:20.393Z",
+  },
+];
+
 const testUser = {
   username: `Lord Feexz5`,
   email: `lordfeexz5@gmail.com`,
@@ -38,16 +70,50 @@ const testUser = {
   imgUrl: "imgUrl.com",
 };
 
+const testUser3 = {
+  username: `Lord Feexz55`,
+  email: `lordfeexz55@gmail.com`,
+  password: `qwertyui55`,
+  fullName: `Lord Feexzzz55`,
+  role: "user",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  isRegis: false,
+  balance: 2000000,
+  imgUrl: "imgUrl.com",
+};
+
+const testUser2 = {
+  username: `Lord Feexz6`,
+  email: `lordfeexz6@gmail.com`,
+  password: `qwertyui6`,
+  fullName: `Lord Feexzzz6`,
+  role: "user",
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  isRegis: false,
+  balance: 2000000,
+  imgUrl: "imgUrl.com",
+};
+
 let access_token;
+let access_token3;
 
 beforeEach(async () => {
   const userTest = await User.create(testUser);
+  const userTest3 = await User.create(testUser3);
   const payload = {
     id: userTest.id,
     username: userTest.username,
     email: userTest.email,
   };
+  const payload3 = {
+    id: userTest3.id,
+    username: userTest3.username,
+    email: userTest3.email,
+  };
   access_token = createToken(payload);
+  access_token3 = createToken(payload3);
 });
 
 async function clearTables(tables) {
@@ -74,6 +140,28 @@ describe("get all users", () => {
     expect(result.body[0]).toHaveProperty("id", expect.any(Number));
     expect(result.body[0]).toHaveProperty("username", expect.any(String));
     expect(result.body[0]).toHaveProperty("email", expect.any(String));
+  });
+});
+
+describe("get all users", () => {
+  it("get /users => fail test invalid access_token", async () => {
+    const result = await request(app).get("/vehicles");
+    expect(result.status).toBe(401);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Token");
+  });
+});
+
+describe("get all users", () => {
+  it("get /users => fail test invalid authorization", async () => {
+    const result = await request(app)
+      .get("/vehicles")
+      .set("access_token", access_token3);
+    expect(result.status).toBe(403);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Forbidden");
   });
 });
 
@@ -124,6 +212,21 @@ describe("patch user by id", () => {
     expect(result.status).toBe(201);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "success update username");
+  });
+});
+
+describe("patch user by id", () => {
+  it("patch /users/:id => fail test invalid username", async () => {
+    const payload = { username: null };
+    const result = await request(app)
+      .patch(`/users/changeusername`)
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid username");
   });
 });
 
@@ -134,5 +237,303 @@ describe("get all balance history", () => {
       .get("/balances")
       .set("access_token", access_token);
     expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Array);
+    expect(result.body[0]).toHaveProperty("id", expect.any(Number));
+    expect(result.body[0]).toHaveProperty("UserId", expect.any(Number));
+    expect(result.body[0]).toHaveProperty(
+      "dateTransaction",
+      expect.any(String)
+    );
+    expect(result.body[0]).toHaveProperty("type", expect.any(String));
+    expect(result.body[0]).toHaveProperty("amount", expect.any(Number));
+    expect(result.body[0]).toHaveProperty("status", expect.any(String));
+    expect(result.body[0]).toHaveProperty("createdAt", expect.any(String));
+    expect(result.body[0]).toHaveProperty("updatedAt", expect.any(String));
+  });
+});
+
+describe("get all balance history", () => {
+  it("get /balances => fail test status(404)", async () => {
+    const result = await request(app)
+      .get("/balances")
+      .set("access_token", access_token);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Balance not found");
+  });
+});
+
+describe("get all users", () => {
+  it("get /users => fail test empty", async () => {
+    await clearTables("Users");
+    const result = await request(app)
+      .get("/users")
+      .set("access_token", access_token);
+    console.log(result.body);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "User not found");
+  });
+});
+
+describe("verify users", () => {
+  it("get /users => fail test empty", async () => {
+    const userTest2 = await User.create(testUser2);
+    const result = await request(app).get(`/users/verify/${userTest2.id}`);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Verified");
+  });
+});
+
+describe("change balance payment", () => {
+  it("get /users/changeBalancePayment => success test", async () => {
+    const result = await request(app)
+      .patch(`/users/changeBalancePayment`)
+      .set("access_token", access_token)
+      .send({
+        price: 10000,
+      });
+
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "success change saldo");
+  });
+});
+
+describe("change balance payment", () => {
+  it("get /users/changeBalancePayment => fail test", async () => {
+    const result = await request(app)
+      .patch(`/users/changeBalancePayment`)
+      .set("access_token", access_token)
+      .send({
+        price: 10000000000,
+      });
+
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty(
+      "message",
+      "You don't have enough balance. please top-up"
+    );
+  });
+});
+
+describe("change balance payment", () => {
+  it("get /users/changeBalancePayment => fail test", async () => {
+    const result = await request(app)
+      .patch(`/users/changeBalancePayment`)
+      .set("access_token", access_token);
+
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Price");
+  });
+});
+
+describe("get all vehicles", () => {
+  it("get /vehicles => success test status(200)", async () => {
+    await queryInterface.bulkInsert("Vehicles", seedVehicles);
+    const result = await request(app)
+      .get("/vehicles")
+      .set("access_token", access_token);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Array);
+    expect(result.body[0]).toHaveProperty("id", expect.any(Number));
+    expect(result.body[0]).toHaveProperty("UserId", expect.any(Number));
+    expect(result.body[0]).toHaveProperty("plat", expect.any(String));
+    expect(result.body[0]).toHaveProperty("modelName", expect.any(String));
+    expect(result.body[0]).toHaveProperty("name", expect.any(String));
+    expect(result.body[0]).toHaveProperty("imgUrl");
+    expect(result.body[0]).toHaveProperty("createdAt", expect.any(String));
+    expect(result.body[0]).toHaveProperty("updatedAt", expect.any(String));
+  });
+});
+
+describe("get all vehicles", () => {
+  it("get /vehicles => success test status(200)", async () => {
+    const result = await request(app)
+      .get("/vehicles")
+      .set("access_token", access_token);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Vehicle not found");
+  });
+});
+
+describe("delete vehicles by id", () => {
+  it("get /vehicles/:id => success status 200", async () => {
+    await queryInterface.bulkInsert("Vehicles", seedVehicles);
+    const id = 1;
+    const result = await request(app)
+      .delete(`/vehicles/${id}`)
+      .set("access_token", access_token);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "success");
+  });
+});
+
+describe("delete vehicles by id", () => {
+  it("get /vehicles/:id => fail vehicle not found", async () => {
+    await queryInterface.bulkInsert("Vehicles", seedVehicles);
+    const id = 999;
+    const result = await request(app)
+      .delete(`/vehicles/${id}`)
+      .set("access_token", access_token);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Vehicle not found");
+  });
+});
+
+describe("create new vehicle", () => {
+  it("get /vehicles/:id => success status 201", async () => {
+    const payload = {
+      plat: "B1234KLT",
+      modelName: "Avanza",
+      name: "mobilku",
+    };
+    const result = await request(app)
+      .post(`/vehicles`)
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(201);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "success create");
+  });
+});
+
+describe("create new vehicle", () => {
+  it("get /vehicles/:id => fail test invalid input", async () => {
+    const payload = {
+      plat: null,
+      modelName: null,
+      name: null,
+    };
+    const result = await request(app)
+      .post(`/vehicles`)
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Input");
+  });
+});
+
+describe("get all balance history", () => {
+  it("get /balances => success test status(200)", async () => {
+    const payload = {
+      totalPrice: 10000,
+      paymentStatus: "topup",
+      bank: "permata",
+    };
+    const result = await request(app)
+      .post("/balances/payment")
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("status_code", expect.any(String));
+    expect(result.body).toHaveProperty("status_message", expect.any(String));
+    expect(result.body).toHaveProperty("transaction_id", expect.any(String));
+    expect(result.body).toHaveProperty("order_id", expect.any(String));
+    expect(result.body).toHaveProperty("merchant_id", expect.any(String));
+    expect(result.body).toHaveProperty("gross_amount", expect.any(String));
+    expect(result.body).toHaveProperty("payment_type", expect.any(String));
+    expect(result.body).toHaveProperty("transaction_time", expect.any(String));
+    expect(result.body).toHaveProperty(
+      "transaction_status",
+      expect.any(String)
+    );
+    expect(result.body).toHaveProperty("va_numbers", expect.any(String));
+    expect(result.body).toHaveProperty("fraud_status", expect.any(String));
+  });
+});
+
+describe("get all balance history", () => {
+  it("get /balances => success test status(200)", async () => {
+    const payload = {
+      totalPrice: 10000,
+      paymentStatus: "topup",
+      bank: "bca",
+    };
+    const result = await request(app)
+      .post("/balances/payment")
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("status_code", expect.any(String));
+    expect(result.body).toHaveProperty("status_message", expect.any(String));
+    expect(result.body).toHaveProperty("transaction_id", expect.any(String));
+    expect(result.body).toHaveProperty("order_id", expect.any(String));
+    expect(result.body).toHaveProperty("merchant_id", expect.any(String));
+    expect(result.body).toHaveProperty("gross_amount", expect.any(String));
+    expect(result.body).toHaveProperty("payment_type", expect.any(String));
+    expect(result.body).toHaveProperty("transaction_time", expect.any(String));
+    expect(result.body).toHaveProperty(
+      "transaction_status",
+      expect.any(String)
+    );
+    expect(result.body).toHaveProperty("va_numbers", expect.any(String));
+    expect(result.body).toHaveProperty("fraud_status", expect.any(String));
+  });
+});
+
+describe("get all balance history", () => {
+  it("get /balances => success test status(200)", async () => {
+    const payload = {
+      totalPrice: null,
+      paymentStatus: null,
+      bank: null,
+    };
+    const result = await request(app)
+      .post("/balances/payment")
+      .send(payload)
+      .set("access_token", access_token);
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Invalid Input");
+  });
+});
+
+describe("get all balance history", () => {
+  it("get /balances => success test status(200)", async () => {
+    const payload = {
+      va_numbers: [{ va_number: "66777397639", bank: "bca" }],
+      transaction_time: "2022-11-07 23:39:29",
+      transaction_status: "settlement",
+      transaction_id: "0b846920-62e8-410a-bbf6-6567ecc2eac4",
+      status_message: "midtrans payment notification",
+      status_code: "200",
+      signature_key:
+        "de094733ec494388deb1cadbf825fd4a19cc91157c2335faedd62f42b08d2a35236f2bbac4116bbeef4833e813a565c4a802981a4a1ddf8da01b522706fdb2e7",
+      settlement_time: "2022-11-07 23:40:06",
+      payment_type: "bank_transfer",
+      payment_amounts: [],
+      order_id: "order-id-$1-1667839170",
+      merchant_id: "G748966777",
+      gross_amount: "10000.00",
+      fraud_status: "accept",
+      currency: "IDR",
+    };
+    const result = await request(app).post("/notification").send(payload);
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "settlement");
   });
 });

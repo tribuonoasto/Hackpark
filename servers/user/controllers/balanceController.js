@@ -19,6 +19,9 @@ class Controller {
         },
       });
 
+      if (!balanceHistory || balanceHistory.length <= 0)
+        throw { name: "Balance not found" };
+
       res.status(200).json(balanceHistory);
     } catch (err) {
       next(err);
@@ -29,6 +32,10 @@ class Controller {
     try {
       const { totalPrice, paymentStatus, bank } = req.body;
       const { id, email, username } = req.user;
+
+      if (!totalPrice || !paymentStatus || !bank) {
+        throw { name: "invalid_input", msg: "Invalid Input" };
+      }
 
       const transfer = new Bank(
         totalPrice,

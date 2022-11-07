@@ -9,6 +9,7 @@ class Controller {
         include: [BalanceHistory, Vehicle],
       });
 
+      if (!users || users.length <= 0) throw { name: "User not found" };
       res.status(200).json(users);
     } catch (err) {
       next(err);
@@ -54,6 +55,11 @@ class Controller {
     try {
       const { id } = req.user;
       const { username } = req.body;
+
+      if (!username) {
+        throw { name: "invalid_input", msg: "Invalid username" };
+      }
+
       const user = await User.findOne({
         where: { id },
       });
@@ -129,10 +135,7 @@ class Controller {
     try {
       const { id } = req.user;
       const { price } = req.body;
-
-      if (!id) {
-        throw { name: "invalid_input", msg: "Invalid ID" };
-      }
+      console.log(price, typeof price);
 
       if (!price) {
         throw { name: "invalid_input", msg: "Invalid Price" };
