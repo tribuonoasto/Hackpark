@@ -1,10 +1,24 @@
-import { View, Text, StyleSheet, FlatList, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import SaldoList from "../components/SaldoList";
 import { useQuery } from "@apollo/client";
 import { GET_BALANCE } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SaldoDetail = () => {
-  const { loading, error, data } = useQuery(GET_BALANCE);
+const SaldoDetail = async () => {
+  // const access_token = AsyncStorage.getItem("access_token")
+  // console.log(access_token,"<<<<")
+  try {
+  const { loading, error, data } = useQuery(GET_BALANCE, {
+    variables: {
+      access_token: await AsyncStorage.getItem('access_token'),
+    },
+  });
   if (loading) {
     return (
       <View>
@@ -25,6 +39,9 @@ const SaldoDetail = () => {
       />
     </View>
   );
+  } catch (error){
+    console.log(error)
+  }
 };
 export default SaldoDetail;
 
