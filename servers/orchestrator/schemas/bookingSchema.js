@@ -1,4 +1,5 @@
 const axios = require("axios");
+const errorHandling = require("../middlewares/errorHandling");
 const baseUrlBooking = "http://localhost:4002";
 const redis = require("./../config/redis");
 
@@ -87,10 +88,8 @@ const resolvers = {
       try {
         const itemsCache = await redis.get("app:venues");
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/venues/`,
@@ -99,7 +98,7 @@ const resolvers = {
           return data;
         }
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getVenueById: async (_, args) => {
@@ -112,17 +111,15 @@ const resolvers = {
         await redis.del("app:venues");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getSlots: async () => {
       try {
         const itemsCache = await redis.get("app:slots");
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/slots/`,
@@ -131,7 +128,7 @@ const resolvers = {
           return data;
         }
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getSlotById: async (_, args) => {
@@ -144,17 +141,15 @@ const resolvers = {
         await redis.del("app:slots");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getRatings: async () => {
       try {
         const itemsCache = await redis.get("app:ratings");
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/ratings/`,
@@ -163,7 +158,7 @@ const resolvers = {
           return data;
         }
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getRatingById: async (_, args) => {
@@ -176,17 +171,15 @@ const resolvers = {
         await redis.del("app:ratings");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getBookings: async () => {
       try {
         const itemsCache = await redis.get("app:bookings");
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/bookings/`,
@@ -195,7 +188,7 @@ const resolvers = {
           return data;
         }
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getBookingById: async (_, args) => {
@@ -208,7 +201,7 @@ const resolvers = {
         await redis.del("app:bookings");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
   },
@@ -224,7 +217,7 @@ const resolvers = {
         await redis.del("app:ratings");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     booking: async (_, args) => {
@@ -238,7 +231,7 @@ const resolvers = {
         await redis.del("app:bookings");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
   },
