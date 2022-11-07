@@ -266,7 +266,7 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when check-out" };
           }
 
-          //// DECREASE PARKING SLOT
+          //// Increase PARKING SLOT
           let currentSlot = checkSlot.slot;
           await Slot.editSlot(checkBooking.SlotId, {
             slot: currentSlot + 1,
