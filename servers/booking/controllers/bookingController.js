@@ -121,9 +121,7 @@ class BookingController {
 
         const qrCode = await axios({
           method: "get",
-          url: `https://api.happi.dev/v1/qrcode?data=${
-            baseUrlLocal + "/bookings/check/" + newBookingId
-          }&width=128&dots=000000&bg=FFFFFF&apikey=e1ee22u5U687OdKoqo9yIbnrMeg12SJIuEHDkJkQ7UFq6QAQ9LICgMqZ`,
+          url: `https://api.happi.dev/v1/qrcode?data=${newBookingId}&width=128&dots=000000&bg=FFFFFF&apikey=e1ee22u5U687OdKoqo9yIbnrMeg12SJIuEHDkJkQ7UFq6QAQ9LICgMqZ`,
         });
 
         const bookingQrCode = qrCode.data.qrcode;
@@ -169,6 +167,7 @@ class BookingController {
       await session.withTransaction(async () => {
         const { bookingId } = req.params;
         const { access_token } = req.body;
+        console.log(access_token);
 
         const checkBooking = await Book.findOne(bookingId);
 
@@ -266,7 +265,7 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when check-out" };
           }
 
-          //// DECREASE PARKING SLOT
+          //// Increase PARKING SLOT
           let currentSlot = checkSlot.slot;
           await Slot.editSlot(checkBooking.SlotId, {
             slot: currentSlot + 1,

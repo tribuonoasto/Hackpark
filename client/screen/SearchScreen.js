@@ -16,11 +16,12 @@ import Card from "../components/Card";
 import Constants from "expo-constants";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import { getBoundsOfDistance, getDistance } from "geolib";
+import Geocoder from "react-native-geocoder";
 
 const SearchScreen = ({ navigation }) => {
   const [pin, setPin] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: -6.2,
+    longitude: 106.816666,
   });
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -35,6 +36,7 @@ const SearchScreen = ({ navigation }) => {
 
   function fitMap() {
     const coordinates = pin;
+    setClicked(false);
 
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
 
@@ -73,7 +75,6 @@ const SearchScreen = ({ navigation }) => {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
 
       setPin({
         latitude: location.coords.latitude,
@@ -81,18 +82,6 @@ const SearchScreen = ({ navigation }) => {
       });
     })();
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      let regionName = await Location.reverseGeocodeAsync({
-        latitude: pin.latitude,
-        longitude: pin.longitude,
-      });
-      setCity(regionName[0]);
-    })();
-  }, []);
-
-  console.log(city);
 
   const handleVenue = (id, coordinates) => {
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
@@ -182,7 +171,7 @@ const SearchScreen = ({ navigation }) => {
                   longitude: venue.lng,
                 })
               }
-              pinColor="#54B435"
+              image={require("../assets/pin-icon.png")}
             >
               <Callout>
                 <View
@@ -299,15 +288,6 @@ const SearchScreen = ({ navigation }) => {
                       }}
                     >
                       Available{" "}
-                    </Text>
-                    <Text
-                      style={{
-                        color: "darkgreen",
-                        fontWeight: "700",
-                        fontSize: 10,
-                      }}
-                    >
-                      10
                     </Text>
                   </View>
                 </View>

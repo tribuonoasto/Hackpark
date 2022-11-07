@@ -13,7 +13,7 @@ const testUser = {
 
 let access_token;
 
-beforeAll(async () => {
+beforeEach(async () => {
   const user = await User.create(testUser);
   const payload = {
     id: user.id,
@@ -31,8 +31,10 @@ async function clearTables(tables) {
   });
 }
 
-afterAll(async () => {
+afterEach(async () => {
+  await clearTables("BalanceHistories");
   await clearTables("Users");
+  await clearTables("Vehicles");
 });
 
 describe("post login customer", () => {
