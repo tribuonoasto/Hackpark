@@ -65,6 +65,20 @@ type Data {
   message: String
 }
 
+type MidtransResp {
+  transaction_time: String
+  gross_amount: String
+  order_id: String
+  payment_type: String
+  status_code: String 
+  transaction_id: String 
+  transaction_status: String 
+  fraud_status: String 
+  status_message: String 
+  merchant_id: String 
+  va_numbers: String 
+}
+
 type Query {
     getUsers:[User]
     getUserById(id:ID, access_token:String):User
@@ -81,6 +95,7 @@ type Mutation {
     changeBalance(access_token:String, price:Int): Data
     vehicle(access_token:String, vehicle: InputVehicle ): Data
     deleteVehicle(access_token:String, id:ID): Data
+    payment(access_token:String,totalPrice:Int,paymentStatus:String,bank:String):MidtransResp
 }
 `;
 
@@ -186,12 +201,12 @@ const resolvers = {
     verify: async (_, args) => {
       try {
         const { id } = args;
-        const {data} = await axios({
+        const { data } = await axios({
           method: "PATCH",
           url: `${baseUrlUser}/users/verify/${id}`,
         });
         await redis.del("app:users");
-        return data
+        return data;
       } catch (error) {
         console.log(error);
       }
@@ -199,7 +214,7 @@ const resolvers = {
     delete: async (_, args) => {
       try {
         const { access_token } = args;
-        const {data} = await axios({
+        const { data } = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/users/`,
           headers: {
@@ -207,7 +222,7 @@ const resolvers = {
           },
         });
         await redis.del("app:users");
-        return data
+        return data;
       } catch (error) {
         console.log(error);
       }
@@ -275,8 +290,8 @@ const resolvers = {
     },
     deleteVehicle: async (_, args) => {
       try {
-        const { access_token , id} = args;
-        const {data} = await axios({
+        const { access_token, id } = args;
+        const { data } = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/vehicles/${id}`,
           headers: {
@@ -284,9 +299,29 @@ const resolvers = {
           },
         });
         await redis.del("app:users");
-        return data
+        return data;
       } catch (error) {
         console.log(error);
+      }
+    },
+    payment: async (_, args) => {
+      try {
+        const { access_token, totalPrice, paymentStatus, bank } = args;
+        const { data } = await axios({
+          method: "post",
+          url: `${baseUrlUser}/balances/payment`,
+          headers: {
+            access_token,
+          },
+          data: {
+            totalPrice,
+            paymentStatus,
+            bank,
+          },
+        });
+        return data;
+      } catch (err) {
+        return err;
       }
     },
   },
