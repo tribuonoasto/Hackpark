@@ -86,8 +86,6 @@ class BookingController {
           },
         });
 
-        console.log(respaxios);
-
         //// CREATE BOOKING
 
         const resp = await Book.insertOne(
