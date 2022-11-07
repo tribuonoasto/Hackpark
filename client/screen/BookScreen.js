@@ -17,7 +17,7 @@ const BookScreen = ({ route, navigation }) => {
   const [mode, setMode] = useState("");
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
-  const [saldo, setSaldo] = useState(10000);
+  const [saldo, setSaldo] = useState(9000);
   const [showSlot, setShowSlot] = useState(false);
 
   const handleSubmit = (answer) => {
@@ -265,6 +265,7 @@ const BookScreen = ({ route, navigation }) => {
                 paddingHorizontal: 20,
                 borderRadius: 20,
               }}
+              onPress={() => navigation.navigate("TopupScreen")}
             >
               <Text
                 style={{ color: "#ededed", fontWeight: "600", fontSize: 16 }}

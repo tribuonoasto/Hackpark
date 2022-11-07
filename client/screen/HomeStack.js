@@ -8,6 +8,7 @@ import MyVehicle from "./MyVehicle";
 import SaldoDetail from "./SaldoDetail";
 import OrderDetail from "../components/OrderDetail";
 import BookScreen from "./BookScreen";
+import TopupScreen from "./TopupScreen";
 
 const Stack = createNativeStackNavigator();
 const HomeStack = () => {
@@ -120,6 +121,21 @@ const HomeStack = () => {
       <Stack.Screen
         name="BookScreen"
         component={BookScreen}
+        options={{
+          headerShown: true,
+          headerTitle: "",
+          headerStyle: {
+            backgroundColor: "#EDEDED",
+          },
+          headerTitleStyle: {
+            color: "#404258",
+          },
+          headerShadowVisible: false,
+        }}
+      />
+      <Stack.Screen
+        name="TopupScreen"
+        component={TopupScreen}
         options={{
           headerShown: true,
           headerTitle: "",

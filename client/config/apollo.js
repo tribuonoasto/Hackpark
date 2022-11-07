@@ -9,6 +9,6 @@ import { TurboModuleRegistry } from "react-native";
 
 // export default client;
 
-const ngrok = "https://6423-114-122-11-107.ap.ngrok.io";
+const ngrok = "https://af1b-114-122-22-135.ap.ngrok.io";
 
 module.exports = ngrok;
