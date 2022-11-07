@@ -45,10 +45,10 @@ class Controller {
       const { order_id, status_code, gross_amount } = data;
 
       const signatureKey = sha512(
-        order_id + status_code + gross_amount + env.serverKey
+        order_id + "200" + gross_amount + env.serverKey
       );
 
-      req.midtrans = signatureKey;
+      console.log(order_id, status_code, gross_amount, "dari pay");
 
       let resp;
 
@@ -108,6 +108,14 @@ class Controller {
         };
       }
 
+      await BalanceHistory.create({
+        UserId: id,
+        type: "debit",
+        amount: +gross_amount,
+        status: "pending",
+        signatureKey,
+      });
+
       res.status(200).json(resp);
     } catch (err) {
       next(err);
@@ -130,26 +138,29 @@ class Controller {
 
         if (!user) throw { name: "User not found" };
 
+        const valid = await BalanceHistory.findOne({
+          where: { signatureKey: data.signature_key },
+        });
+
+        if (!valid) throw { name: "Forbidden" };
+
         const balance = +data.gross_amount + user.balance;
 
         await User.update({ balance }, { where: { id }, transaction: t });
 
-        const balanceHistory = await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: "Success",
-        });
+        const balanceHistory = await BalanceHistory.update(
+          {
+            status: "Success",
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         if (!balanceHistory) {
-          await BalanceHistory.create(
+          await BalanceHistory.update(
             {
-              UserId: id,
-              type: "debit",
-              amount: +data.gross_amount,
               status: "Failed",
             },
-            { transaction: t }
+            { where: { signatureKey: data.signature_key }, transaction: t }
           );
 
           throw { name: "payment_error" };
@@ -163,23 +174,23 @@ class Controller {
         data.transaction_status == "deny" ||
         data.transaction_status == "expire"
       ) {
-        await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: `${data.transaction_status}`,
-        });
+        await BalanceHistory.update(
+          {
+            status: `${data.transaction_status}`,
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "pending") {
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "refund") {
-        await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: `${data.transaction_status}`,
-        });
+        await BalanceHistory.update(
+          {
+            status: `${data.transaction_status}`,
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         res.status(200).json({ message: `${data.transaction_status}` });
       }
