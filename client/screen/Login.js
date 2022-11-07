@@ -12,16 +12,45 @@ import {
 } from "react-native";
 
 import Constants from "expo-constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../queries/user";
 
 const Login = ({ navigation }) => {
+  const [signIn, { data }] = useMutation(LOGIN);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [access_token, setAccessToken] = useState("")
 
-  const handleLogin = () => {
-    console.log(email, password);
+  const handleLogin = async () => {
+    signIn({
+      variables: {login :{
+        email: email,
+        password: password,
+      }}
+    });
     navigation.navigate("TabScreen");
   };
+
+  useEffect(() => {
+    if (data != null) {
+      setToken();
+    }
+  });
+
+  const setToken = async () => {
+    try {
+      // console.log("before");
+      await AsyncStorage.setItem("setAccessToken", data.login.access_token);
+      // console.log("after");
+      console.log(access_token)
+
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
