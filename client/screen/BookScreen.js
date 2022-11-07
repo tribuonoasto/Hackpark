@@ -70,6 +70,23 @@ const BookScreen = ({ route, navigation }) => {
     }
   };
 
+  const onPressDate = () => {
+    let isValidDate = Date.parse(textDate);
+    showMode("date");
+
+    if (isNaN(isValidDate)) {
+      onChangeDate(new Date());
+    }
+  };
+  const onPressTime = () => {
+    let isValidDate = Date.parse(textTime);
+    showMode("time");
+
+    if (isNaN(isValidDate)) {
+      onChangeTime(new Date());
+    }
+  };
+
   const onChangeDate = (e, selectedDate) => {
     const currentDate = selectedDate || date;
     setDate(currentDate);
@@ -121,7 +138,7 @@ const BookScreen = ({ route, navigation }) => {
             <Text style={styles.label}>
               Date <Text style={{ color: "red" }}>*</Text>
             </Text>
-            <TouchableOpacity onPress={() => showMode("date")}>
+            <TouchableOpacity onPress={onPressDate}>
               <Text style={styles.input}>{textDate}</Text>
             </TouchableOpacity>
           </View>
@@ -130,7 +147,7 @@ const BookScreen = ({ route, navigation }) => {
             <Text style={styles.label}>
               Time <Text style={{ color: "red" }}>*</Text>
             </Text>
-            <TouchableOpacity onPress={() => showMode("time")}>
+            <TouchableOpacity onPress={onPressTime}>
               <Text style={styles.input}>{textTime}</Text>
             </TouchableOpacity>
           </View>

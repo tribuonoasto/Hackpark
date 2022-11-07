@@ -16,11 +16,12 @@ import Card from "../components/Card";
 import Constants from "expo-constants";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import { getBoundsOfDistance, getDistance } from "geolib";
+import Geocoder from "react-native-geocoder";
 
 const SearchScreen = ({ navigation }) => {
   const [pin, setPin] = useState({
-    latitude: 37.78825,
-    longitude: -122.4324,
+    latitude: -6.2,
+    longitude: 106.816666,
   });
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -48,6 +49,8 @@ const SearchScreen = ({ navigation }) => {
       },
     });
   }
+
+  console.log(Geocoder.geocodePosition(pin.latitude, pin.longitude));
 
   useEffect(() => {
     fetch(`${ngrok}/venues`)

@@ -84,26 +84,75 @@ const ModalScreenSlot = ({ setShowSlot, setName, venues }) => {
             />
           </View>
 
-          {area.length !== 0 && (
-            <View style={{ marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              marginTop: 50,
+              justifyContent: "space-evenly",
+              alignItems: "center",
+            }}
+          >
+            <View
+              style={{
+                backgroundColor: "#50577A",
+                padding: 10,
+                width: 100,
+                borderRadius: 10,
+              }}
+            >
               <Text
-                style={{ fontSize: 18, fontWeight: "500", marginVertical: 10 }}
+                style={{
+                  textAlign: "center",
+                  fontWeight: "600",
+                  fontSize: 16,
+                  color: "#ededed",
+                }}
               >
-                Floor:{" "}
-                <Text style={{ fontSize: 14, fontWeight: "400" }}>
-                  {area[0].floor}
-                </Text>
+                Floor
               </Text>
               <Text
-                style={{ fontSize: 18, fontWeight: "500", marginVertical: 10 }}
+                style={{
+                  textAlign: "center",
+                  padding: 10,
+                  fontSize: 24,
+                  fontWeight: "600",
+                  color: "#ededed",
+                }}
               >
-                Slot:{" "}
-                <Text style={{ fontSize: 14, fontWeight: "400" }}>
-                  {area[0].slot}
-                </Text>
+                {area.length !== 0 ? area[0].floor : 0}
               </Text>
             </View>
-          )}
+            <View
+              style={{
+                backgroundColor: "#50577A",
+                padding: 10,
+                width: 100,
+                borderRadius: 10,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  fontWeight: "600",
+                  fontSize: 16,
+                  color: "#ededed",
+                }}
+              >
+                Slot
+              </Text>
+              <Text
+                style={{
+                  textAlign: "center",
+                  padding: 10,
+                  fontSize: 24,
+                  fontWeight: "600",
+                  color: "#ededed",
+                }}
+              >
+                {area.length !== 0 ? area[0].slot : 0}
+              </Text>
+            </View>
+          </View>
 
           <TouchableOpacity
             style={{
