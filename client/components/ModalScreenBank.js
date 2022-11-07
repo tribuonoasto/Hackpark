@@ -13,18 +13,21 @@ import { Entypo, Feather } from "react-native-vector-icons";
 const banks = [
   {
     name: "Bank Mandiri",
+    codeName: "mandiri",
     imgUrl:
       "https://seeklogo.com/images/B/bank-mandiri-logo-B10991D0B8-seeklogo.com.png",
     bankCode: "200",
   },
   {
     name: "Bank Permata",
+    codeName: "permata",
     imgUrl:
       "https://seeklogo.com/images/B/bank-permata-logo-A7B3360D9F-seeklogo.com.png",
     bankCode: "013",
   },
   {
     name: "Bank BCA",
+    codeName: "bca",
     imgUrl:
       "https://seeklogo.com/images/B/bca-bank-logo-1E89320DC2-seeklogo.com.png",
     bankCode: "014",
@@ -32,11 +35,11 @@ const banks = [
 ];
 
 const ModalScreenBank = ({ handleModal, setModalVisible, modalVisible }) => {
-  const handleSubmit = (bank) => {
-    handleModal(bank);
+  const handleSubmit = (codeName, bank) => {
+    handleModal(codeName, bank);
   };
   return (
-    <View style={styles.centeredView}>
+    <View style={styles.container}>
       <Modal
         animationType="slide"
         transparent={true}
@@ -75,7 +78,7 @@ const ModalScreenBank = ({ handleModal, setModalVisible, modalVisible }) => {
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center" }}
                 onPress={() => {
-                  handleSubmit(item.name);
+                  handleSubmit(item.codeName, item.name);
                   setModalVisible(false);
                 }}
               >
@@ -98,7 +101,7 @@ const ModalScreenBank = ({ handleModal, setModalVisible, modalVisible }) => {
 };
 
 const styles = StyleSheet.create({
-  centeredView: {
+  container: {
     flex: 1,
     width: "100%",
     height: "100%",

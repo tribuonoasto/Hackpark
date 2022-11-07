@@ -9,7 +9,38 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalScreen from "../components/ModalScreen";
-import { Entypo, Feather } from "react-native-vector-icons";
+import ModalScreenSlot from "../components/ModalScreenSlot";
+
+const slotData = [
+  {
+    _id: "6364c5698b3a2b673173d4e1",
+    VenueId: 1,
+    slot: 104,
+    floor: 1,
+    name: "A1",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e2",
+    VenueId: 1,
+    slot: 80,
+    floor: 1,
+    name: "A2",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e3",
+    VenueId: 2,
+    slot: 90,
+    floor: 2,
+    name: "B1",
+  },
+  {
+    _id: "6364c5e38b3a2b673173d4e3",
+    VenueId: 2,
+    slot: 10,
+    floor: 2,
+    name: "B2",
+  },
+];
 
 const BookScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,8 +48,14 @@ const BookScreen = ({ route, navigation }) => {
   const [mode, setMode] = useState("");
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
-  const [saldo, setSaldo] = useState(9000);
+  const [name, setName] = useState("Area");
+  const [saldo, setSaldo] = useState(10000);
   const [showSlot, setShowSlot] = useState(false);
+  const { id } = route.params;
+
+  const venues = slotData.filter((slot) => slot.VenueId === id);
+
+  const venue = venues.filter((el) => el.name === name);
 
   const handleSubmit = (answer) => {
     setModalVisible(true);
@@ -29,7 +66,7 @@ const BookScreen = ({ route, navigation }) => {
 
     if (answer === "sure") {
       setModalVisible(false);
-      navigation.navigate("OrderDetail", { id: 1 });
+      console.log(date, venue[0]._id);
     }
   };
 
@@ -73,40 +110,12 @@ const BookScreen = ({ route, navigation }) => {
         <View style={{ height: 350, paddingHorizontal: 20 }}>
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
-              Slot <Text style={{ color: "red" }}>*</Text>
+              Parking Area <Text style={{ color: "red" }}>*</Text>
             </Text>
             <TouchableOpacity onPress={() => setShowSlot(true)}>
-              <Text style={styles.input}>{textDate}</Text>
+              <Text style={styles.input}>{name}</Text>
             </TouchableOpacity>
           </View>
-
-          {showSlot && (
-            <View
-              style={{
-                backgroundColor: "#fff",
-                position: "absolute",
-                right: 0,
-                left: 0,
-                bottom: 0,
-                padding: 20,
-                flex: 1,
-                height: "100%",
-                zIndex: 1,
-              }}
-            >
-              <View>
-                <TouchableOpacity
-                  onPress={() => setShowSlot(false)}
-                  style={{ position: "absolute", top: 0, right: 0 }}
-                >
-                  <Feather name="x" color="#A1A9CC" size={24} />
-                </TouchableOpacity>
-                <View style={{ marginTop: 30, flexDirection: "row" }}>
-                  <Text>Hai</Text>
-                </View>
-              </View>
-            </View>
-          )}
 
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
@@ -194,6 +203,25 @@ const BookScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}
               >
+                Slot
+              </Text>
+              <Text
+                style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
+              >
+                {name}
+              </Text>
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: 10,
+              }}
+            >
+              <Text
+                style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}
+              >
                 Booking date
               </Text>
               <Text
@@ -241,7 +269,14 @@ const BookScreen = ({ route, navigation }) => {
           </Text>
         </View>
       </ScrollView>
-
+      {showSlot && (
+        <ModalScreenSlot
+          setShowSlot={setShowSlot}
+          setName={setName}
+          name={name}
+          venues={venues}
+        />
+      )}
       <View>
         {saldo < 10000 ? (
           <View

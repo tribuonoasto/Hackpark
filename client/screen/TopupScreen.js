@@ -15,19 +15,21 @@ const TopupScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [inputAmount, setInputAmount] = useState(0);
-  const [inputBank, setInputBank] = useState("Select a top up method");
+  const [inputBank, setInputBank] = useState("");
+  const [bankName, setBankName] = useState("Select a top up method");
 
   const handleSubmit = () => {
     Keyboard.dismiss();
     setClicked(false);
 
-    console.log(inputAmount, inputBank);
+    console.log(inputAmount, inputBank, "done");
   };
 
-  const handleModal = (bank) => {
+  const handleModal = (codeName, bank) => {
     setModalVisible(true);
-    if (typeof bank !== "object") {
-      setInputBank(bank);
+    if (typeof codeName !== "object") {
+      setInputBank(codeName);
+      setBankName(bank);
     }
   };
 
@@ -68,7 +70,7 @@ const TopupScreen = () => {
         <TouchableOpacity onPress={handleModal}>
           <Text style={styles.label}>Top up with</Text>
           <View>
-            <Text style={styles.input}>{inputBank}</Text>
+            <Text style={styles.input}>{bankName}</Text>
           </View>
         </TouchableOpacity>
       </View>

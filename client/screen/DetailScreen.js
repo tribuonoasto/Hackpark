@@ -15,8 +15,6 @@ const DetailScreen = ({ route, navigation }) => {
   const [loading, setLoading] = useState(true);
   const { id } = route.params;
 
-  console.log(id);
-
   useEffect(() => {
     fetch(`${ngrok}/venues/${id}`)
       .then((response) => response.json())
@@ -96,15 +94,6 @@ const DetailScreen = ({ route, navigation }) => {
               style={{ color: "darkgreen", fontWeight: "500", fontSize: 16 }}
             >
               Available{" "}
-            </Text>
-            <Text
-              style={{
-                color: "darkgreen",
-                fontWeight: "700",
-                fontSize: 18,
-              }}
-            >
-              10
             </Text>
           </View>
         </View>

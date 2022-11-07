@@ -299,15 +299,6 @@ const SearchScreen = ({ navigation }) => {
                     >
                       Available{" "}
                     </Text>
-                    <Text
-                      style={{
-                        color: "darkgreen",
-                        fontWeight: "700",
-                        fontSize: 10,
-                      }}
-                    >
-                      10
-                    </Text>
                   </View>
                 </View>
               </View>

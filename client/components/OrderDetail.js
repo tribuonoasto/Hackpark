@@ -93,9 +93,7 @@ const OrderDetail = ({ route }) => {
             alignItems: "center",
           }}
         >
-          {status === "ongoing" ? (
-            <Image source={require("../assets/qrcode.png")} />
-          ) : (
+          {status === "done" ? (
             <View>
               <Text
                 style={{ fontSize: 18, color: "#2C2D3E", fontWeight: "700" }}
@@ -118,6 +116,11 @@ const OrderDetail = ({ route }) => {
                   onFinishRating={ratingCompleted}
                 />
               </View>
+            </View>
+          ) : (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <Text>Please check-in before "expired date".</Text>
+              <Image source={require("../assets/qrcode.png")} />
             </View>
           )}
         </View>
