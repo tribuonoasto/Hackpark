@@ -50,8 +50,6 @@ const SearchScreen = ({ navigation }) => {
     });
   }
 
-  console.log(Geocoder.geocodePosition(pin.latitude, pin.longitude));
-
   useEffect(() => {
     fetch(`${ngrok}/venues`)
       .then((response) => response.json())
@@ -77,22 +75,11 @@ const SearchScreen = ({ navigation }) => {
       }
 
       let location = await Location.getCurrentPositionAsync({});
-      setLocation(location);
 
       setPin({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude,
       });
-    })();
-  }, []);
-
-  useEffect(() => {
-    (async () => {
-      let regionName = await Location.reverseGeocodeAsync({
-        latitude: pin.latitude,
-        longitude: pin.longitude,
-      });
-      setCity(regionName[0]);
     })();
   }, []);
 

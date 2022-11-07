@@ -15,7 +15,7 @@ const ModalScreenSlot = ({ setShowSlot, setName, venues }) => {
 
   const handleSubmit = () => {
     setShowSlot(false);
-    setName(selected);
+    if (selected) return setName(selected);
   };
 
   return (
@@ -36,7 +36,7 @@ const ModalScreenSlot = ({ setShowSlot, setName, venues }) => {
           }}
           onPress={() => {
             setShowSlot(false);
-            setName("");
+            setName("Area");
           }}
         >
           <Entypo name="cross" size={25} color="black" style={{ padding: 1 }} />

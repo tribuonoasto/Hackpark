@@ -326,20 +326,48 @@ const BookScreen = ({ route, navigation }) => {
               </Text>
             </TouchableOpacity>
           </View>
-        ) : (
-          <View></View>
-        )}
+        ) : null}
+
+        {textDate === "Date" || textTime === "Time" || name === "Area" ? (
+          <View
+            style={{
+              backgroundColor: "#282C3D",
+              paddingHorizontal: 20,
+              paddingVertical: 10,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+          >
+            <Text style={{ color: "#ededed", fontWeight: "400", fontSize: 14 }}>
+              Please fill out the form above{" "}
+              <Text style={{ color: "red" }}>*</Text>
+            </Text>
+          </View>
+        ) : null}
 
         <View style={{ paddingHorizontal: 20, paddingVertical: 10 }}>
           <TouchableOpacity
             style={{
-              backgroundColor: saldo < 10000 ? "#dedede" : "#404258",
+              backgroundColor:
+                saldo < 10000 ||
+                textDate === "Date" ||
+                textTime === "Time" ||
+                name === "Area"
+                  ? "#dedede"
+                  : "#404258",
               paddingVertical: 13,
               paddingHorizontal: 10,
               borderRadius: 40,
             }}
             onPress={handleSubmit}
-            disabled={saldo < 10000 ? true : false}
+            disabled={
+              saldo < 10000 ||
+              textDate === "Date" ||
+              textTime === "Time" ||
+              name === "Area"
+                ? true
+                : false
+            }
           >
             <Text
               style={{

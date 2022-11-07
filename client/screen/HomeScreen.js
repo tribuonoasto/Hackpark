@@ -17,9 +17,32 @@ import {
 import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import ngrok from "../config/apollo";
+import Geocoder from "react-native-geocoder";
+import * as Location from "expo-location";
+import { getBoundsOfDistance, getDistance } from "geolib";
 
 const HomeScreen = ({ navigation }) => {
   const [venues, setVenues] = useState([]);
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+
+      let region = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      setLocation(region[0]);
+    })();
+  }, []);
 
   useEffect(() => {
     fetch(`${ngrok}/venues`)
@@ -56,11 +79,19 @@ const HomeScreen = ({ navigation }) => {
                   }}
                 >
                   <Entypo name="location-pin" color="#A1A9CC" size={24} />
-                  <Text
-                    style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
-                  >
-                    Jakarta, Indonesia
-                  </Text>
+                  {!location ? (
+                    <Text
+                      style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                    >
+                      Jakarta, Indonesia
+                    </Text>
+                  ) : (
+                    <Text
+                      style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
+                    >
+                      {location.city}, {location.country}
+                    </Text>
+                  )}
                 </View>
               </View>
               <TouchableOpacity
@@ -119,7 +150,7 @@ const HomeScreen = ({ navigation }) => {
       >
         <View
           style={{
-            backgroundColor: "#50577A",
+            backgroundColor: "#5763A4",
             width: "90%",
             padding: 20,
             borderRadius: 10,
