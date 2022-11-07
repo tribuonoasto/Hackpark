@@ -151,15 +151,13 @@ class Controller {
 
       const resp = await User.update(
         { balance: newBalance },
-        { where: { id } },
-        { transaction: t }
+        { where: { id }, transaction: t }
       );
 
       if (resp[0] === 0) {
         await BalanceHistory.create(
           {
             UserId: id,
-            dateTransaction: new Date(),
             type: "kredit",
             amount: price,
             status: "Failed",
