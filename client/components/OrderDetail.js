@@ -13,21 +13,9 @@ const ngrok = require("./../config/apollo");
 const OrderDetail = ({ route }) => {
   const { id, status } = route.params;
   console.log(id, status);
-  // const [status, setStatus] = useState("ongoing");
   const ratingCompleted = (rating) => {
     console.log("Rating is: " + rating);
   };
-
-  // const [bookings, setBookings] = useState([]);
-
-  // useEffect(() => {
-  //   fetch(`${ngrok}/bookings/${id}?_expand=venue`)
-  //     .then((response) => response.json())
-  //     .then((json) => setBookings(json));
-  // }, []);
-
-  // console.log(bookings, "bookings");
-  // console.log(setBookings, "set");
 
   return (
     <View style={styles.container}>
@@ -93,9 +81,7 @@ const OrderDetail = ({ route }) => {
             alignItems: "center",
           }}
         >
-          {status === "ongoing" ? (
-            <Image source={require("../assets/qrcode.png")} />
-          ) : (
+          {status === "done" ? (
             <View>
               <Text
                 style={{ fontSize: 18, color: "#2C2D3E", fontWeight: "700" }}
@@ -118,6 +104,11 @@ const OrderDetail = ({ route }) => {
                   onFinishRating={ratingCompleted}
                 />
               </View>
+            </View>
+          ) : (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <Text>Please check-in before "expired date".</Text>
+              <Image source={require("../assets/qrcode.png")} />
             </View>
           )}
         </View>

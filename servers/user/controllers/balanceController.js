@@ -2,6 +2,7 @@ const { BalanceHistory, User, sequelize } = require("../models");
 const env = require("../helpers/env");
 const midtransClient = require("midtrans-client");
 const Bank = require("../helpers/bank");
+const sha512 = require("js-sha512");
 const core = new midtransClient.CoreApi({
   isProduction: false,
   serverKey: env.serverKey,
@@ -19,6 +20,9 @@ class Controller {
         },
       });
 
+      if (!balanceHistory || balanceHistory.length <= 0)
+        throw { name: "Balance not found" };
+
       res.status(200).json(balanceHistory);
     } catch (err) {
       next(err);
@@ -30,6 +34,10 @@ class Controller {
       const { totalPrice, paymentStatus, bank } = req.body;
       const { id, email, username } = req.user;
 
+      if (!totalPrice || !paymentStatus || !bank) {
+        throw { name: "invalid_input", msg: "Invalid Input" };
+      }
+
       const transfer = new Bank(
         totalPrice,
         paymentStatus,
@@ -40,6 +48,12 @@ class Controller {
       ).body();
 
       const data = await core.charge(transfer);
+
+      const { order_id, status_code, gross_amount } = data;
+
+      const signatureKey = sha512(
+        order_id + "200" + gross_amount + env.serverKey
+      );
 
       let resp;
 
@@ -99,6 +113,14 @@ class Controller {
         };
       }
 
+      await BalanceHistory.create({
+        UserId: id,
+        type: "debit",
+        amount: +gross_amount,
+        status: "pending",
+        signatureKey,
+      });
+
       res.status(200).json(resp);
     } catch (err) {
       next(err);
@@ -121,26 +143,29 @@ class Controller {
 
         if (!user) throw { name: "User not found" };
 
+        const valid = await BalanceHistory.findOne({
+          where: { signatureKey: data.signature_key },
+        });
+
+        if (!valid) throw { name: "Forbidden" };
+
         const balance = +data.gross_amount + user.balance;
 
         await User.update({ balance }, { where: { id }, transaction: t });
 
-        const balanceHistory = await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: "Success",
-        });
+        const balanceHistory = await BalanceHistory.update(
+          {
+            status: "Success",
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         if (!balanceHistory) {
-          await BalanceHistory.create(
+          await BalanceHistory.update(
             {
-              UserId: id,
-              type: "debit",
-              amount: +data.gross_amount,
               status: "Failed",
             },
-            { transaction: t }
+            { where: { signatureKey: data.signature_key }, transaction: t }
           );
 
           throw { name: "payment_error" };
@@ -154,23 +179,23 @@ class Controller {
         data.transaction_status == "deny" ||
         data.transaction_status == "expire"
       ) {
-        await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: `${data.transaction_status}`,
-        });
+        await BalanceHistory.update(
+          {
+            status: `${data.transaction_status}`,
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "pending") {
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "refund") {
-        await BalanceHistory.create({
-          UserId: id,
-          type: "debit",
-          amount: +data.gross_amount,
-          status: `${data.transaction_status}`,
-        });
+        await BalanceHistory.update(
+          {
+            status: `${data.transaction_status}`,
+          },
+          { where: { signatureKey: data.signature_key }, transaction: t }
+        );
 
         res.status(200).json({ message: `${data.transaction_status}` });
       }
