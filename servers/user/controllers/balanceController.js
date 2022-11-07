@@ -41,7 +41,65 @@ class Controller {
 
       const data = await core.charge(transfer);
 
-      res.status(200).json(data);
+      let resp;
+
+      if (bank.toLowerCase() == "permata") {
+        const {
+          status_code,
+          status_message,
+          transaction_id,
+          order_id,
+          gross_amount,
+          payment_type,
+          transaction_time,
+          transaction_status,
+          fraud_status,
+          permata_va_number,
+          merchant_id,
+        } = data;
+        resp = {
+          status_code,
+          status_message,
+          transaction_id,
+          order_id,
+          gross_amount,
+          payment_type,
+          transaction_time,
+          transaction_status,
+          fraud_status,
+          va_numbers: permata_va_number,
+          merchant_id,
+        };
+      } else if (bank.toLowerCase() != "permata") {
+        const {
+          status_code,
+          status_message,
+          transaction_id,
+          order_id,
+          merchant_id,
+          gross_amount,
+          payment_type,
+          transaction_time,
+          transaction_status,
+          va_numbers,
+          fraud_status,
+        } = data;
+        resp = {
+          status_code,
+          status_message,
+          transaction_id,
+          order_id,
+          merchant_id,
+          gross_amount,
+          payment_type,
+          transaction_time,
+          transaction_status,
+          va_numbers: va_numbers[0].va_number,
+          fraud_status,
+        };
+      }
+
+      res.status(200).json(resp);
     } catch (err) {
       next(err);
     }
