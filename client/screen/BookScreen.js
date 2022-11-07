@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalScreen from "../components/ModalScreen";
+import { Entypo, Feather } from "react-native-vector-icons";
 
 const BookScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -16,8 +17,8 @@ const BookScreen = ({ route, navigation }) => {
   const [mode, setMode] = useState("");
   const [textDate, setTextDate] = useState("Date");
   const [textTime, setTextTime] = useState("Time");
-
   const [saldo, setSaldo] = useState(10000);
+  const [showSlot, setShowSlot] = useState(false);
 
   const handleSubmit = (answer) => {
     setModalVisible(true);
@@ -69,7 +70,44 @@ const BookScreen = ({ route, navigation }) => {
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
       >
-        <View style={{ height: 250, paddingHorizontal: 20 }}>
+        <View style={{ height: 350, paddingHorizontal: 20 }}>
+          <View style={styles.inputWrapper}>
+            <Text style={styles.label}>
+              Slot <Text style={{ color: "red" }}>*</Text>
+            </Text>
+            <TouchableOpacity onPress={() => setShowSlot(true)}>
+              <Text style={styles.input}>{textDate}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {showSlot && (
+            <View
+              style={{
+                backgroundColor: "#fff",
+                position: "absolute",
+                right: 0,
+                left: 0,
+                bottom: 0,
+                padding: 20,
+                flex: 1,
+                height: "100%",
+                zIndex: 1,
+              }}
+            >
+              <View>
+                <TouchableOpacity
+                  onPress={() => setShowSlot(false)}
+                  style={{ position: "absolute", top: 0, right: 0 }}
+                >
+                  <Feather name="x" color="#A1A9CC" size={24} />
+                </TouchableOpacity>
+                <View style={{ marginTop: 30, flexDirection: "row" }}>
+                  <Text>Hai</Text>
+                </View>
+              </View>
+            </View>
+          )}
+
           <View style={styles.inputWrapper}>
             <Text style={styles.label}>
               Date <Text style={{ color: "red" }}>*</Text>
@@ -107,9 +145,7 @@ const BookScreen = ({ route, navigation }) => {
               display="default"
               onChange={onChangeTime}
             />
-          ) : (
-            <View></View>
-          )}
+          ) : null}
         </View>
         <View style={{ paddingHorizontal: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: "600", color: "#404258" }}>
