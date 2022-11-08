@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 import {
   Entypo,
   FontAwesome5,
@@ -20,14 +19,12 @@ import Card from "../components/Card";
 import { useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
 import { useEffect, useState } from "react";
-// import Card from "../components/Card";
-// import ngrok from "../config/apollo";
 import * as Location from "expo-location";
+import { setContext } from "@apollo/client/link/context";
 
 const HomeScreen = ({ navigation }) => {
-  // const [venues, setVenues] = useState([]);
   const [location, setLocation] = useState(null);
-
+  const [access_token, setAccess_token] = useState("");
   const { loading, error, data } = useQuery(GET_VENUES);
 
   useEffect(() => {
@@ -35,7 +32,7 @@ const HomeScreen = ({ navigation }) => {
       const access_token = await AsyncStorage.getItem("access_token");
 
       if (access_token) {
-        console.log(access_token);
+        setAccess_token(access_token);
       }
     })();
   }, []);
@@ -58,6 +55,12 @@ const HomeScreen = ({ navigation }) => {
       setLocation(region[0]);
     })();
   }, []);
+
+  const setAuthorizationLink = setContext((request, previousContext) => ({
+    headers: { authorization: access_token },
+  }));
+
+  console.log(setAuthorizationLink);
 
   if (loading) {
     return (

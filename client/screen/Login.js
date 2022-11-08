@@ -24,6 +24,7 @@ const Login = ({ navigation }) => {
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
+    console.log(email, password);
     signIn({
       variables: {
         login: {
@@ -36,7 +37,7 @@ const Login = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      if (data) {
+      if (data && data.login !== null) {
         await AsyncStorage.setItem("access_token", data?.login?.access_token);
       }
     })();
