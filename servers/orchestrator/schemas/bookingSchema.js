@@ -23,8 +23,8 @@ type Venue {
     _id: String
     name: String
     address: String
-    lat: Int
-    lng: Int
+    lat: String
+    lng: String
     parkingPrice: Int
     bookingPrice: Int
     imgVenue: String
@@ -157,7 +157,7 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getVenueById: async (_, args) => {
+    getVenueById: async (_, args, context) => {
       try {
         const { id } = args;
         const { data: venue } = await axios({

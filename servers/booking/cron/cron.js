@@ -7,10 +7,6 @@ const task = cron.schedule("* * * * *", async () => {
   try {
     const bookings = await Book.findAll();
 
-    if (!bookings || bookings.length <= 0) {
-      res.status(200).json({ message: "No expired book found" });
-    }
-
     const today = new Date();
 
     const expiredBook = bookings.filter((book) => {
@@ -30,8 +26,6 @@ const task = cron.schedule("* * * * *", async () => {
         slot: currentSlot + expiredBook.length,
       });
     });
-
-    res.status(200).json({ message: "Database booking up to date" });
   } catch (error) {
     next(error);
   }
