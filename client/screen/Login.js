@@ -68,111 +68,111 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    // <KeyboardAvoidingView
-    //   behavior={Platform.OS === "ios" ? "padding" : "height"}
-    //   style={styles.container}
-    // >
-    <ScrollView>
-      <View
-        style={{
-          alignItems: "center",
-          marginTop: "30%",
-        }}
-      >
-        <Image
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <ScrollView>
+        <View
           style={{
-            width: 250,
-            height: 250,
-            borderRadius: 200,
-            resizeMode: "cover",
+            alignItems: "center",
+            marginTop: "30%",
           }}
-          source={require("../assets/login-img.jpg")}
-        />
-      </View>
-
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={{ marginTop: 50, paddingLeft: 20, paddingRight: 20 }}>
-          <View style={{ marginBottom: 20 }}>
-            <Text
-              style={{
-                textAlign: "center",
-                color: "#404258",
-                fontSize: 18,
-                fontWeight: "600",
-              }}
-            >
-              Please login to your account
-            </Text>
-          </View>
-          <View>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Enter your email"
-              value={email}
-              onChangeText={setEmail}
-              onSubmitEditing={Keyboard.dismiss}
-            />
-          </View>
-          <View style={{ marginTop: 15 }}>
-            <Text style={styles.label}>Password</Text>
-            <TextInput
-              style={styles.input}
-              passwordRules
-              secureTextEntry={true}
-              keyboardType="visible-password"
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Password"
-              onSubmitEditing={Keyboard.dismiss}
-            />
-          </View>
-          <TouchableOpacity
-            onPress={handleLogin}
+        >
+          <Image
             style={{
-              marginTop: 15,
-              height: 40,
-              borderWidth: 1,
-              padding: 10,
-              backgroundColor: "#404258",
-              borderColor: "#404258",
-              borderRadius: 20,
+              width: 250,
+              height: 250,
+              borderRadius: 200,
+              resizeMode: "cover",
             }}
-          >
-            <Text
-              style={{
-                textAlign: "center",
-                color: "#EDEDED",
-                fontWeight: "400",
-                fontSize: 14,
-              }}
-            >
-              Submit
-            </Text>
-          </TouchableOpacity>
-
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              marginTop: 10,
-              width: "100%",
-            }}
-          >
-            <Text style={{ color: "#6B728E" }}>
-              Don't have an account yet?{" "}
-              <Text
-                style={{ color: "#404258" }}
-                onPress={() => navigation.navigate("Register")}
-              >
-                Sign up
-              </Text>
-            </Text>
-          </View>
+            source={require("../assets/login-img.jpg")}
+          />
         </View>
-      </TouchableWithoutFeedback>
-    </ScrollView>
-    // </KeyboardAvoidingView>
+
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+          <View style={{ marginTop: 50, paddingLeft: 20, paddingRight: 20 }}>
+            <View style={{ marginBottom: 20 }}>
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#404258",
+                  fontSize: 18,
+                  fontWeight: "600",
+                }}
+              >
+                Please login to your account
+              </Text>
+            </View>
+            <View>
+              <Text style={styles.label}>Email</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                onSubmitEditing={Keyboard.dismiss}
+              />
+            </View>
+            <View style={{ marginTop: 15 }}>
+              <Text style={styles.label}>Password</Text>
+              <TextInput
+                style={styles.input}
+                passwordRules
+                secureTextEntry={true}
+                keyboardType="visible-password"
+                value={password}
+                onChangeText={setPassword}
+                placeholder="Password"
+                onSubmitEditing={Keyboard.dismiss}
+              />
+            </View>
+            <TouchableOpacity
+              onPress={handleLogin}
+              style={{
+                marginTop: 15,
+                height: 40,
+                borderWidth: 1,
+                padding: 10,
+                backgroundColor: "#404258",
+                borderColor: "#404258",
+                borderRadius: 20,
+              }}
+            >
+              <Text
+                style={{
+                  textAlign: "center",
+                  color: "#EDEDED",
+                  fontWeight: "400",
+                  fontSize: 14,
+                }}
+              >
+                Submit
+              </Text>
+            </TouchableOpacity>
+
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginTop: 10,
+                width: "100%",
+              }}
+            >
+              <Text style={{ color: "#6B728E" }}>
+                Don't have an account yet?{" "}
+                <Text
+                  style={{ color: "#404258" }}
+                  onPress={() => navigation.navigate("Register")}
+                >
+                  Sign up
+                </Text>
+              </Text>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 };
 export default Login;
