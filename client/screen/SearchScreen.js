@@ -7,17 +7,17 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE, Marker, Callout } from "react-native-maps";
 import * as Location from "expo-location";
 import Search from "../components/Search";
-import ngrok from "../config/apollo";
 import Card from "../components/Card";
 import Constants from "expo-constants";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import { getBoundsOfDistance, getDistance } from "geolib";
-import { useQuery } from "@apollo/client";
-import { GET_VENUES } from "../queries/bookings";
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GET_VENUES, GET_VENUES_BY_ID } from "../queries/bookings";
 
 const SearchScreen = ({ navigation }) => {
   const [pin, setPin] = useState({
@@ -28,14 +28,13 @@ const SearchScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [filteredVenues, seFilteredVenues] = useState([]);
-  // const [venues, setVenues] = useState([]);
   const [clickedPin, setClickedPin] = useState(false);
-  const [venue, setVenue] = useState({});
+
   const map = useRef();
 
   function fitMap() {
     const coordinates = pin;
-    setClicked(false);
+    setClickedPin(false);
 
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
 
@@ -78,6 +77,11 @@ const SearchScreen = ({ navigation }) => {
     })();
   }, []);
 
+  const [
+    getVenueId,
+    { loading: venueLoading, error: venueError, data: venueData },
+  ] = useLazyQuery(GET_VENUES_BY_ID);
+
   const handleVenue = (id, coordinates) => {
     const radiusBoundaries = getBoundsOfDistance(coordinates, 700);
 
@@ -91,7 +95,12 @@ const SearchScreen = ({ navigation }) => {
     });
 
     setClickedPin(true);
-    console.log(id);
+
+    getVenueId({
+      variables: {
+        getVenueByIdId: id,
+      },
+    });
   };
 
   if (loading) {
@@ -140,7 +149,6 @@ const SearchScreen = ({ navigation }) => {
             console.log("Ini lokasi ku");
           }}
           onDragEnd={(e) => {
-            console.log(e.nativeEvent);
             setPin({
               latitude: e.nativeEvent.coordinate.latitude,
               longitude: e.nativeEvent.coordinate.longitude,
@@ -153,13 +161,13 @@ const SearchScreen = ({ navigation }) => {
             <Marker
               key={index}
               coordinate={{
-                latitude: venue.lat,
-                longitude: venue.lng,
+                latitude: +venue.lat,
+                longitude: +venue.lng,
               }}
               onPress={() =>
-                handleVenue(venue.id, {
-                  latitude: venue.lat,
-                  longitude: venue.lng,
+                handleVenue(venue._id, {
+                  latitude: +venue.lat,
+                  longitude: +venue.lng,
                 })
               }
               image={require("../assets/pin-icon.png")}
@@ -193,7 +201,7 @@ const SearchScreen = ({ navigation }) => {
         <FontAwesome5 name="map-marked-alt" color="#fff" size={24} />
       </TouchableOpacity>
 
-      {/* {clickedPin && (
+      {clickedPin && (
         <View
           style={{
             backgroundColor: "#fff",
@@ -215,7 +223,7 @@ const SearchScreen = ({ navigation }) => {
             </TouchableOpacity>
             <View style={{ marginTop: 30, flexDirection: "row" }}>
               <Image
-                source={{ uri: venue.imgVenue }}
+                source={{ uri: venueData?.getVenueById.imgVenue }}
                 style={{
                   width: 70,
                   height: 70,
@@ -227,12 +235,12 @@ const SearchScreen = ({ navigation }) => {
                 <Text
                   style={{ fontSize: 16, fontWeight: "600", color: "#404258" }}
                 >
-                  {venue.name}
+                  {venueData?.getVenueById.name}
                 </Text>
                 <Text
                   style={{ fontSize: 12, fontWeight: "400", color: "#50577A" }}
                 >
-                  {venue.address}
+                  {venueData?.getVenueById.address}
                 </Text>
                 <View
                   style={{
@@ -250,7 +258,7 @@ const SearchScreen = ({ navigation }) => {
                         color: "#50577A",
                       }}
                     >
-                      Booking price: Rp{venue.bookingPrice}
+                      Booking price: Rp {venueData?.getVenueById.bookingPrice}
                     </Text>
                     <Text
                       style={{
@@ -259,7 +267,7 @@ const SearchScreen = ({ navigation }) => {
                         color: "#50577A",
                       }}
                     >
-                      Parking price: Rp{venue.parkingPrice}
+                      Parking price: Rp {venueData?.getVenueById.parkingPrice}
                     </Text>
                   </View>
                   <View
@@ -294,7 +302,9 @@ const SearchScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
               onPress={() =>
-                navigation.navigate("BookScreen", { id: venues.id })
+                navigation.navigate("BookScreen", {
+                  id: venueData?.getVenueById._id,
+                })
               }
             >
               <Text
@@ -305,7 +315,7 @@ const SearchScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      )} */}
+      )}
 
       {clicked && (
         <View

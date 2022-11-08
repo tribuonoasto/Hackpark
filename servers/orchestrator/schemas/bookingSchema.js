@@ -18,6 +18,10 @@ input InputBooking {
     bookingDate: String
 }
 
+input InputBookingId {
+  bookingId: String
+}
+
 type Venue {
     _id: String
     name: String
@@ -70,6 +74,50 @@ type Data {
   message: String
 }
 
+type bookingData {
+  message: String
+  bookingId: String
+}
+
+type Payload {
+    access_token: String
+    id: ID
+    username: String
+    email: String
+}
+
+type User {
+    id:ID
+    username: String
+    email: String
+    password: String
+    fullName: String
+    balance: Int
+    isRegis: Boolean
+    imgUrl: String
+    role: String
+    BalanceHistories: [BalanceHistories]
+    Vehicle: Vehicle
+}
+
+type BalanceHistories {
+    id: ID
+    UserId: ID
+    dateTransaction: String
+    type: String
+    amount: Int
+    status: String
+}
+
+type Vehicle{
+    id: ID
+    UserId: ID
+    plat: String
+    modelName: String
+    name: String
+    imgUrl: String
+}
+
 type Query {
     getVenues:[Venue]
     getVenueById(id:String): Venue
@@ -83,7 +131,8 @@ type Query {
 
 type Mutation {
     rating(rating: InputRating): Data
-    booking(booking: InputBooking): Data
+    booking(booking: InputBooking!): bookingData
+    checkBooking(bookingId: InputBookingId):Data
 }
 `;
 
@@ -539,17 +588,80 @@ const resolvers = {
     booking: async (_, args, context) => {
       try {
         const { booking } = args;
-        const { data } = await axios({
+        const { access_token } = context;
+        const { UserId, SlotId, bookingDate } = booking;
+
+        const { data: user } = await axios({
+          method: "get",
+          url: `${baseUrlUser}/users/${UserId}`,
+          headers: {
+            access_token,
+          },
+        });
+
+        if (!user) throw { name: "user_not_found" };
+
+        const { data: book } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/bookings`,
-          data: { ...booking, access_token: context.access_token },
+          data: {
+            SlotId,
+            bookingDate,
+            UserId,
+          },
         });
-        await redis.del("app:bookings");
 
-        console.log(data);
-        return data;
+        const { data: resp } = await axios({
+          method: "patch",
+          url: `${baseUrlUser}/users/changeBalancePayment`,
+          headers: {
+            access_token,
+          },
+          data: {
+            price: book.price,
+          },
+        });
+
+        if (!resp) {
+          await axios({
+            method: "patch",
+            url: `${baseUrlBooking}/${book.resp._id}`,
+          });
+
+          return { message: "Failed Booking", bookingId: null };
+        }
+        return { message: book.message, bookingId: book.resp.insertedId };
       } catch (error) {
         errorHandling(error);
+      }
+    },
+    checkBooking: async (_, args, context) => {
+      try {
+        const { bookingId } = args;
+        const { access_token } = context;
+
+        const { data: book } = await axios({
+          method: "post",
+          url: `${baseUrlBooking}/bookings/check/${bookingId.bookingId}`,
+        });
+
+        if (book == "Checkout Success") {
+          await axios({
+            method: "patch",
+            url: `${baseUrlUser}/users/changeBalancePayment`,
+            headers: {
+              access_token,
+            },
+            data: {
+              price: book.checkoutPrice,
+            },
+          });
+          return book;
+        }
+
+        return book;
+      } catch (err) {
+        errorHandling(err);
       }
     },
   },

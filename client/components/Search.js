@@ -11,10 +11,8 @@ import {
   TouchableOpacity,
 } from "react-native";
 import Constans from "expo-constants";
-import { useState } from "react";
-const Search = ({ clicked, setClicked, searchPhrase, setSearchPhrase }) => {
-  const [modalVisible, setModalVisible] = useState(false);
 
+const Search = ({ clicked, setClicked, searchPhrase, setSearchPhrase }) => {
   return (
     <TouchableOpacity
       style={styles.container}
@@ -85,7 +83,7 @@ const styles = StyleSheet.create({
     flex: 1,
     position: "absolute",
     top: Constans.statusBarHeight,
-    zIndex: 99,
+    zIndex: 1000,
   },
   searchWrapper: {
     marginTop: 15,
@@ -99,7 +97,7 @@ const styles = StyleSheet.create({
     width: "90%",
     backgroundColor: "#E3E7FA",
     alignSelf: "center",
-    zIndex: 100,
+    zIndex: 1000,
   },
   input: {
     height: 45,
