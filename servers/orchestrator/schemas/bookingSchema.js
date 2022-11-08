@@ -1,6 +1,7 @@
 const axios = require("axios");
 const errorHandling = require("../middlewares/errorHandling");
 const baseUrlBooking = "http://localhost:4002";
+const baseUrlUser = "http://localhost:3000";
 const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
@@ -47,6 +48,8 @@ type Rating {
     UserId: Int
     VenueId: String
     rating: Int
+    User: User
+    Venue: Venue
 }
 
 type Booking {
@@ -354,16 +357,66 @@ const resolvers = {
     },
     getRatings: async () => {
       try {
-        const itemsCache = await redis.get("app:ratings");
+        // const itemsCache = await redis.get("app:ratings");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
-          const { data } = await axios({
+          const { data: ratings } = await axios({
             method: "GET",
-            url: `${baseUrlBooking}/ratings/`,
+            url: `${baseUrlBooking}/ratings`,
           });
-          await redis.set("app:ratings", JSON.stringify(data));
-          return data;
+
+          const { data: venues } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/venues`,
+          });
+
+          const { data: users } = await axios({
+            method: "GET",
+            url: `${baseUrlUser}/users/`,
+          });
+
+          const ratingVenue = ratings.map((rating) => {
+            let venue = venues.filter((venue) => {
+              if (rating.VenueId === venue._id) {
+                return venue;
+              }
+            });
+            if (venue.length === 0) {
+              return {
+                ...rating,
+                Venue: {},
+              };
+            } else {
+              return {
+                ...rating,
+                Venue: venue[0],
+              };
+            }
+          });
+
+          const newRatings = ratingVenue.map((rating) => {
+            let user = users.filter((user) => {
+              if (rating.UserId === user.id) {
+                return user;
+              }
+            });
+            if (user.length === 0) {
+              return {
+                ...rating,
+                User: {},
+              };
+            } else {
+              return {
+                ...rating,
+                User: user[0],
+              };
+            }
+          });
+
+          await redis.set("app:ratings", JSON.stringify(newRatings));
+          return newRatings;
         }
       } catch (error) {
         errorHandling(error);
@@ -372,12 +425,65 @@ const resolvers = {
     getRatingById: async (_, args) => {
       try {
         const { id } = args;
-        const { data } = await axios({
+        const { data: rating } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/ratings/${id}`,
         });
+
+        const { data: venues } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/venues`,
+        });
+
+        const { data: users } = await axios({
+          method: "GET",
+          url: `${baseUrlUser}/users/`,
+        });
+
+        const ratings = [rating];
+
+        const ratingVenue = ratings.map((rating) => {
+          let venue = venues.filter((venue) => {
+            if (rating.VenueId === venue._id) {
+              return venue;
+            }
+          });
+          if (venue.length === 0) {
+            return {
+              ...rating,
+              Venue: {},
+            };
+          } else {
+            return {
+              ...rating,
+              Venue: venue[0],
+            };
+          }
+        });
+
+        const newRatings = ratingVenue.map((rating) => {
+          let user = users.filter((user) => {
+            if (rating.UserId === user.id) {
+              return user;
+            }
+          });
+          if (user.length === 0) {
+            return {
+              ...rating,
+              User: {},
+            };
+          } else {
+            return {
+              ...rating,
+              User: user[0],
+            };
+          }
+        });
+
+        const newRating = newRatings[0];
+
         await redis.del("app:ratings");
-        return data;
+        return newRating;
       } catch (error) {
         errorHandling(error);
       }
