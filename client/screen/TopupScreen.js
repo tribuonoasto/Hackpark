@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import {
   Text,
@@ -10,6 +11,7 @@ import {
 } from "react-native";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import ModalScreenBank from "../components/ModalScreenBank";
+import { TOPUP_BALANCE } from "../queries/user";
 
 const TopupScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,13 +19,23 @@ const TopupScreen = () => {
   const [inputAmount, setInputAmount] = useState(0);
   const [inputBank, setInputBank] = useState("");
   const [bankName, setBankName] = useState("Select a top up method");
+  const [topupBalance, { data, loading, error }] = useMutation(TOPUP_BALANCE);
 
   const handleSubmit = () => {
     Keyboard.dismiss();
     setClicked(false);
 
-    console.log(inputAmount, inputBank, "done");
+    topupBalance({
+      variables: {
+        payment: {
+          totalPrice: +inputAmount,
+          paymentStatus: "done",
+          bank: inputBank,
+        },
+      },
+    });
   };
+  console.log(data, loading, error);
 
   const handleModal = (codeName, bank) => {
     setModalVisible(true);

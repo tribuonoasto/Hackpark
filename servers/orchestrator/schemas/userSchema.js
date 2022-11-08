@@ -93,10 +93,10 @@ type Mutation {
     register(register: InputRegister): Data
     delete(access_token:String): Data
     changeUsername(access_token:String, username:String): Data
-    changeBalance(access_token:String, price:Int): Data
+    changeBalance(price:Int): Data
     vehicle(access_token:String, vehicle: InputVehicle ): Data
     deleteVehicle(access_token:String, id:ID): Data
-    payment(access_token:String,totalPrice:Int,paymentStatus:String,bank:String):MidtransResp
+    payment(totalPrice:Int,paymentStatus:String,bank:String):MidtransResp
 }
 `;
 
@@ -249,9 +249,9 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    changeBalance: async (_, args) => {
+    changeBalance: async (_, args, context) => {
       try {
-        const { access_token, price } = args;
+        const { price } = args;
 
         const params = new URLSearchParams();
         params.append("price", price);
@@ -260,7 +260,7 @@ const resolvers = {
           method: "PATCH",
           url: `${baseUrlUser}/users/changeBalancePayment`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
             "Content-Type": "application/x-www-form-urlencoded",
           },
           data: params,
@@ -304,14 +304,15 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    payment: async (_, args) => {
+    payment: async (_, args, context) => {
       try {
-        const { access_token, totalPrice, paymentStatus, bank } = args;
+        const { totalPrice, paymentStatus, bank } = args;
+        console.log(totalPrice, paymentStatus, bank);
         const { data } = await axios({
           method: "post",
           url: `${baseUrlUser}/balances/payment`,
           headers: {
-            access_token,
+            access_token: context.access_token,
           },
           data: {
             totalPrice,
@@ -319,9 +320,10 @@ const resolvers = {
             bank,
           },
         });
+        console.log(data);
         return data;
       } catch (err) {
-        errorHandling(error);
+        errorHandling(err);
       }
     },
   },
