@@ -294,7 +294,7 @@ class BookingController {
 
       const book = await Book.destroy(id);
 
-      if (book.value) throw { name: "booking_not_found" };
+      if (!book.value) throw { name: "booking_not_found" };
 
       res.status(200).json({ message: "success delete" });
     } catch (err) {
