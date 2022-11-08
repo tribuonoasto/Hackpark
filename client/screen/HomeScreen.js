@@ -16,15 +16,34 @@ import {
   FontAwesome,
 } from "react-native-vector-icons";
 import Card from "../components/Card";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
 import { useEffect, useState } from "react";
 import * as Location from "expo-location";
+import { GET_USER_BY_ID } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
 
   const { loading, error, data } = useQuery(GET_VENUES);
+  const [
+    getUserId,
+    { loading: userLoading, error: userError, data: userData },
+  ] = useLazyQuery(GET_USER_BY_ID);
+
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+      getUserId({
+        variables: {
+          getUserByIdId: id,
+        },
+      });
+    })();
+  }, []);
+
+  console.log(userLoading, userError, userData);
 
   useEffect(() => {
     (async () => {
@@ -45,7 +64,7 @@ const HomeScreen = ({ navigation }) => {
     })();
   }, []);
 
-  if (loading) {
+  if (loading || userLoading) {
     return (
       <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
         <ActivityIndicator size="large" color="red" />
@@ -83,11 +102,7 @@ const HomeScreen = ({ navigation }) => {
                 >
                   <Entypo name="location-pin" color="#A1A9CC" size={24} />
                   {!location ? (
-                    <Text
-                      style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
-                    >
-                      Jakarta, Indonesia
-                    </Text>
+                    <View></View>
                   ) : (
                     <Text
                       style={{ color: "#D9D9D9", fontSize: 18, marginLeft: 5 }}
@@ -101,7 +116,11 @@ const HomeScreen = ({ navigation }) => {
                 onPress={() => navigation.navigate("UserScreen")}
               >
                 <Image
-                  source={require("../assets/user.jpg")}
+                  source={
+                    userLoading || userData?.getUserById.imgUrl === null
+                      ? require("../assets/user.jpg")
+                      : { uri: userData?.getUserById.imgUrl }
+                  }
                   style={{ width: 50, height: 50, borderRadius: 100 }}
                 />
               </TouchableOpacity>
@@ -190,7 +209,7 @@ const HomeScreen = ({ navigation }) => {
               <Text
                 style={{ marginTop: 10, color: "#50577A", fontWeight: "600" }}
               >
-                Rp10.000
+                Rp {userData?.getUserById.balance}
               </Text>
             </View>
             <TouchableOpacity
