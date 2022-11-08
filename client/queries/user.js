@@ -100,3 +100,11 @@ export const LOGIN = gql`
     }
   }
 `;
+
+export const REGISTER = gql`
+  mutation Register($register: InputRegister) {
+    register(register: $register) {
+      message
+    }
+  }
+`;
