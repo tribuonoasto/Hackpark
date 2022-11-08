@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -24,8 +25,6 @@ const BookScreen = ({ route, navigation }) => {
   const [name, setName] = useState("Area");
   const [saldo, setSaldo] = useState(10000);
   const [showSlot, setShowSlot] = useState(false);
-  const [venue, setVenue] = useState();
-  const [venueId, setVenueId] = useState([]);
   const [
     booking,
     { data: bookingData, loading: bookingLoading, error: bookingError },
@@ -36,17 +35,15 @@ const BookScreen = ({ route, navigation }) => {
     loading: venueLoading,
     error: venueError,
     data: venueData,
+    refetch: venueRefetch,
   } = useQuery(GET_VENUES_BY_ID, {
     variables: { getVenueByIdId: id },
   });
 
-  useEffect(() => {
-    setVenueId(venueData);
-  }, [venueData]);
-
-  console.log(venueId.getVenueById.Slots);
-
-  const { loading, error, data } = useQuery(GET_SLOTS);
+  const { loading, error, data, refetch } = useQuery(GET_SLOTS, {
+    refetchOnWindowFocus: false,
+    enabled: false, // disable this query from automatically running
+  });
   const venues = data?.getSlots.filter((slot) => {
     if (slot.VenueId === id && slot.slot > 0 && slot.slot !== null) return slot;
   });
@@ -113,9 +110,6 @@ const BookScreen = ({ route, navigation }) => {
 
     if (answer === "sure") {
       setModalVisible(false);
-      console.log(date, slotRes[0]._id, userId);
-
-      console.log(+userId);
       booking({
         variables: {
           booking: {
@@ -124,17 +118,42 @@ const BookScreen = ({ route, navigation }) => {
             UserId: +userId,
           },
         },
+      }).then(() => {
+        refetch();
+        venueRefetch();
+        navigation.navigate("OrderDetail");
       });
-
-      console.log(bookingData, bookingError, bookingLoading);
     }
   };
-
-  console.log(slotRes);
 
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
+
+  if (bookingLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ededed",
+        }}
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            fontWeight: "600",
+            fontSize: 24,
+            marginBottom: 20,
+          }}
+        >
+          Processing your booking
+        </Text>
         <ActivityIndicator size="large" color="red" />
       </View>
     );

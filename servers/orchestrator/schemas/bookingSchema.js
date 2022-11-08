@@ -225,7 +225,8 @@ const resolvers = {
     },
     getSlots: async () => {
       try {
-        const itemsCache = await redis.get("app:slots");
+        // const itemsCache = await redis.get("app:slots");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
