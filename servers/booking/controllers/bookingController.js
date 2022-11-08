@@ -287,6 +287,20 @@ class BookingController {
       next(error);
     }
   }
+
+  static async destroy(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const book = await Book.destroy(id);
+
+      if (book.value) throw { name: "booking_not_found" };
+
+      res.status(200).json({ message: "success delete" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = BookingController;
