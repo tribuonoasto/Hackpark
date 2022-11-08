@@ -15,17 +15,24 @@ const task = cron.schedule("* * * * *", async () => {
       }
     });
 
-    expiredBook.forEach(async (el) => {
-      const bookingId = el._id.toString();
-      await Book.editBooking(bookingId, {
+    const bookPromise = expiredBook.map((book) => {
+      const bookingId = book._id.toString();
+      return Book.editBooking(bookingId, {
         transactionStatus: "Expired",
       });
-      const checkSlot = await Slot.findOne(el.SlotId);
+    });
+
+    Promise.allSettled(bookPromise);
+
+    expiredBook.forEach(async (el) => {
+      const checkSlot = await Slot.findOne(el.SlotId.toString());
       const currentSlot = checkSlot.slot + 1;
       await Slot.editSlot(el.SlotId, {
         slot: currentSlot,
       });
     });
+
+    console.log("cron jalan");
   } catch (error) {
     next(error);
   }

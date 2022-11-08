@@ -1,9 +1,14 @@
 var cron = require("node-cron");
 const Book = require("../models/booking");
 const Slot = require("../models/slot");
+const format = require("date-fns/format");
+const addDays = require("date-fns/addDays");
 
-const taskSlot = cron.schedule("*/10 * * * * *", async () => {
+const taskSlot = cron.schedule("* */23 * * *", async () => {
   try {
+    const today = format(new Date(), "yyyy-MM-dd");
+    const tommorrow = format(addDays(new Date(), 1), "yyyy-MM-dd");
+
     const slots = await Slot.findAllSlotBook({
       $lookup: {
         from: "bookings",
@@ -18,8 +23,8 @@ const taskSlot = cron.schedule("*/10 * * * * *", async () => {
             $match: {
               $expr: {
                 $and: [
-                  { $gte: ["$bookingDate", new Date("2022-11-08")] },
-                  { $lt: ["$bookingDate", new Date("2022-11-11")] },
+                  { $gte: ["$bookingDate", new Date(today)] },
+                  { $lt: ["$bookingDate", new Date(tommorrow)] },
                 ],
               },
             },
@@ -35,56 +40,7 @@ const taskSlot = cron.schedule("*/10 * * * * *", async () => {
     });
 
     Promise.allSettled(slotPromise);
-
     console.log("cron jalan");
-
-    // const bookings = await Book.findAllBookSlot(
-    //   {
-    //     $lookup: {
-    //       from: "slots",
-    //       localField: "SlotId",
-    //       foreignField: "_id",
-    //       as: "myslot",
-    //     },
-    //   },
-    //   { $limit: 1 }
-    // );
-
-    // const date = new Date();
-
-    // let day = date.getDate();
-    // let month = date.getMonth() + 1;
-    // let year = date.getFullYear();
-
-    // let currentDate = `${day}-${month}-${year}`;
-
-    // const todayBooked = bookings.filter((book) => {
-    //   const dateBook = book.bookingDate;
-    //   let dayBook = dateBook.getDate();
-    //   let monthBook = dateBook.getMonth() + 1;
-    //   let yearBook = dateBook.getFullYear();
-
-    //   let dateBooking = `${dayBook}-${monthBook}-${yearBook}`;
-
-    //   if (currentDate === dateBooking) {
-    //     return book;
-    //   }
-    // });
-
-    // const slotPromise = todayBooked.map((book) => {
-    //   console.log(book);
-    //   return Slot.editSlot(book.myslot[0]._id.toString(), {
-    //     slot: book.myslot[0].slot - 1,
-    //   });
-    // });
-    // Promise.allSettled(slotPromise);
-    // todayBooked.forEach(async (el) => {
-    //   const checkSlot = await Slot.findOne(el.SlotId);
-    //   const currentSlot = checkSlot.slot - 1;
-    //   await Slot.editSlot(el.SlotId, {
-    //     slot: currentSlot,
-    //   });
-    // });
   } catch (error) {
     console.log(error);
     next(error);
