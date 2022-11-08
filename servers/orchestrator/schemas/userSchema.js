@@ -321,7 +321,7 @@ const resolvers = {
         });
         return data;
       } catch (err) {
-        errorHandling(error);
+        errorHandling(err);
       }
     },
   },

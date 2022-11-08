@@ -59,6 +59,15 @@ class Book {
     }
   }
 
+  static async destroy(data) {
+    try {
+      const collection = getDB().collection("bookings");
+      return await collection.findOneAndDelete({ _id: ObjectId(data) });
+    } catch (err) {
+      throw err;
+    }
+  }
+
   static async findAllBookSlot(options) {
     try {
       const collection = getDB().collection("bookings");

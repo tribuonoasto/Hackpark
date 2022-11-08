@@ -13,25 +13,14 @@ class BookingController {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
-        const { UserId, SlotId, bookingDate, access_token } = req.body;
+        const { UserId, SlotId, bookingDate } = req.body;
 
-        console.log(req.body);
-
-        if (!UserId || !SlotId || !access_token) {
+        if (!UserId || !SlotId) {
           throw {
             name: "invalid_validation",
             msg: "Invalid Input",
           };
         }
-
-        //// AXIOS CEK USER ID
-        await axios({
-          method: "get",
-          url: `${baseUrlLocalUser}/users/${UserId}`,
-          headers: {
-            access_token,
-          },
-        });
 
         //// CEK SLOT
         const checkSlot = await Slot.findOne(SlotId);
@@ -75,18 +64,6 @@ class BookingController {
         const venuePrice = checkVenue.bookingPrice;
         const multiplierPrice = await Venue.findOnePrice(priceAdjuster);
         const bookPrice = venuePrice * multiplierPrice.value;
-
-        // PAYMENT WITH BALANCE
-        const respaxios = await axios({
-          method: "patch",
-          url: `${baseUrlLocalUser}/users/changeBalancePayment`,
-          headers: {
-            access_token,
-          },
-          data: {
-            price: bookPrice,
-          },
-        });
 
         //// CREATE BOOKING
 
@@ -154,7 +131,9 @@ class BookingController {
             name: "invalid_Book",
             msg: "Error when booking parking slot",
           };
-        res.status(201).json({ message: "slot booked" });
+        res
+          .status(201)
+          .json({ message: "slot booked", price: bookPrice, resp });
       });
     } catch (error) {
       next(error);
@@ -168,9 +147,9 @@ class BookingController {
     try {
       await session.withTransaction(async () => {
         const { bookingId } = req.params;
-        const { access_token } = req.body;
 
         const checkBooking = await Book.findOne(bookingId);
+        console.log(checkBooking);
 
         if (!checkBooking) throw { name: "booking_not_found" };
 
@@ -241,18 +220,6 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when totalling price" };
           }
 
-          // PAYMENT WITH BALANCE
-          await axios({
-            method: "patch",
-            url: `${baseUrlLocalUser}/users/changeBalancePayment`,
-            headers: {
-              access_token,
-            },
-            data: {
-              price: checkoutPrice,
-            },
-          });
-
           const newBooking = await Book.editBooking(
             bookingId,
             {
@@ -272,7 +239,7 @@ class BookingController {
             slot: currentSlot + 1,
           });
 
-          res.status(200).json({ message: "Checkout Success" });
+          res.status(200).json({ message: "Checkout Success", checkoutPrice });
         }
       });
     } catch (error) {
@@ -305,6 +272,39 @@ class BookingController {
       res.status(200).json(book);
     } catch (error) {
       next(error);
+    }
+  }
+
+  static async destroy(req, res, next) {
+    try {
+      const { id } = req.params;
+
+      const book = await Book.destroy(id);
+
+      if (!book.value) throw { name: "booking_not_found" };
+
+      res.status(200).json({ message: "success delete" });
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  static async failedBooking(req, res, next) {
+    const session = client.startSession();
+    try {
+      const { id } = req.params;
+
+      await Book.editBooking(
+        id,
+        {
+          transactionStatus: "failed",
+        },
+        { session }
+      );
+
+      res.status(200).json({ message: "success" });
+    } catch (err) {
+      next(err);
     }
   }
 }
