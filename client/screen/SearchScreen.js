@@ -28,7 +28,7 @@ const SearchScreen = ({ navigation }) => {
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
   const [filteredVenues, seFilteredVenues] = useState([]);
-  const [venues, setVenues] = useState([]);
+  // const [venues, setVenues] = useState([]);
   const [clickedPin, setClickedPin] = useState(false);
   const [venue, setVenue] = useState({});
   const map = useRef();
@@ -49,14 +49,11 @@ const SearchScreen = ({ navigation }) => {
     });
   }
 
-  useEffect(() => {
-    const { loading, error, data } = useQuery(GET_VENUES);
-    console.log(loading, error, data);
-  }, []);
+  const { loading, error, data } = useQuery(GET_VENUES);
 
   useEffect(() => {
     if (searchPhrase) {
-      const tempVenues = venues.filter((venue) => {
+      const tempVenues = data?.getVenues.filter((venue) => {
         return venue.name.toLowerCase().includes(searchPhrase.toLowerCase());
       });
 
@@ -94,10 +91,16 @@ const SearchScreen = ({ navigation }) => {
     });
 
     setClickedPin(true);
-    fetch(`${ngrok}/venues/${id}`)
-      .then((response) => response.json())
-      .then((json) => setVenue(json));
+    console.log(id);
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -137,6 +140,7 @@ const SearchScreen = ({ navigation }) => {
             console.log("Ini lokasi ku");
           }}
           onDragEnd={(e) => {
+            console.log(e.nativeEvent);
             setPin({
               latitude: e.nativeEvent.coordinate.latitude,
               longitude: e.nativeEvent.coordinate.longitude,
@@ -144,10 +148,10 @@ const SearchScreen = ({ navigation }) => {
           }}
         ></Marker>
 
-        {venues.map((venue) => {
+        {data?.getVenues.map((venue, index) => {
           return (
             <Marker
-              key={venue.id}
+              key={index}
               coordinate={{
                 latitude: venue.lat,
                 longitude: venue.lng,
@@ -189,7 +193,7 @@ const SearchScreen = ({ navigation }) => {
         <FontAwesome5 name="map-marked-alt" color="#fff" size={24} />
       </TouchableOpacity>
 
-      {clickedPin && (
+      {/* {clickedPin && (
         <View
           style={{
             backgroundColor: "#fff",
@@ -301,7 +305,7 @@ const SearchScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
         </View>
-      )}
+      )} */}
 
       {clicked && (
         <View
