@@ -157,8 +157,9 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getVenueById: async (_, args) => {
+    getVenueById: async (_, args, context) => {
       try {
+        console.log(context);
         const { id } = args;
         const { data: venue } = await axios({
           method: "GET",
