@@ -85,12 +85,12 @@ type Query {
     getUserById(id:ID, access_token:String):User
     getBalance(access_token:String):[BalanceHistories]
     getVehicle(access_token:String):[Vehicle]
+    verify(id:ID): Data
 }
 
 type Mutation {
     login(login: InputLogin): Payload
     register(register: InputRegister): Data
-    verify(id:ID): Data
     delete(access_token:String): Data
     changeUsername(access_token:String, username:String): Data
     changeBalance(access_token:String, price:Int): Data
