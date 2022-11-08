@@ -26,8 +26,8 @@ type Venue {
     _id: String
     name: String
     address: String
-    lat: Int
-    lng: Int
+    lat: String
+    lng: String
     parkingPrice: Int
     bookingPrice: Int
     imgVenue: String
@@ -140,7 +140,8 @@ const resolvers = {
   Query: {
     getVenues: async () => {
       try {
-        const itemsCache = await redis.get("app:venues");
+        // const itemsCache = await redis.get("app:venues");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -273,7 +274,8 @@ const resolvers = {
     },
     getSlots: async () => {
       try {
-        const itemsCache = await redis.get("app:slots");
+        // const itemsCache = await redis.get("app:slots");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -538,7 +540,8 @@ const resolvers = {
     },
     getBookings: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings");
+        // const itemsCache = await redis.get("app:bookings");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -582,7 +585,7 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    booking: async (_, args, context) => {
+    booking: async (_, args) => {
       try {
         const { booking } = args;
         const { access_token } = context;
@@ -601,33 +604,10 @@ const resolvers = {
         const { data: book } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/bookings`,
-          data: {
-            SlotId,
-            bookingDate,
-            UserId,
-          },
+          data: booking,
         });
-
-        const { data: resp } = await axios({
-          method: "patch",
-          url: `${baseUrlUser}/users/changeBalancePayment`,
-          headers: {
-            access_token,
-          },
-          data: {
-            price: book.price,
-          },
-        });
-
-        if (!resp) {
-          await axios({
-            method: "patch",
-            url: `${baseUrlBooking}/${book.resp._id}`,
-          });
-
-          return { message: "Failed Booking", bookingId: null };
-        }
-        return { message: book.message, bookingId: book.resp.insertedId };
+        await redis.del("app:bookings");
+        return data;
       } catch (error) {
         errorHandling(error);
       }

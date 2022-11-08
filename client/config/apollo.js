@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { TurboModuleRegistry } from "react-native";
 
 const httpLink = createHttpLink({
-  uri: "https://bb5e-94-198-43-56.ap.ngrok.io/",
+  uri: "https://28d5-110-232-80-69.ap.ngrok.io/",
 });
 
 const authLink = setContext(async (_, { headers }) => {

@@ -104,7 +104,8 @@ const resolvers = {
   Query: {
     getUsers: async () => {
       try {
-        const itemsCache = await redis.get("app:users");
+        // const itemsCache = await redis.get("app:users");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -119,14 +120,15 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getUserById: async (_, args) => {
+    getUserById: async (_, args, context) => {
       try {
-        const { id, access_token } = args;
+        const { id } = args;
+
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/users/${id}`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");
@@ -319,7 +321,7 @@ const resolvers = {
         });
         return data;
       } catch (err) {
-        errorHandling(error);
+        errorHandling(err);
       }
     },
   },

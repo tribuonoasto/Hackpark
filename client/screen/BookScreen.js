@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -6,41 +7,14 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalScreen from "../components/ModalScreen";
 import ModalScreenSlot from "../components/ModalScreenSlot";
-
-const slotData = [
-  {
-    _id: "6364c5698b3a2b673173d4e1",
-    VenueId: 1,
-    slot: 104,
-    floor: 1,
-    name: "A1",
-  },
-  {
-    _id: "6364c5e38b3a2b673173d4e2",
-    VenueId: 1,
-    slot: 80,
-    floor: 1,
-    name: "A2",
-  },
-  {
-    _id: "6364c5e38b3a2b673173d4e3",
-    VenueId: 2,
-    slot: 90,
-    floor: 2,
-    name: "B1",
-  },
-  {
-    _id: "6364c5e38b3a2b673173d4e3",
-    VenueId: 2,
-    slot: 10,
-    floor: 2,
-    name: "B2",
-  },
-];
+import { useMutation, useQuery } from "@apollo/client";
+import { BOOKINGS, GET_SLOTS, GET_VENUES_BY_ID } from "../queries/bookings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BookScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -51,24 +25,30 @@ const BookScreen = ({ route, navigation }) => {
   const [name, setName] = useState("Area");
   const [saldo, setSaldo] = useState(10000);
   const [showSlot, setShowSlot] = useState(false);
+  const [
+    booking,
+    { data: bookingData, loading: bookingLoading, error: bookingError },
+  ] = useMutation(BOOKINGS);
   const { id } = route.params;
 
-  const venues = slotData.filter((slot) => slot.VenueId === id);
+  const {
+    loading: venueLoading,
+    error: venueError,
+    data: venueData,
+    refetch: venueRefetch,
+  } = useQuery(GET_VENUES_BY_ID, {
+    variables: { getVenueByIdId: id },
+  });
 
-  const venue = venues.filter((el) => el.name === name);
+  const { loading, error, data, refetch } = useQuery(GET_SLOTS, {
+    refetchOnWindowFocus: false,
+    enabled: false, // disable this query from automatically running
+  });
+  const venues = data?.getSlots.filter((slot) => {
+    if (slot.VenueId === id && slot.slot > 0 && slot.slot !== null) return slot;
+  });
 
-  const handleSubmit = (answer) => {
-    setModalVisible(true);
-
-    if (answer === "no") {
-      return setModalVisible(false);
-    }
-
-    if (answer === "sure") {
-      setModalVisible(false);
-      console.log(date, venue[0]._id);
-    }
-  };
+  const slotRes = venues?.filter((el) => el.name === name);
 
   const onPressDate = () => {
     let isValidDate = Date.parse(textDate);
@@ -78,6 +58,7 @@ const BookScreen = ({ route, navigation }) => {
       onChangeDate(new Date());
     }
   };
+
   const onPressTime = () => {
     let isValidDate = Date.parse(textTime);
     showMode("time");
@@ -117,6 +98,66 @@ const BookScreen = ({ route, navigation }) => {
   const showMode = (currentMode) => {
     setMode(currentMode);
   };
+
+  const handleSubmit = async (answer) => {
+    setModalVisible(true);
+
+    const userId = await AsyncStorage.getItem("id");
+
+    if (answer === "no") {
+      return setModalVisible(false);
+    }
+
+    if (answer === "sure") {
+      setModalVisible(false);
+      booking({
+        variables: {
+          booking: {
+            bookingDate: date,
+            SlotId: slotRes[0]._id,
+            UserId: +userId,
+          },
+        },
+      }).then(() => {
+        refetch();
+        venueRefetch();
+        navigation.navigate("OrderDetail");
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
+
+  if (bookingLoading) {
+    return (
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#ededed",
+        }}
+      >
+        <Text
+          style={{
+            textAlign: "center",
+            fontWeight: "600",
+            fontSize: 24,
+            marginBottom: 20,
+          }}
+        >
+          Processing your booking
+        </Text>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -183,7 +224,11 @@ const BookScreen = ({ route, navigation }) => {
             }}
           >
             <Image
-              source={require("../assets/parking-img.jpg")}
+              source={
+                venueLoading
+                  ? require("../assets/parking-img.jpg")
+                  : { uri: venueData.getVenueById.imgVenue }
+              }
               style={{
                 width: 100,
                 height: 100,
@@ -201,12 +246,12 @@ const BookScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 18, fontWeight: "600", color: "#50577A" }}
               >
-                Indomaret
+                {venueLoading ? "Venue" : venueData.getVenueById.name}
               </Text>
               <Text
                 style={{ fontSize: 12, fontWeight: "300", color: "#6B728E" }}
               >
-                Jln. in aja dulu
+                {venueLoading ? "Address" : venueData.getVenueById.address}
               </Text>
             </View>
             <View

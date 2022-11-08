@@ -4,15 +4,14 @@ export const GET_VENUES = gql`
   query GetVenues {
     getVenues {
       _id
-      name
-      slot
       address
+      bookingPrice
+      description
+      imgVenue
       lat
       lng
+      name
       parkingPrice
-      bookingPrice
-      imgVenue
-      description
     }
   }
 `;
@@ -20,16 +19,19 @@ export const GET_VENUES = gql`
 export const GET_VENUES_BY_ID = gql`
   query GetVenueById($getVenueByIdId: String) {
     getVenueById(id: $getVenueByIdId) {
+      Slots {
+        _id
+        floor
+        name
+        slot
+      }
       _id
-      name
-      slot
       address
-      lat
-      lng
-      parkingPrice
       bookingPrice
-      imgVenue
       description
+      imgVenue
+      name
+      parkingPrice
     }
   }
 `;
@@ -37,11 +39,11 @@ export const GET_VENUES_BY_ID = gql`
 export const GET_SLOTS = gql`
   query GetSlots {
     getSlots {
-      _id
       VenueId
-      slot
+      _id
       floor
       name
+      slot
     }
   }
 `;
@@ -114,6 +116,14 @@ export const GET_BOOKINGS_BY_ID = gql`
       PriceAdjusterId
       totalPrice
       imgQrCode
+    }
+  }
+`;
+
+export const BOOKINGS = gql`
+  mutation Mutation($booking: InputBooking) {
+    booking(booking: $booking) {
+      message
     }
   }
 `;

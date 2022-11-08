@@ -7,27 +7,20 @@ import {
   TouchableOpacity,
   ActivityIndicator,
 } from "react-native";
-import { useEffect, useState } from "react";
-import ngrok from "../config/apollo";
+import { useQuery } from "@apollo/client";
+import { GET_VENUES_BY_ID } from "../queries/bookings";
 
 const DetailScreen = ({ route, navigation }) => {
-  const [venues, setVenues] = useState({});
-  const [loading, setLoading] = useState(true);
   const { id } = route.params;
 
-  useEffect(() => {
-    fetch(`${ngrok}/venues/${id}`)
-      .then((response) => response.json())
-      .then((res) => {
-        setVenues(res);
-        setLoading(false);
-      });
-  }, []);
+  const { loading, error, data } = useQuery(GET_VENUES_BY_ID, {
+    variables: { getVenueByIdId: id },
+  });
 
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#404258" />
+        <ActivityIndicator size="large" color="red" />
       </View>
     );
   }
@@ -35,7 +28,7 @@ const DetailScreen = ({ route, navigation }) => {
   return (
     <View style={{ flex: 1 }}>
       <Image
-        source={{ uri: venues.imgVenue }}
+        source={{ uri: data.getVenueById.imgVenue }}
         style={{
           width: "100%",
           height: "100%",
@@ -68,7 +61,7 @@ const DetailScreen = ({ route, navigation }) => {
         >
           <View>
             <Text style={{ fontSize: 28, color: "#404258", fontWeight: "600" }}>
-              {venues.name}
+              {data.getVenueById.name}
             </Text>
 
             <Text
@@ -79,7 +72,7 @@ const DetailScreen = ({ route, navigation }) => {
                 marginTop: 5,
               }}
             >
-              IDR{venues.bookingPrice}
+              IDR{data.getVenueById.bookingPrice}
             </Text>
           </View>
           <View
@@ -110,7 +103,7 @@ const DetailScreen = ({ route, navigation }) => {
               lineHeight: 13 * 1.5,
             }}
           >
-            {venues.description}
+            {data.getVenueById.description}
           </Text>
           <View style={{ marginTop: 10 }}>
             <Text style={{ fontSize: 18, fontWeight: "500", color: "#474E68" }}>
@@ -118,7 +111,7 @@ const DetailScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 12, color: "#6B728E", fontWeight: "400" }}
               >
-                {venues.address}
+                {data.getVenueById.address}
               </Text>
             </Text>
 
@@ -145,7 +138,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   First hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {venues.bookingPrice}
+                    IDR {data.getVenueById.bookingPrice}
                   </Text>
                 </Text>
                 <Text
@@ -153,7 +146,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   Next hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {venues.parkingPrice}
+                    IDR {data.getVenueById.parkingPrice}
                   </Text>
                 </Text>
               </View>
@@ -171,7 +164,9 @@ const DetailScreen = ({ route, navigation }) => {
             paddingVertical: 15,
             borderRadius: 40,
           }}
-          onPress={() => navigation.navigate("BookScreen", { id: venues.id })}
+          onPress={() =>
+            navigation.navigate("BookScreen", { id: data.getVenueById._id })
+          }
         >
           <Text style={{ color: "#EDEDED", fontSize: 24, fontWeight: "600" }}>
             Book Now
