@@ -585,7 +585,7 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    booking: async (_, args) => {
+    booking: async (_, args, context) => {
       try {
         const { booking } = args;
         const { access_token } = context;
@@ -604,10 +604,33 @@ const resolvers = {
         const { data: book } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/bookings`,
-          data: booking,
+          data: {
+            SlotId,
+            bookingDate,
+            UserId,
+          },
         });
-        await redis.del("app:bookings");
-        return data;
+
+        const { data: resp } = await axios({
+          method: "patch",
+          url: `${baseUrlUser}/users/changeBalancePayment`,
+          headers: {
+            access_token,
+          },
+          data: {
+            price: book.price,
+          },
+        });
+
+        if (!resp) {
+          await axios({
+            method: "patch",
+            url: `${baseUrlBooking}/${book.resp._id}`,
+          });
+
+          return { message: "Failed Booking", bookingId: null };
+        }
+        return { message: book.message, bookingId: book.resp.insertedId };
       } catch (error) {
         errorHandling(error);
       }
