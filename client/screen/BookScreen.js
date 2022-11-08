@@ -31,6 +31,8 @@ const BookScreen = ({ route, navigation }) => {
   ] = useMutation(BOOKINGS);
   const { id } = route.params;
 
+  console.log(id);
+
   const {
     loading: venueLoading,
     error: venueError,
@@ -39,6 +41,8 @@ const BookScreen = ({ route, navigation }) => {
   } = useQuery(GET_VENUES_BY_ID, {
     variables: { getVenueByIdId: id },
   });
+
+  console.log(venueData);
 
   const { loading, error, data, refetch } = useQuery(GET_SLOTS, {
     refetchOnWindowFocus: false,
@@ -121,7 +125,7 @@ const BookScreen = ({ route, navigation }) => {
       }).then(() => {
         refetch();
         venueRefetch();
-        navigation.navigate("OrderDetail");
+        // navigation.navigate("OrderDetail");
       });
     }
   };
@@ -227,7 +231,7 @@ const BookScreen = ({ route, navigation }) => {
               source={
                 venueLoading
                   ? require("../assets/parking-img.jpg")
-                  : { uri: venueData.getVenueById.imgVenue }
+                  : { uri: venueData?.getVenueById.imgVenue }
               }
               style={{
                 width: 100,
@@ -246,12 +250,12 @@ const BookScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 18, fontWeight: "600", color: "#50577A" }}
               >
-                {venueLoading ? "Venue" : venueData.getVenueById.name}
+                {venueLoading ? "Venue" : venueData?.getVenueById.name}
               </Text>
               <Text
                 style={{ fontSize: 12, fontWeight: "300", color: "#6B728E" }}
               >
-                {venueLoading ? "Address" : venueData.getVenueById.address}
+                {venueLoading ? "Address" : venueData?.getVenueById.address}
               </Text>
             </View>
             <View
