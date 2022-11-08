@@ -31,6 +31,42 @@ class Book {
     }
   }
 
+  static async editBookingPrice(id, payload, session) {
+    try {
+      const collection = getDB().collection("bookings");
+      const _id = ObjectId(id);
+
+      const resp = await collection.updateOne(
+        { _id },
+        {
+          $set: payload,
+        },
+        session
+      );
+      return resp;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async editBookingStatus(id, payload, session) {
+    try {
+      const collection = getDB().collection("bookings");
+      const _id = ObjectId(id);
+
+      const resp = await collection.updateOne(
+        { _id },
+        {
+          $set: payload,
+        },
+        session
+      );
+      return resp;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   static async findOne(id) {
     try {
       const collection = getDB().collection("bookings");
@@ -65,17 +101,6 @@ class Book {
       return await collection.findOneAndDelete({ _id: ObjectId(data) });
     } catch (err) {
       throw err;
-    }
-  }
-
-  static async findAllBookSlot(options) {
-    try {
-      const collection = getDB().collection("bookings");
-
-      const bookings = await collection.aggregate([options]).toArray();
-      return bookings;
-    } catch (error) {
-      throw error;
     }
   }
 }

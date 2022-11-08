@@ -208,7 +208,7 @@ class BookingController {
             checkVenue.parkingPrice * (checkHour ? checkHour : 1);
           const newPrice = checkBooking.totalPrice + checkoutPrice;
 
-          const payBooking = await Book.editBooking(
+          const payBooking = await Book.editBookingPrice(
             bookingId,
             {
               totalPrice: newPrice,
@@ -220,7 +220,7 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when totalling price" };
           }
 
-          const newBooking = await Book.editBooking(
+          const newBooking = await Book.editBookingStatus(
             bookingId,
             {
               transactionStatus: "Done",
@@ -294,13 +294,20 @@ class BookingController {
     try {
       const { id } = req.params;
 
-      await Book.editBooking(
+      const resp = await Book.editBooking(
         id,
         {
           transactionStatus: "failed",
         },
         { session }
       );
+
+      if (!resp.acknowledged) {
+        throw {
+          name: "invalid_Book",
+          msg: "Error when check-outchange status",
+        };
+      }
 
       res.status(200).json({ message: "success" });
     } catch (err) {

@@ -23,9 +23,6 @@ const errorHandler = (err, req, res, next) => {
   } else if (err.name === "already_paid") {
     code = 400;
     message = "This transaction is already paid";
-  } else if (err.name === "invalid_rating") {
-    code = 400;
-    message = "Error when rating venue";
   } else if (err.name === "rating_not_found") {
     code = 404;
     message = "Rating Not Found";
