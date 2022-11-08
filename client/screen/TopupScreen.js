@@ -1,3 +1,4 @@
+import { useMutation } from "@apollo/client";
 import { useState, useEffect } from "react";
 import {
   Text,
@@ -10,6 +11,8 @@ import {
 } from "react-native";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import ModalScreenBank from "../components/ModalScreenBank";
+import ModalScreenTopup from "../components/ModalScreenTopup";
+import { TOPUP_BALANCE } from "../queries/user";
 
 const TopupScreen = () => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,12 +20,20 @@ const TopupScreen = () => {
   const [inputAmount, setInputAmount] = useState(0);
   const [inputBank, setInputBank] = useState("");
   const [bankName, setBankName] = useState("Select a top up method");
+  const [topupBalance, { data, loading, error }] = useMutation(TOPUP_BALANCE);
+  const [modalTopUp, setModalTopUp] = useState(false);
 
   const handleSubmit = () => {
     Keyboard.dismiss();
     setClicked(false);
 
-    console.log(inputAmount, inputBank, "done");
+    topupBalance({
+      variables: {
+        totalPrice: +inputAmount,
+        paymentStatus: "done",
+        bank: inputBank,
+      },
+    });
   };
 
   const handleModal = (codeName, bank) => {
@@ -32,6 +43,14 @@ const TopupScreen = () => {
       setBankName(bank);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Processing your top up...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -103,6 +122,13 @@ const TopupScreen = () => {
           handleModal={handleModal}
         />
       )}
+
+      {/* {modalTopUp && (
+        <ModalScreenTopup
+          modalVisible={modalTopUp}
+          setModalVisible={setModalTopUp}
+        />
+      )} */}
     </View>
   );
 };
