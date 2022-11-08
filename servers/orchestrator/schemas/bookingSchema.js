@@ -38,6 +38,8 @@ type Slot {
     slot: Int
     floor: Int
     name: String
+    Venue: Venue
+    Bookings: [Booking]
 }
 
 type Rating {
@@ -93,7 +95,7 @@ const resolvers = {
         } else {
           const { data: venues } = await axios({
             method: "GET",
-            url: `${baseUrlBooking}/venues/`,
+            url: `${baseUrlBooking}/venues`,
           });
 
           const { data: slots } = await axios({
@@ -144,8 +146,6 @@ const resolvers = {
             }
           });
 
-          console.log(newVenues);
-
           await redis.set("app:venues", JSON.stringify(newVenues));
 
           return newVenues;
@@ -157,12 +157,65 @@ const resolvers = {
     getVenueById: async (_, args) => {
       try {
         const { id } = args;
-        const { data } = await axios({
+        const { data: venue } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/venues/${id}`,
         });
+
+        const { data: slots } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/slots`,
+        });
+
+        const { data: ratings } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/ratings`,
+        });
+
+        const venues = [venue];
+
+        const slotVenues = venues.map((venue) => {
+          let slot = slots.filter((slot) => {
+            if (slot.VenueId === venue._id) {
+              return slot;
+            }
+          });
+          if (slot.length === 0) {
+            return {
+              ...venue,
+              Slots: [],
+            };
+          } else {
+            return {
+              ...venue,
+              Slots: slot,
+            };
+          }
+        });
+
+        const newVenues = slotVenues.map((venue) => {
+          let newRatings = ratings.filter((rating) => {
+            if (rating.VenueId === venue._id) {
+              return rating;
+            }
+          });
+          if (newRatings.length === 0) {
+            return {
+              ...venue,
+              Ratings: [],
+            };
+          } else {
+            return {
+              ...venue,
+              Ratings: newRatings,
+            };
+          }
+        });
+
+        const newVenue = newVenues[0];
+
         await redis.del("app:venues");
-        return data;
+        return newVenue;
       } catch (error) {
         errorHandling(error);
       }
@@ -173,12 +226,61 @@ const resolvers = {
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
-          const { data } = await axios({
+          const { data: slots } = await axios({
             method: "GET",
-            url: `${baseUrlBooking}/slots/`,
+            url: `${baseUrlBooking}/slots`,
           });
-          await redis.set("app:slots", JSON.stringify(data));
-          return data;
+
+          const { data: venues } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/venues`,
+          });
+
+          const { data: bookings } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/bookings`,
+          });
+
+          const venueSlots = slots.map((slot) => {
+            let venue = venues.filter((venue) => {
+              if (slot.VenueId === venue._id) {
+                return venue;
+              }
+            });
+            if (venue.length === 0) {
+              return {
+                ...slot,
+                Venue: {},
+              };
+            } else {
+              return {
+                ...slot,
+                Venue: venue[0],
+              };
+            }
+          });
+
+          const newSlots = venueSlots.map((slot) => {
+            let booking = bookings.filter((booking) => {
+              if (booking.SlotId === slot._id) {
+                return booking;
+              }
+            });
+            if (booking.length === 0) {
+              return {
+                ...slot,
+                Bookings: [],
+              };
+            } else {
+              return {
+                ...slot,
+                Bookings: booking,
+              };
+            }
+          });
+
+          await redis.set("app:slots", JSON.stringify(newSlots));
+          return newSlots;
         }
       } catch (error) {
         errorHandling(error);
@@ -187,12 +289,65 @@ const resolvers = {
     getSlotById: async (_, args) => {
       try {
         const { id } = args;
-        const { data } = await axios({
+        const { data: slot } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/slots/${id}`,
         });
+
+        const slots = [slot];
+
+        const { data: venues } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/venues`,
+        });
+
+        const { data: bookings } = await axios({
+          method: "GET",
+          url: `${baseUrlBooking}/bookings`,
+        });
+
+        const venueSlots = slots.map((slot) => {
+          let venue = venues.filter((venue) => {
+            if (slot.VenueId === venue._id) {
+              return venue;
+            }
+          });
+          if (venue.length === 0) {
+            return {
+              ...slot,
+              Venue: {},
+            };
+          } else {
+            return {
+              ...slot,
+              Venue: venue[0],
+            };
+          }
+        });
+
+        const newSlots = venueSlots.map((slot) => {
+          let booking = bookings.filter((booking) => {
+            if (booking.SlotId === slot._id) {
+              return booking;
+            }
+          });
+          if (booking.length === 0) {
+            return {
+              ...slot,
+              Bookings: [],
+            };
+          } else {
+            return {
+              ...slot,
+              Bookings: booking,
+            };
+          }
+        });
+
+        const newSlot = newSlots[0];
+
         await redis.del("app:slots");
-        return data;
+        return newSlot;
       } catch (error) {
         errorHandling(error);
       }
