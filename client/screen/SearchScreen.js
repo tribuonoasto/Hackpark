@@ -16,14 +16,14 @@ import Card from "../components/Card";
 import Constants from "expo-constants";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import { getBoundsOfDistance, getDistance } from "geolib";
-import Geocoder from "react-native-geocoder";
+import { useQuery } from "@apollo/client";
+import { GET_VENUES } from "../queries/bookings";
 
 const SearchScreen = ({ navigation }) => {
   const [pin, setPin] = useState({
     latitude: -6.2,
     longitude: 106.816666,
   });
-  const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [clicked, setClicked] = useState(false);
   const [searchPhrase, setSearchPhrase] = useState("");
@@ -31,7 +31,6 @@ const SearchScreen = ({ navigation }) => {
   const [venues, setVenues] = useState([]);
   const [clickedPin, setClickedPin] = useState(false);
   const [venue, setVenue] = useState({});
-  const [city, setCity] = useState({});
   const map = useRef();
 
   function fitMap() {
@@ -51,9 +50,8 @@ const SearchScreen = ({ navigation }) => {
   }
 
   useEffect(() => {
-    fetch(`${ngrok}/venues`)
-      .then((response) => response.json())
-      .then((json) => setVenues(json));
+    const { loading, error, data } = useQuery(GET_VENUES);
+    console.log(loading, error, data);
   }, []);
 
   useEffect(() => {
@@ -99,17 +97,6 @@ const SearchScreen = ({ navigation }) => {
     fetch(`${ngrok}/venues/${id}`)
       .then((response) => response.json())
       .then((json) => setVenue(json));
-  };
-
-  const handleDistance = (coordinate) => {
-    var dis = getDistance(
-      { latitude: pin.latitude, longitude: pin.longitude },
-      { latitude: coordinate.latitude, longitude: coordinate.longitude }
-    );
-
-    const km = dis / 1000;
-
-    console.log(`${km.toFixed(2)} KM`);
   };
 
   return (

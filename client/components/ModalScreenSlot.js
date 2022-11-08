@@ -2,7 +2,7 @@ import { Modal, StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import Constans from "expo-constants";
 import { Entypo } from "react-native-vector-icons";
 import SelectList from "react-native-dropdown-select-list";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const ModalScreenSlot = ({ setShowSlot, setName, venues }) => {
   const [selected, setSelected] = useState("");

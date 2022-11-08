@@ -2,7 +2,7 @@ var cron = require("node-cron");
 const Book = require("../models/booking");
 const Slot = require("../models/slot");
 
-const taskSlot = cron.schedule("* * * * *", async () => {
+const taskSlot = cron.schedule("* */5 * * *", async () => {
   try {
     const bookings = await Book.findAll();
 

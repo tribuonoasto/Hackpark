@@ -5,7 +5,7 @@ const Card = ({ navigation, item }) => {
   return (
     <TouchableOpacity
       style={[styles.container, styles.shadow]}
-      onPress={() => navigation.navigate("DetailScreen", { id: item.id })}
+      onPress={() => navigation.navigate("DetailScreen", { id: item._id })}
     >
       <View style={{ flexDirection: "row", padding: 10 }}>
         <Image

@@ -15,6 +15,8 @@ class BookingController {
       await session.withTransaction(async () => {
         const { UserId, SlotId, bookingDate, access_token } = req.body;
 
+        console.log(req.body);
+
         if (!UserId || !SlotId || !access_token) {
           throw {
             name: "invalid_validation",
@@ -167,7 +169,6 @@ class BookingController {
       await session.withTransaction(async () => {
         const { bookingId } = req.params;
         const { access_token } = req.body;
-        console.log(access_token);
 
         const checkBooking = await Book.findOne(bookingId);
 

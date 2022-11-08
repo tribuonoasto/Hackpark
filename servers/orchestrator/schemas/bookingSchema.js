@@ -16,15 +16,14 @@ input InputBooking {
     UserId: Int
     SlotId: String
     bookingDate: String
-    access_token: String
 }
 
 type Venue {
     _id: String
     name: String
     address: String
-    lat: Int
-    lng: Int
+    lat: String
+    lng: String
     parkingPrice: Int
     bookingPrice: Int
     imgVenue: String
@@ -92,7 +91,8 @@ const resolvers = {
   Query: {
     getVenues: async () => {
       try {
-        const itemsCache = await redis.get("app:venues");
+        // const itemsCache = await redis.get("app:venues");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -490,7 +490,8 @@ const resolvers = {
     },
     getBookings: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings");
+        // const itemsCache = await redis.get("app:bookings");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -534,15 +535,17 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    booking: async (_, args) => {
+    booking: async (_, args, context) => {
       try {
         const { booking } = args;
         const { data } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/bookings`,
-          data: booking,
+          data: { ...booking, access_token: context.access_token },
         });
         await redis.del("app:bookings");
+
+        console.log(data);
         return data;
       } catch (error) {
         errorHandling(error);

@@ -18,7 +18,6 @@ const server = new ApolloServer({
 startStandaloneServer(server, {
   listen: { port: PORT },
   context: ({ req, res }) => {
-    console.log(req.headers);
     return { access_token: req.headers.access_token };
   },
 }).then(({ url }) => {

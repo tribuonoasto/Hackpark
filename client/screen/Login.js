@@ -38,8 +38,10 @@ const Login = ({ navigation }) => {
     (async () => {
       if (data) {
         await AsyncStorage.setItem("access_token", data?.login?.access_token);
+        await AsyncStorage.setItem("id", data?.login?.id);
       }
     })();
+
     console.log(data, loading, error);
 
     if (data && data.login !== null) {
