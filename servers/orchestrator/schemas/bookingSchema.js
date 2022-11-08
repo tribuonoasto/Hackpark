@@ -3,7 +3,6 @@ const errorHandling = require("../middlewares/errorHandling");
 const baseUrlBooking = "http://localhost:4002";
 const baseUrlUser = "http://localhost:3000";
 const redis = require("./../config/redis");
-const baseUrlUser = "http://localhost:3000";
 
 const typeDefs = `#graphql
 
@@ -17,7 +16,6 @@ input InputBooking {
     UserId: Int
     SlotId: String
     bookingDate: String
-    access_token: String
 }
 
 type Venue {
@@ -124,7 +122,7 @@ type Query {
 
 type Mutation {
     rating(rating: InputRating): Data
-    booking(access_token:String,booking: InputBooking,id:ID): Data
+    booking(booking: InputBooking!): Data
 }
 `;
 
@@ -574,10 +572,11 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    booking: async (_, args) => {
+    booking: async (_, args, context) => {
       try {
         const { booking } = args;
-        const { UserId, SlotId, bookingDate, access_token } = booking;
+        const { access_token } = context;
+        const { UserId, SlotId, bookingDate } = booking;
 
         const { data: user } = await axios({
           method: "get",
@@ -595,7 +594,6 @@ const resolvers = {
           data: {
             SlotId,
             bookingDate,
-            access_token,
             UserId,
           },
         });
@@ -610,6 +608,16 @@ const resolvers = {
             price: book.price,
           },
         });
+
+        if (!resp) {
+          await axios({
+            method: "patch",
+            url: `${baseUrlBooking}/${book.resp._id}`,
+          });
+
+          return { message: "Failed Booking" };
+        }
+        return { message: "Success Booking" };
       } catch (error) {
         errorHandling(error);
       }

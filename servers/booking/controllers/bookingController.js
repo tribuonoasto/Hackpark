@@ -13,9 +13,9 @@ class BookingController {
     const session = client.startSession();
     try {
       await session.withTransaction(async () => {
-        const { UserId, SlotId, bookingDate, access_token } = req.body;
+        const { UserId, SlotId, bookingDate } = req.body;
 
-        if (!UserId || !SlotId || !access_token) {
+        if (!UserId || !SlotId) {
           throw {
             name: "invalid_validation",
             msg: "Invalid Input",
@@ -221,7 +221,6 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when totalling price" };
           }
 
-          // PAYMENT WITH BALANCE
           await axios({
             method: "patch",
             url: `${baseUrlLocalUser}/users/changeBalancePayment`,
