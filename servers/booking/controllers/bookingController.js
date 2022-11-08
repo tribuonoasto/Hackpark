@@ -301,6 +301,25 @@ class BookingController {
       next(err);
     }
   }
+
+  static async failedBooking(req, res, next) {
+    const session = client.startSession();
+    try {
+      const { id } = req.params;
+
+      await Book.editBooking(
+        id,
+        {
+          transactionStatus: "failed",
+        },
+        { session }
+      );
+
+      res.status(200).json({ message: "success" });
+    } catch (err) {
+      next(err);
+    }
+  }
 }
 
 module.exports = BookingController;

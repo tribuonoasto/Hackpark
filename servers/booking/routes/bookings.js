@@ -7,5 +7,6 @@ router.get("/", BookingController.showAllBookings);
 router.post("/check/:bookingId", BookingController.checkBooking);
 router.delete("/:id", BookingController.destroy);
 router.get("/:id", BookingController.showOneBooking);
+router.patch("/:id", BookingController.failedBooking);
 
 module.exports = router;
