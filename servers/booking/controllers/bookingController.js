@@ -16,10 +16,20 @@ class BookingController {
       await session.withTransaction(async () => {
         const { UserId, SlotId, bookingDate } = req.body;
 
-        if (!UserId || !SlotId) {
+        if (!UserId || !SlotId || !bookingDate) {
           throw {
             name: "invalid_validation",
             msg: "Invalid Input",
+          };
+        }
+
+        //// CHECK DATE
+        const today = format(new Date(), "yyyy-MM-dd");
+        const checkBookingDate = format(new Date(bookingDate), "yyyy-MM-dd");
+        if (checkBookingDate < today) {
+          throw {
+            name: "invalid_validation",
+            msg: "Invalid date",
           };
         }
 
@@ -92,9 +102,11 @@ class BookingController {
           };
 
         //// DECREASE PARKING SLOT
-        await Slot.editSlot(SlotId, {
-          slot: currentSlot - 1,
-        });
+        if (today === checkBookingDate) {
+          await Slot.editSlot(SlotId, {
+            slot: currentSlot - 1,
+          });
+        }
 
         //// QR CODE
         const newBookingId = resp.insertedId.toString();
