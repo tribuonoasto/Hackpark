@@ -8,8 +8,14 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
+import {
+  Entypo,
+  FontAwesome5,
+  Feather,
+  FontAwesome,
+} from "react-native-vector-icons";
 import Card from "../components/Card";
 import { useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
@@ -23,6 +29,36 @@ const HomeScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
 
   const { loading, error, data } = useQuery(GET_VENUES);
+
+  useEffect(() => {
+    (async () => {
+      const access_token = await AsyncStorage.getItem("access_token");
+
+      if (access_token) {
+        console.log(access_token);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+
+      let region = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude,
+      });
+
+      setLocation(region[0]);
+    })();
+  }, []);
+
   if (loading) {
     return (
       <View>
@@ -30,31 +66,6 @@ const HomeScreen = ({ navigation }) => {
       </View>
     );
   }
-
-  // useEffect(() => {
-  //   (async () => {
-  //     let { status } = await Location.requestForegroundPermissionsAsync();
-  //     if (status !== "granted") {
-  //       setErrorMsg("Permission to access location was denied");
-  //       return;
-  //     }
-
-  //     let location = await Location.getCurrentPositionAsync({});
-
-  //     let region = await Location.reverseGeocodeAsync({
-  //       latitude: location.coords.latitude,
-  //       longitude: location.coords.longitude,
-  //     });
-
-  //     setLocation(region[0]);
-  //   })();
-  // }, []);
-
-  // useEffect(() => {
-  //   fetch(`${ngrok}/venues`)
-  //     .then((response) => response.json())
-  //     .then((json) => setVenues(json));
-  // }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -178,7 +189,7 @@ const HomeScreen = ({ navigation }) => {
                   alignItems: "center",
                 }}
               >
-                <FontAwesome name="wallet" size={20} color="#50577A" />
+                <FontAwesome5 name="wallet" size={20} color="#50577A" />
                 <Text
                   style={{
                     marginLeft: 10,
@@ -238,7 +249,7 @@ const HomeScreen = ({ navigation }) => {
         >
           Closest spot
         </Text>
-        <FlatList
+        {/* <FlatList
           data={data.getVenues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
@@ -250,7 +261,7 @@ const HomeScreen = ({ navigation }) => {
               keyExtractor={(item) => item.id}
             />
           )}
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );

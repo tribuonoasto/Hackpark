@@ -9,6 +9,7 @@ import {
   Keyboard,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import Constants from "expo-constants";
@@ -18,12 +19,11 @@ import { useMutation } from "@apollo/client";
 import { LOGIN } from "../queries/user";
 
 const Login = ({ navigation }) => {
-  const [signIn, { data }] = useMutation(LOGIN);
+  const [signIn, { data, loading, error }] = useMutation(LOGIN);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [access_token, setAccessToken] = useState("");
 
-  const handleLogin = async () => {
+  const handleLogin = () => {
     signIn({
       variables: {
         login: {
@@ -32,40 +32,28 @@ const Login = ({ navigation }) => {
         },
       },
     });
-    navigation.navigate("TabScreen");
   };
 
   useEffect(() => {
-    if (data != null) {
-      setToken();
-      getData();
-    }
-  });
-
-  const setToken = async () => {
-    try {
-      // console.log(data)
-      setAccessToken(data.login.access_token);
-      await AsyncStorage.setItem("access_token", data.login.access_token);
-      // console.log("after");
-      console.log(access_token, "ini token");
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getData = async () => {
-    try {
-      const value = await AsyncStorage.getItem("access_token");
-      if (value !== null) {
-        // value previously stored
-        console.log(value, "value");
+    (async () => {
+      if (data) {
+        await AsyncStorage.setItem("access_token", data?.login?.access_token);
       }
-    } catch (e) {
-      // error reading value
-      console.log(e);
+    })();
+    console.log(data, loading, error);
+
+    if (data && data.login !== null) {
+      navigation.navigate("TabScreen");
     }
-  };
+  }, [data, loading, error]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <KeyboardAvoidingView

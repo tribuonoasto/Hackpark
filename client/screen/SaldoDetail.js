@@ -11,36 +11,36 @@ import { GET_BALANCE } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SaldoDetail = async () => {
-  // const access_token = AsyncStorage.getItem("access_token")
-  // console.log(access_token,"<<<<")
+  const access_token = AsyncStorage.getItem("access_token");
+  console.log(access_token, "<<<<");
   try {
-  const { loading, error, data } = useQuery(GET_BALANCE, {
-    variables: {
-      access_token: await AsyncStorage.getItem('access_token'),
-    },
-  });
-  if (loading) {
+    const { loading, error, data } = useQuery(GET_BALANCE, {
+      variables: {
+        access_token: await AsyncStorage.getItem("access_token"),
+      },
+    });
+    if (loading) {
+      return (
+        <View>
+          <ActivityIndicator size="large" color="#ededed" />
+        </View>
+      );
+    }
+
     return (
-      <View>
-        <ActivityIndicator size="large" color="#ededed" />
+      <View style={styles.container}>
+        <FlatList
+          data={data.getBalance}
+          scrollEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => <SaldoList item={item} />}
+          style={{ marginTop: 40 }}
+        />
       </View>
     );
-  }
-
-  return (
-    <View style={styles.container}>
-      <FlatList
-        data={data.getBalance}
-        scrollEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => <SaldoList item={item} />}
-        style={{ marginTop: 40 }}
-      />
-    </View>
-  );
-  } catch (error){
-    console.log(error)
+  } catch (error) {
+    console.log(error);
   }
 };
 export default SaldoDetail;
