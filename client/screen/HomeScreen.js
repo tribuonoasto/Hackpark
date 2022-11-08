@@ -23,6 +23,7 @@ import { useEffect, useState } from "react";
 // import Card from "../components/Card";
 // import ngrok from "../config/apollo";
 import * as Location from "expo-location";
+import { setContext } from "@apollo/client/link/context";
 
 const HomeScreen = ({ navigation }) => {
   // const [venues, setVenues] = useState([]);
