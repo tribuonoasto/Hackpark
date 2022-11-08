@@ -3,7 +3,7 @@ import { Text, View, StyleSheet } from "react-native";
 const SaldoList = ({ item }) => {
   return (
     <View style={styles.container}>
-      {item.type === "credit" ? (
+      {item.type === "kredit" ? (
         <Text style={{ color: "#B73E3E", fontSize: 18, fontWeight: "500" }}>
           - IDR {item.amount}
         </Text>

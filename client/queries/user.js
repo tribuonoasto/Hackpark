@@ -89,3 +89,14 @@ export const GET_VEHICLE = gql`
     }
   }
 `;
+
+export const LOGIN = gql`
+  mutation Login($login: InputLogin) {
+    login(login: $login) {
+      access_token
+      id
+      username
+      email
+    }
+  }
+`;

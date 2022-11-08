@@ -1,24 +1,36 @@
-import { View, Text, StyleSheet, FlatList } from "react-native";
-import { useEffect, useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import SaldoList from "../components/SaldoList";
-const ngrok = require("./../config/apollo");
+import { useQuery } from "@apollo/client";
+import { GET_BALANCE } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const SaldoDetail = () => {
-  const [clicked, setClicked] = useState(false);
-  const [searchPhrase, setSearchPhrase] = useState("");
-
-  const [saldoHistories, setSaldoHistories] = useState([]);
-
-  useEffect(() => {
-    fetch(`${ngrok}/saldoHistories`)
-      .then((response) => response.json())
-      .then((json) => setSaldoHistories(json));
-  }, []);
+const SaldoDetail = async () => {
+  // const access_token = AsyncStorage.getItem("access_token")
+  // console.log(access_token,"<<<<")
+  try {
+  const { loading, error, data } = useQuery(GET_BALANCE, {
+    variables: {
+      access_token: await AsyncStorage.getItem('access_token'),
+    },
+  });
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#ededed" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
       <FlatList
-        data={saldoHistories}
+        data={data.getBalance}
         scrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -27,6 +39,9 @@ const SaldoDetail = () => {
       />
     </View>
   );
+  } catch (error){
+    console.log(error)
+  }
 };
 export default SaldoDetail;
 
