@@ -7,6 +7,7 @@ const { baseUrlLocal, baseUrlLocalUser } = require("../helpers/baseUrl");
 const axios = require("axios");
 const ImageKit = require("imagekit");
 const { client } = require("../config/mongo");
+const { ObjectId } = require("mongodb");
 
 class BookingController {
   static async createBooking(req, res, next) {
@@ -15,10 +16,17 @@ class BookingController {
       await session.withTransaction(async () => {
         const { UserId, SlotId, bookingDate } = req.body;
 
-        if (!UserId || !SlotId) {
+        if (!UserId || !SlotId || !bookingDate) {
           throw {
             name: "invalid_validation",
             msg: "Invalid Input",
+          };
+        }
+
+        if (new Date(bookingDate) < new Date()) {
+          throw {
+            name: "invalid_validation",
+            msg: "Invalid date",
           };
         }
 
@@ -70,7 +78,7 @@ class BookingController {
         const resp = await Book.insertOne(
           {
             UserId: +UserId,
-            SlotId,
+            SlotId: ObjectId(SlotId),
             bookingDate: bookDate,
             expiredDate: expiredDate,
             checkinDate: null,
@@ -90,10 +98,16 @@ class BookingController {
             msg: "Error when booking parking slot",
           };
 
+        //// CHECK DATE
+        const today = format(new Date(), "yyyy-MM-dd");
+        const checkBookingDate = format(new Date(bookingDate), "yyyy-MM-dd");
+
         //// DECREASE PARKING SLOT
-        await Slot.editSlot(SlotId, {
-          slot: currentSlot - 1,
-        });
+        if (today === checkBookingDate) {
+          await Slot.editSlot(SlotId, {
+            slot: currentSlot - 1,
+          });
+        }
 
         //// QR CODE
         const newBookingId = resp.insertedId.toString();
@@ -149,7 +163,6 @@ class BookingController {
         const { bookingId } = req.params;
 
         const checkBooking = await Book.findOne(bookingId);
-        console.log(checkBooking);
 
         if (!checkBooking) throw { name: "booking_not_found" };
 
@@ -208,7 +221,7 @@ class BookingController {
             checkVenue.parkingPrice * (checkHour ? checkHour : 1);
           const newPrice = checkBooking.totalPrice + checkoutPrice;
 
-          const payBooking = await Book.editBooking(
+          const payBooking = await Book.editBookingPrice(
             bookingId,
             {
               totalPrice: newPrice,
@@ -220,7 +233,7 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when totalling price" };
           }
 
-          const newBooking = await Book.editBooking(
+          const newBooking = await Book.editBookingStatus(
             bookingId,
             {
               transactionStatus: "Done",
@@ -294,13 +307,20 @@ class BookingController {
     try {
       const { id } = req.params;
 
-      await Book.editBooking(
+      const resp = await Book.editBooking(
         id,
         {
           transactionStatus: "failed",
         },
         { session }
       );
+
+      if (!resp.acknowledged) {
+        throw {
+          name: "invalid_Book",
+          msg: "Error when check-outchange status",
+        };
+      }
 
       res.status(200).json({ message: "success" });
     } catch (err) {

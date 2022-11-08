@@ -120,6 +120,17 @@ export const GET_BOOKINGS_BY_ID = gql`
   }
 `;
 
+export const GET_VENUE_BY_SLOT_ID = gql`
+  query GetSlotById($getSlotByIdId: String) {
+    getSlotById(id: $getSlotByIdId) {
+      Venue {
+        imgVenue
+        name
+      }
+    }
+  }
+`;
+
 export const BOOKINGS = gql`
   mutation Mutation($booking: InputBooking) {
     booking(booking: $booking) {

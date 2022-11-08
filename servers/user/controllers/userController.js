@@ -2,6 +2,7 @@ const { User, BalanceHistory, Vehicle, sequelize } = require("../models");
 const ImageKit = require("imagekit");
 const fs = require("fs");
 const env = require("../helpers/env");
+const imagekit = require("../config/imageKit");
 class Controller {
   static async getAllUsers(req, res, next) {
     try {
@@ -64,7 +65,7 @@ class Controller {
         where: { id },
       });
 
-      if (!user) throw { name: "User not found" };
+      if (!user) throw { name: "User_not_found" };
 
       if (user.username === username) throw { name: "username is already use" };
 
@@ -107,12 +108,6 @@ class Controller {
       const { id } = req.user;
       const { path, filename, originalname } = req.file;
 
-      const imagekit = new ImageKit({
-        publicKey: env.publicKey,
-        privateKey: env.privateKey,
-        urlEndpoint: env.urlEndpoint,
-      });
-
       const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
       const result = await imagekit.upload({
         file: fileUploaded, //required
@@ -121,7 +116,7 @@ class Controller {
 
       const resp = await User.update({ imgUrl: result.url }, { where: { id } });
       if (resp[0] === 0) {
-        throw { name: "upload_error" };
+        throw { name: "invalid_input", msg: "Error Upload" };
       }
 
       res.status(201).json({ message: "success change image" });
@@ -167,7 +162,7 @@ class Controller {
           { transaction: t }
         );
 
-        throw { name: "payment_error" };
+        throw { name: "invalid_input", msg: "Error when doing payment" };
       }
 
       await BalanceHistory.create(

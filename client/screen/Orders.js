@@ -5,24 +5,40 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
 } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
 import BookList from "../components/BookList";
 import img from "../assets/parking-img.jpg";
-const ngrok = require("./../config/apollo");
+import { useLazyQuery, useQuery } from "@apollo/client";
+import { GET_BOOKINGS, GET_BOOKINGS_BY_ID } from "../queries/bookings";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Orders = ({ navigation }) => {
-  const [clicked, setClicked] = useState(false);
-  const [searchPhrase, setSearchPhrase] = useState("");
-
   const [bookings, setBookings] = useState([]);
+  const { loading, data, error } = useQuery(GET_BOOKINGS);
 
   useEffect(() => {
-    fetch(`${ngrok}/bookings?_expand=venue`)
-      .then((response) => response.json())
-      .then((json) => setBookings(json));
-  }, []);
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+
+      if (data) {
+        const res = data.getBookings.filter(
+          (booking) => booking.UserId === +id
+        );
+        setBookings(res);
+      }
+    })();
+  }, [data, loading, error]);
+
+  if (loading && !data) {
+    return (
+      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -60,16 +76,24 @@ const Orders = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      {/* <FlatList
-        data={bookings}
-        scrollEnabled={true}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <BookList item={item} img={img} navigation={navigation} />
-        )}
-        style={{ marginTop: 40 }}
-      /> */}
+      {bookings.length === 0 ? (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <ActivityIndicator size="large" color="red" />
+        </View>
+      ) : (
+        <FlatList
+          data={bookings}
+          scrollEnabled={true}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          renderItem={({ item }) => (
+            <BookList item={item} img={img} navigation={navigation} />
+          )}
+          style={{ marginTop: 40 }}
+        />
+      )}
     </View>
   );
 };

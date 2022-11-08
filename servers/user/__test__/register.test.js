@@ -14,6 +14,7 @@ const testUser = {
 let access_token;
 
 beforeEach(async () => {
+  jest.restoreAllMocks();
   const user = await User.create(testUser);
   const payload = {
     id: user.id,

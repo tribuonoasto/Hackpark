@@ -40,8 +40,6 @@ class Controller {
         { where: { UserId: id, id: vehicleId } }
       );
 
-      console.log(result, "A<<<<<<<<<<<<<<<<<<<<<<<<<<");
-
       if (resp[0] === 0) {
         throw { name: "upload_error" };
       }

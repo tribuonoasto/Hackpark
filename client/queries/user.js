@@ -90,6 +90,28 @@ export const GET_VEHICLE = gql`
   }
 `;
 
+export const TOPUP_BALANCE = gql`
+  mutation Payment($totalPrice: Int, $paymentStatus: String, $bank: String) {
+    payment(
+      totalPrice: $totalPrice
+      paymentStatus: $paymentStatus
+      bank: $bank
+    ) {
+      transaction_time
+      gross_amount
+      order_id
+      payment_type
+      status_code
+      transaction_id
+      transaction_status
+      fraud_status
+      status_message
+      merchant_id
+      va_numbers
+    }
+  }
+`;
+
 export const LOGIN = gql`
   mutation Login($login: InputLogin) {
     login(login: $login) {

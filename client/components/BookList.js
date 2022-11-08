@@ -1,6 +1,50 @@
-import { Text, View, Image, TouchableOpacity } from "react-native";
+import { useLazyQuery } from "@apollo/client";
+import { useEffect } from "react";
+import {
+  Text,
+  View,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
+import { GET_VENUE_BY_SLOT_ID } from "../queries/bookings";
 
-const BookList = ({ img, navigation, item }) => {
+const BookList = ({ navigation, item }) => {
+  const [getVenue, { loading, data, error }] =
+    useLazyQuery(GET_VENUE_BY_SLOT_ID);
+
+  useEffect(() => {
+    getVenue({
+      variables: {
+        getSlotByIdId: item.SlotId,
+      },
+    });
+  }, []);
+
+  const onChangeTime = (selectedDate) => {
+    const currentDate = selectedDate || date;
+
+    let tempTime = new Date(currentDate);
+    let options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    return tempTime.toLocaleTimeString("en-us", options);
+  };
+
+  if (loading) {
+    return (
+      <View
+        style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
+      ></View>
+    );
+  }
+
   return (
     <TouchableOpacity
       style={{
@@ -11,21 +55,26 @@ const BookList = ({ img, navigation, item }) => {
       }}
       onPress={() => {
         navigation.navigate("OrderDetail", {
-          id: item.id,
-          status: item.status,
+          id: item._id,
+          status: item.paymentStatus,
         });
       }}
     >
       <View style={{ flexDirection: "row" }}>
         <Image
-          source={item.venue.imgVenue}
+          source={
+            loading || !data
+              ? {
+                  uri: "https://www.technipages.com/wp-content/uploads/2020/10/fix-google-maps-not-updating-location-600x341.png",
+                }
+              : { uri: data?.getSlotById.Venue.imgVenue }
+          }
           style={{ width: 70, height: 70, borderRadius: 10 }}
         />
-
         <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
           <View>
-            <Text style={{ fontSize: 18, fontWeight: "500", color: "#404258" }}>
-              {item.venue.name}
+            <Text style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}>
+              {data?.getSlotById.Venue.name}
             </Text>
             <Text
               style={{
@@ -39,7 +88,9 @@ const BookList = ({ img, navigation, item }) => {
             </Text>
           </View>
           <Text style={{ color: "#6B728E", fontSize: 10, fontWeight: "300" }}>
-          {item.checkoutDate}
+            {item.checkoutDate
+              ? onChangeTime(item.checkoutDate)
+              : onChangeTime(item.expiredDate)}
           </Text>
         </View>
       </View>

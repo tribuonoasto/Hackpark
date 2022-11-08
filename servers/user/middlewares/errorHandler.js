@@ -47,9 +47,6 @@ const errorHandler = (err, req, res, next) => {
   ) {
     status = 406;
     message = err.ApiResponse.status_message;
-  } else if (err.name == `upload_error`) {
-    status = 500;
-    message = "Failed to upload image";
   }
   res.status(status).json({ message });
 };
