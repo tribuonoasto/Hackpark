@@ -74,6 +74,11 @@ type Data {
   message: String
 }
 
+type bookingData {
+  message: String
+  bookingId: String
+}
+
 type Payload {
     access_token: String
     id: ID
@@ -126,7 +131,7 @@ type Query {
 
 type Mutation {
     rating(rating: InputRating): Data
-    booking(booking: InputBooking!): Data
+    booking(booking: InputBooking!): bookingData
     checkBooking(bookingId: InputBookingId):Data
 }
 `;
@@ -614,19 +619,15 @@ const resolvers = {
           },
         });
 
-        console.log(resp, "resp");
-        console.log(book);
-
         if (!resp) {
           await axios({
             method: "patch",
             url: `${baseUrlBooking}/${book.resp._id}`,
           });
 
-          return { message: "Failed Booking" };
+          return { message: "Failed Booking", bookingId: null };
         }
-        console.log("success");
-        return { message: "Success Booking", bookingId: book._id };
+        return { message: book.message, bookingId: book.resp.insertedId };
       } catch (error) {
         errorHandling(error);
       }
@@ -638,10 +639,8 @@ const resolvers = {
 
         const { data: book } = await axios({
           method: "post",
-          url: `${baseUrlBooking}/check/${bookingId}`,
+          url: `${baseUrlBooking}/bookings/check/${bookingId.bookingId}`,
         });
-
-        console.log(book, "<<<<");
 
         if (book == "Checkout Success") {
           await axios({
@@ -654,10 +653,10 @@ const resolvers = {
               price: book.checkoutPrice,
             },
           });
-          return book.message;
+          return book;
         }
 
-        return book.message;
+        return book;
       } catch (err) {
         errorHandling(err);
       }

@@ -149,6 +149,7 @@ class BookingController {
         const { bookingId } = req.params;
 
         const checkBooking = await Book.findOne(bookingId);
+        console.log(checkBooking);
 
         if (!checkBooking) throw { name: "booking_not_found" };
 
