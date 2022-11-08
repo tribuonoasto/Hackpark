@@ -60,7 +60,7 @@ const Orders = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      <FlatList
+      {/* <FlatList
         data={bookings}
         scrollEnabled={true}
         showsHorizontalScrollIndicator={false}
@@ -69,7 +69,7 @@ const Orders = ({ navigation }) => {
           <BookList item={item} img={img} navigation={navigation} />
         )}
         style={{ marginTop: 40 }}
-      />
+      /> */}
     </View>
   );
 };

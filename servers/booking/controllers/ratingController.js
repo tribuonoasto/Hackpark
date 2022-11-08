@@ -21,7 +21,7 @@ class RatingController {
       await Rating.insertOne({
         UserId: +UserId,
         VenueId,
-        rating,
+        rating: +rating,
       });
 
       res.status(201).json({ message: "Rating Success" });

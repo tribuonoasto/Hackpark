@@ -9,19 +9,52 @@ import {
   Keyboard,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import Constants from "expo-constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useMutation } from "@apollo/client";
+import { LOGIN } from "../queries/user";
 
 const Login = ({ navigation }) => {
+  const [signIn, { data, loading, error }] = useMutation(LOGIN);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleLogin = () => {
-    console.log(email, password);
-    navigation.navigate("TabScreen");
+    signIn({
+      variables: {
+        login: {
+          email: email,
+          password: password,
+        },
+      },
+    });
   };
+
+  useEffect(() => {
+    (async () => {
+      if (data) {
+        await AsyncStorage.setItem("access_token", data?.login?.access_token);
+      }
+    })();
+    console.log(data, loading, error);
+
+    if (data && data.login !== null) {
+      navigation.navigate("TabScreen");
+    }
+  }, [data, loading, error]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}

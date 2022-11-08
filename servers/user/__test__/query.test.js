@@ -552,3 +552,31 @@ describe("get all balance history", () => {
     expect(result.body).toHaveProperty("message", "settlement");
   });
 });
+
+describe("change image user", () => {
+  it("get /changeImg => success test change image", async () => {
+    const result = await request(app)
+      .patch(`/users/changeImg`)
+      .set("access_token", access_token)
+      .attach("image", "uploads/2.jpg");
+    expect(result.status).toBe(201);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "success change image");
+  });
+});
+
+describe("change image user", () => {
+  it("get /changeImg => success test change image", async () => {
+    await queryInterface.bulkInsert("Vehicles", seedVehicles);
+    const vehiclesId = 1;
+    const result = await request(app)
+      .patch(`/vehicles/${vehiclesId}`)
+      .set("access_token", access_token)
+      .attach("image", "uploads/2.jpg");
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Success");
+  });
+});

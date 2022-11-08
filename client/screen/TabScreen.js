@@ -7,9 +7,11 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import SearchScreen from "./SearchScreen";
 import HomeStack from "./HomeStack";
 import Orders from "./Orders";
-import { Button, TouchableOpacity } from "react-native";
+import { Button, Text, TouchableOpacity, View } from "react-native";
 import OrderStack from "./OrderStack";
 import ModalScreen from "../components/ModalScreen";
+import { useEffect } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Tab = createBottomTabNavigator();
 

@@ -8,28 +8,38 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import { Entypo, FontAwesome, Feather } from "react-native-vector-icons";
+import {
+  Entypo,
+  FontAwesome5,
+  Feather,
+  FontAwesome,
+} from "react-native-vector-icons";
 import Card from "../components/Card";
 import { useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
 import { useEffect, useState } from "react";
-import Card from "../components/Card";
-import ngrok from "../config/apollo";
+// import Card from "../components/Card";
+// import ngrok from "../config/apollo";
 import * as Location from "expo-location";
+import { setContext } from "@apollo/client/link/context";
 
 const HomeScreen = ({ navigation }) => {
-  const [venues, setVenues] = useState([]);
+  // const [venues, setVenues] = useState([]);
   const [location, setLocation] = useState(null);
 
   const { loading, error, data } = useQuery(GET_VENUES);
-  if (loading) {
-    return (
-      <View>
-        <ActivityIndicator size="large" color="#ededed" />
-      </View>
-    );
-  }
+
+  useEffect(() => {
+    (async () => {
+      const access_token = await AsyncStorage.getItem("access_token");
+
+      if (access_token) {
+        console.log(access_token);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     (async () => {
@@ -50,11 +60,13 @@ const HomeScreen = ({ navigation }) => {
     })();
   }, []);
 
-  useEffect(() => {
-    fetch(`${ngrok}/venues`)
-      .then((response) => response.json())
-      .then((json) => setVenues(json));
-  }, []);
+  if (loading) {
+    return (
+      <View>
+        <ActivityIndicator size="large" color="#ededed" />
+      </View>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -238,7 +250,7 @@ const HomeScreen = ({ navigation }) => {
         >
           Closest spot
         </Text>
-        <FlatList
+        {/* <FlatList
           data={data.getVenues}
           scrollEnabled={true}
           showsHorizontalScrollIndicator={false}
@@ -250,7 +262,7 @@ const HomeScreen = ({ navigation }) => {
               keyExtractor={(item) => item.id}
             />
           )}
-        />
+        /> */}
       </View>
     </SafeAreaView>
   );

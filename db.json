@@ -2,23 +2,23 @@
   "users": [
     {
       "id": 1,
-      "username": "Customer",
-      "email": "customer@mail.com",
-      "password": "customer",
-      "saldo": 100000,
+      "username": "putri123",
+      "email": "putri@gmail.com",
+      "password": "1234567",
+      "saldo": 0,
       "isRegis": true,
-      "fullName": "Kang Customer",
-      "imgUrl": "https://klikhukum.id/wp-content/uploads/2022/05/Kang-park-ir.jpg"
+      "fullName": "Putri Melati",
+      "imgUrl": "https://images.unsplash.com/photo-1667611209778-ba82bd262af3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=774&q=80"
     },
     {
       "id": 2,
-      "username": "Customer2",
-      "email": "customer2@mail.com",
-      "password": "customer2",
-      "saldo": 9000,
+      "username": "anto987",
+      "email": "anto@gmail.com",
+      "password": "1234567",
+      "saldo": 10000,
       "isRegis": true,
-      "fullName": "Kang Customer",
-      "imgUrl": "https://klikhukum.id/wp-content/uploads/2022/05/Kang-park-ir.jpg"
+      "fullName": "Anto Suprapto",
+      "imgUrl": "https://images.unsplash.com/photo-1659321196549-448fba0143fe?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1160&q=80"
     }
   ],
   "vehicles": [
@@ -26,7 +26,9 @@
       "id": 1,
       "userId": 1,
       "plat": "B 1234 XYZ",
-      "modelName": "Suzuki Ertiga"
+      "modelName": "Suzuki Ertiga",
+      "imageUrl": "https://d2fgf7u961ce77.cloudfront.net/assets/static/img/variant/Pearl-Snow-White.png",
+      "name": ""
     }
   ],
   "saldoHistories": [
@@ -46,7 +48,7 @@
     },
     {
       "id": 3,
-      "userId": 1,
+      "userId": 2,
       "dateTransaction": "2022-10-31 17:35:38.808 +0700",
       "type": "credit",
       "amount": 10000
@@ -70,7 +72,7 @@
       "parkingPrice": 10000,
       "bookingPrice": 10000,
       "imgVenue": "https://awsimages.detik.net.id/visual/2021/05/03/dok-pondok-indah-mall_169.jpeg?w=650",
-      "description": "ini tempat parkir"
+      "description": "Pondok Indah Mall is one of the first malls in Jakarta which was built in 1991 and its development has also created a trend of mall development in other parts of Jakarta."
     },
     {
       "id": 2,
@@ -81,7 +83,7 @@
       "parkingPrice": 10000,
       "bookingPrice": 10000,
       "imgVenue": "https://cdn2.pikavenue.com/wp-content/uploads/2020/11/1280px-PIK_Avenue_tampak_depan.jpg",
-      "description": "ini tempat parkir"
+      "description": "PIK Avenue is a premium retail space that was established on September 7, 2016. Located in the Pantai Indah Kapuk area, PIK Avenue provides a variety of choices from places to eat to fashion."
     },
     {
       "id": 3,
@@ -92,7 +94,7 @@
       "parkingPrice": 5000,
       "bookingPrice": 10000,
       "imgVenue": "https://ringroadcitywalks.com/home/images/slide/7.jpg",
-      "description": "ini tempat parkir"
+      "description": "A bustling shopping mall with various shops, restaurants, supermarkets & colorful fountains."
     },
     {
       "id": 4,
@@ -103,7 +105,7 @@
       "parkingPrice": 5000,
       "bookingPrice": 7000,
       "imgVenue": "https://seputarkota.com/wp-content/uploads/2019/10/sun-plaza-medan.jpeg",
-      "description": "ini tempat parkir"
+      "description": "Sun Plaza is a commercial shopping and entertainment center in Madras Hulu, Medan Polonia, Medan City, North Sumatra in the form of a six-storey building (including Lower Ground and Ground Floor) designed with a family concept by Lippo Group through Lippo Malls."
     }
   ],
   "slots": [
