@@ -7,6 +7,7 @@ const { baseUrlLocal, baseUrlLocalUser } = require("../helpers/baseUrl");
 const axios = require("axios");
 const ImageKit = require("imagekit");
 const { client } = require("../config/mongo");
+const { ObjectId } = require("mongodb");
 
 class BookingController {
   static async createBooking(req, res, next) {
@@ -70,7 +71,7 @@ class BookingController {
         const resp = await Book.insertOne(
           {
             UserId: +UserId,
-            SlotId,
+            SlotId: ObjectId(SlotId),
             bookingDate: bookDate,
             expiredDate: expiredDate,
             checkinDate: null,
