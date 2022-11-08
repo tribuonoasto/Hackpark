@@ -21,9 +21,9 @@ const task = cron.schedule("* * * * *", async () => {
         transactionStatus: "Expired",
       });
       const checkSlot = await Slot.findOne(el.SlotId);
-      let currentSlot = checkSlot.slot;
+      const currentSlot = checkSlot.slot + 1;
       await Slot.editSlot(el.SlotId, {
-        slot: currentSlot + expiredBook.length,
+        slot: currentSlot,
       });
     });
   } catch (error) {
