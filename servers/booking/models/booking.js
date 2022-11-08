@@ -58,5 +58,16 @@ class Book {
       throw error;
     }
   }
+
+  static async findAllBookSlot(options) {
+    try {
+      const collection = getDB().collection("bookings");
+
+      const bookings = await collection.aggregate([options]).toArray();
+      return bookings;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 module.exports = Book;

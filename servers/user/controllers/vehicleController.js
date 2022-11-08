@@ -1,7 +1,8 @@
 const { Vehicle } = require("../models");
-const ImageKit = require("imagekit");
+// const ImageKit = require("imagekit");
 const fs = require("fs");
 const env = require("../helpers/env");
+const imagekit = require("../config/imageKit");
 
 class Controller {
   static async getVehicle(req, res, next) {
@@ -28,12 +29,6 @@ class Controller {
       const { vehicleId } = req.params;
       const { path, filename, originalname } = req.file;
 
-      const imagekit = new ImageKit({
-        publicKey: env.publicKey,
-        privateKey: env.privateKey,
-        urlEndpoint: env.urlEndpoint,
-      });
-
       const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
       const result = await imagekit.upload({
         file: fileUploaded, //required
@@ -44,6 +39,9 @@ class Controller {
         { imgUrl: result.url },
         { where: { UserId: id, id: vehicleId } }
       );
+
+      console.log(result, "A<<<<<<<<<<<<<<<<<<<<<<<<<<");
+
       if (resp[0] === 0) {
         throw { name: "upload_error" };
       }
