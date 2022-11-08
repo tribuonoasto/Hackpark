@@ -22,15 +22,6 @@ class BookingController {
           };
         }
 
-        //// AXIOS CEK USER ID
-        await axios({
-          method: "get",
-          url: `${baseUrlLocalUser}/users/${UserId}`,
-          headers: {
-            access_token,
-          },
-        });
-
         //// CEK SLOT
         const checkSlot = await Slot.findOne(SlotId);
         if (!checkSlot) {
@@ -73,18 +64,6 @@ class BookingController {
         const venuePrice = checkVenue.bookingPrice;
         const multiplierPrice = await Venue.findOnePrice(priceAdjuster);
         const bookPrice = venuePrice * multiplierPrice.value;
-
-        // PAYMENT WITH BALANCE
-        const respaxios = await axios({
-          method: "patch",
-          url: `${baseUrlLocalUser}/users/changeBalancePayment`,
-          headers: {
-            access_token,
-          },
-          data: {
-            price: bookPrice,
-          },
-        });
 
         //// CREATE BOOKING
 
@@ -152,7 +131,9 @@ class BookingController {
             name: "invalid_Book",
             msg: "Error when booking parking slot",
           };
-        res.status(201).json({ message: "slot booked" });
+        res
+          .status(201)
+          .json({ message: "slot booked", price: bookPrice, resp });
       });
     } catch (error) {
       next(error);
