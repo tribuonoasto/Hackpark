@@ -32,6 +32,7 @@ async function clearTables(tables) {
 }
 
 afterEach(async () => {
+  jest.restoreAllMocks();
   await clearTables("BalanceHistories");
   await clearTables("Users");
   await clearTables("Vehicles");

@@ -3,7 +3,9 @@ const request = require("supertest");
 const { sequelize, BalanceHistory, User } = require("../models");
 const { createToken } = require("../helpers/jwt");
 const { JsonWebTokenError } = require("jsonwebtoken");
+const imagekit = require("../config/imageKit");
 const { queryInterface } = sequelize;
+const env = require("../helpers/env");
 
 const seedBalance = [
   {
@@ -218,6 +220,19 @@ describe("delete user by id", () => {
   });
 });
 
+describe("delete user by id", () => {
+  it("delete /users/:id => fail test user not found", async () => {
+    jest.spyOn(User, "destroy").mockRejectedValue({ name: "User not found" });
+    const result = await request(app)
+      .delete(`/users`)
+      .set("access_token", access_token);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "User not found");
+  });
+});
+
 describe("patch user by id", () => {
   it("patch /users/:id => success test status(201)", async () => {
     const payload = { username: "patch username" };
@@ -286,7 +301,6 @@ describe("get all users", () => {
     const result = await request(app)
       .get("/users")
       .set("access_token", access_token);
-    console.log(result.body);
     expect(result.status).toBe(404);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
@@ -295,13 +309,25 @@ describe("get all users", () => {
 });
 
 describe("verify users", () => {
-  it("get /users => fail test empty", async () => {
+  it("get /users => success test", async () => {
     const userTest2 = await User.create(testUser2);
     const result = await request(app).get(`/users/verify/${userTest2.id}`);
     expect(result.status).toBe(200);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
     expect(result.body).toHaveProperty("message", "Verified");
+  });
+});
+
+describe("verify users", () => {
+  it("get /users => fail test", async () => {
+    const userTest2 = await User.create(testUser2);
+    const id = 9999;
+    const result = await request(app).get(`/users/verify/${id}`);
+    expect(result.status).toBe(404);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "User not found");
   });
 });
 
@@ -350,6 +376,22 @@ describe("change balance payment", () => {
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
     expect(result.body).toHaveProperty("message", "Invalid Price");
+  });
+});
+
+describe("change balance payment", () => {
+  it("get /users/changeBalancePayment => fail test server", async () => {
+    jest.spyOn(User, "update").mockResolvedValue([0]);
+    const result = await request(app)
+      .patch(`/users/changeBalancePayment`)
+      .set("access_token", access_token)
+      .send({
+        price: 10000,
+      });
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Error when doing payment");
   });
 });
 
@@ -448,8 +490,8 @@ describe("create new vehicle", () => {
   });
 });
 
-describe("get all balance history", () => {
-  it("get /balances => success test status(200)", async () => {
+describe("topup test", () => {
+  it("get /balances => permata success test status(200)", async () => {
     const payload = {
       totalPrice: 10000,
       paymentStatus: "topup",
@@ -478,8 +520,8 @@ describe("get all balance history", () => {
   });
 });
 
-describe("get all balance history", () => {
-  it("get /balances => success test status(200)", async () => {
+describe("topup test", () => {
+  it("get /balances => bca success test status(200)", async () => {
     const payload = {
       totalPrice: 10000,
       paymentStatus: "topup",
@@ -526,8 +568,8 @@ describe("get all balance history", () => {
   });
 });
 
-describe("get all balance history", () => {
-  it("get /balances => success test status(200)", async () => {
+describe("handle request from midtrans", () => {
+  it("post /notification => success test status(200)", async () => {
     await queryInterface.bulkInsert("BalanceHistories", seedBalanceHistories);
     const payload = {
       va_numbers: [{ va_number: "66777597948", bank: "bca" }],
@@ -557,6 +599,7 @@ describe("get all balance history", () => {
 
 describe("change image user", () => {
   it("get /changeImg => success test change image", async () => {
+    jest.spyOn(imagekit, "upload").mockResolvedValue({ url: "asd.com" });
     const result = await request(app)
       .patch(`/users/changeImg`)
       .set("access_token", access_token)
@@ -569,7 +612,23 @@ describe("change image user", () => {
 });
 
 describe("change image user", () => {
-  it("get /changeImg => success test change image", async () => {
+  it("get /changeImg => fail test server when change image", async () => {
+    jest.spyOn(imagekit, "upload").mockResolvedValue({ url: "asd.com" });
+    jest.spyOn(User, "update").mockResolvedValue([0]);
+    const result = await request(app)
+      .patch(`/users/changeImg`)
+      .set("access_token", access_token)
+      .attach("image", "uploads/2.jpg");
+    expect(result.status).toBe(400);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Error Upload");
+  });
+});
+
+describe("change image vehicles", () => {
+  it("get /changeImg => success test change image vehicles", async () => {
+    jest.spyOn(imagekit, "upload").mockResolvedValue({ url: "asd.com" });
     await queryInterface.bulkInsert("Vehicles", seedVehicles);
     const vehiclesId = 1;
     const result = await request(app)
@@ -583,22 +642,32 @@ describe("change image user", () => {
   });
 });
 
-// jest.mock("imagekit");
-const ImageKit = require("imagekit");
-const imagekit = require("../config/imageKit");
-
-describe("change image user", () => {
-  it.only("get /changeImg => success test change image", async () => {
-    jest.spyOn(imagekit, "upload").mockResolvedValue({ url: "asd.com" });
-    await queryInterface.bulkInsert("Vehicles", seedVehicles);
-    const vehiclesId = 1;
-    const result = await request(app)
-      .patch(`/vehicles/${vehiclesId}`)
-      .set("access_token", access_token)
-      .attach("image", "uploads/2.jpg");
-    expect(result.status).toBe(200);
+describe("handle request from midtrans", () => {
+  it("post /notification => fail test", async () => {
+    jest.spyOn(BalanceHistory, "update").mockResolvedValue(false);
+    await queryInterface.bulkInsert("BalanceHistories", seedBalanceHistories);
+    const payload = {
+      va_numbers: [{ va_number: "66777597948", bank: "bca" }],
+      transaction_time: "2022-11-08 00:04:29",
+      transaction_status: "settlement",
+      transaction_id: "fbb8baae-4841-459e-8c03-aeaefe4cd572",
+      status_message: "midtrans payment notification",
+      status_code: "200",
+      signature_key:
+        "cd28f8370b90a909baebfaf4c838bde60dfbd1d7e8a00de5f6e07f9edabd6cad91d67ba7be9c36015d534c9f337aa12dc4eae9945e1515af6baad73f3d15cc0d",
+      settlement_time: "2022-11-08 00:05:14",
+      payment_type: "bank_transfer",
+      payment_amounts: [],
+      order_id: "order-id-$1-1667840670",
+      merchant_id: "G748966777",
+      gross_amount: "10000.00",
+      fraud_status: "accept",
+      currency: "IDR",
+    };
+    const result = await request(app).post("/notification").send(payload);
+    expect(result.status).toBe(500);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "Success");
+    expect(result.body).toHaveProperty("message", "Failed to pay");
   });
 });
