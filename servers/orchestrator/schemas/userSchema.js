@@ -1,4 +1,5 @@
 const axios = require("axios");
+const errorHandling = require("../middlewares/errorHandling");
 const baseUrlUser = "http://localhost:3000";
 const redis = require("./../config/redis");
 
@@ -84,12 +85,12 @@ type Query {
     getUserById(id:ID, access_token:String):User
     getBalance(access_token:String):[BalanceHistories]
     getVehicle(access_token:String):[Vehicle]
+    verify(id:ID): Data
 }
 
 type Mutation {
     login(login: InputLogin): Payload
     register(register: InputRegister): Data
-    verify(id:ID): Data
     delete(access_token:String): Data
     changeUsername(access_token:String, username:String): Data
     changeBalance(access_token:String, price:Int): Data
@@ -117,7 +118,7 @@ const resolvers = {
           return data;
         }
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getUserById: async (_, args) => {
@@ -133,7 +134,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getBalance: async (_, args) => {
@@ -149,7 +150,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     getVehicle: async (_, args) => {
@@ -165,7 +166,19 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
+      }
+    },
+    verify: async (_, args) => {
+      try {
+        const { id } = args;
+        const { data } = await axios({
+          method: "get",
+          url: `${baseUrlUser}/users/verify/${id}`,
+        });
+        return data;
+      } catch (error) {
+        errorHandling(error);
       }
     },
   },
@@ -181,7 +194,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     login: async (_, args) => {
@@ -195,20 +208,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
-      }
-    },
-    verify: async (_, args) => {
-      try {
-        const { id } = args;
-        const { data } = await axios({
-          method: "PATCH",
-          url: `${baseUrlUser}/users/verify/${id}`,
-        });
-        await redis.del("app:users");
-        return data;
-      } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     delete: async (_, args) => {
@@ -224,7 +224,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     changeUsername: async (_, args) => {
@@ -246,7 +246,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     changeBalance: async (_, args) => {
@@ -268,7 +268,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     vehicle: async (_, args) => {
@@ -285,7 +285,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     deleteVehicle: async (_, args) => {
@@ -301,7 +301,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
-        console.log(error);
+        errorHandling(error);
       }
     },
     payment: async (_, args) => {
@@ -321,7 +321,7 @@ const resolvers = {
         });
         return data;
       } catch (err) {
-        return err;
+        errorHandling(error);
       }
     },
   },

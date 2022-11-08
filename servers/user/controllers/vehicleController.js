@@ -14,6 +14,8 @@ class Controller {
         },
       });
 
+      if (!vehicle || vehicle.length <= 0) throw { name: "Vehicle not found" };
+
       res.status(200).json(vehicle);
     } catch (err) {
       next(err);
@@ -79,6 +81,10 @@ class Controller {
   static async create(req, res, next) {
     try {
       const { plat, modelName, name } = req.body;
+
+      if (!plat || !modelName || !name) {
+        throw { name: "invalid_input", msg: "Invalid Input" };
+      }
 
       const UserId = req.user.id;
 
