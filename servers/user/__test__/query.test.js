@@ -115,6 +115,7 @@ let access_token;
 let access_token3;
 
 beforeEach(async () => {
+  jest.restoreAllMocks();
   const userTest = await User.create(testUser);
   const userTest3 = await User.create(testUser3);
   const payload = {
@@ -583,25 +584,21 @@ describe("change image user", () => {
 });
 
 // jest.mock("imagekit");
-// const Imagekit = require("imagekit");
+const ImageKit = require("imagekit");
+const imagekit = require("../config/imageKit");
 
-// describe("change image user", () => {
-//   it.only("get /changeImg => success test change image", async () => {
-//     const imagekit = new ImageKit({
-//       publicKey: process.env.publicKey,
-//       privateKey: process.env.privateKey,
-//       urlEndpoint: process.env.urlEndpoint,
-//     });
-//     imagekit.mockReturnValue(Promise.resolve({ url: "imgurl.com" }));
-//     await queryInterface.bulkInsert("Vehicles", seedVehicles);
-//     const vehiclesId = 1;
-//     const result = await request(app)
-//       .patch(`/vehicles/${vehiclesId}`)
-//       .set("access_token", access_token)
-//       .attach("image", "uploads/2.jpg");
-//     expect(result.status).toBe(200);
-//     expect(result.body).toBeInstanceOf(Object);
-//     expect(result.body).toHaveProperty("message", expect.any(String));
-//     expect(result.body).toHaveProperty("message", "Success");
-//   });
-// });
+describe("change image user", () => {
+  it.only("get /changeImg => success test change image", async () => {
+    jest.spyOn(imagekit, "upload").mockResolvedValue({ url: "asd.com" });
+    await queryInterface.bulkInsert("Vehicles", seedVehicles);
+    const vehiclesId = 1;
+    const result = await request(app)
+      .patch(`/vehicles/${vehiclesId}`)
+      .set("access_token", access_token)
+      .attach("image", "uploads/2.jpg");
+    expect(result.status).toBe(200);
+    expect(result.body).toBeInstanceOf(Object);
+    expect(result.body).toHaveProperty("message", expect.any(String));
+    expect(result.body).toHaveProperty("message", "Success");
+  });
+});
