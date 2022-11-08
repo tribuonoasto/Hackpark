@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import ModalScreenBank from "../components/ModalScreenBank";
+import ModalScreenTopup from "../components/ModalScreenTopup";
 import { TOPUP_BALANCE } from "../queries/user";
 
 const TopupScreen = () => {
@@ -20,6 +21,7 @@ const TopupScreen = () => {
   const [inputBank, setInputBank] = useState("");
   const [bankName, setBankName] = useState("Select a top up method");
   const [topupBalance, { data, loading, error }] = useMutation(TOPUP_BALANCE);
+  const [modalTopUp, setModalTopUp] = useState(false);
 
   const handleSubmit = () => {
     Keyboard.dismiss();
@@ -27,15 +29,12 @@ const TopupScreen = () => {
 
     topupBalance({
       variables: {
-        payment: {
-          totalPrice: +inputAmount,
-          paymentStatus: "done",
-          bank: inputBank,
-        },
+        totalPrice: +inputAmount,
+        paymentStatus: "done",
+        bank: inputBank,
       },
     });
   };
-  console.log(data, loading, error);
 
   const handleModal = (codeName, bank) => {
     setModalVisible(true);
@@ -44,6 +43,14 @@ const TopupScreen = () => {
       setBankName(bank);
     }
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <Text>Processing your top up...</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -115,6 +122,13 @@ const TopupScreen = () => {
           handleModal={handleModal}
         />
       )}
+
+      {/* {modalTopUp && (
+        <ModalScreenTopup
+          modalVisible={modalTopUp}
+          setModalVisible={setModalTopUp}
+        />
+      )} */}
     </View>
   );
 };
