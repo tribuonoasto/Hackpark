@@ -18,6 +18,10 @@ input InputBooking {
     bookingDate: String
 }
 
+input InputBookingId {
+  bookingId: String
+}
+
 type Venue {
     _id: String
     name: String
@@ -123,6 +127,7 @@ type Query {
 type Mutation {
     rating(rating: InputRating): Data
     booking(booking: InputBooking!): Data
+    checkBooking(bookingId: InputBookingId):Data
 }
 `;
 
@@ -609,6 +614,9 @@ const resolvers = {
           },
         });
 
+        console.log(resp, "resp");
+        console.log(book);
+
         if (!resp) {
           await axios({
             method: "patch",
@@ -617,9 +625,41 @@ const resolvers = {
 
           return { message: "Failed Booking" };
         }
-        return { message: "Success Booking" };
+        console.log("success");
+        return { message: "Success Booking", bookingId: book._id };
       } catch (error) {
         errorHandling(error);
+      }
+    },
+    checkBooking: async (_, args, context) => {
+      try {
+        const { bookingId } = args;
+        const { access_token } = context;
+
+        const { data: book } = await axios({
+          method: "post",
+          url: `${baseUrlBooking}/check/${bookingId}`,
+        });
+
+        console.log(book, "<<<<");
+
+        if (book == "Checkout Success") {
+          await axios({
+            method: "patch",
+            url: `${baseUrlUser}/users/changeBalancePayment`,
+            headers: {
+              access_token,
+            },
+            data: {
+              price: book.checkoutPrice,
+            },
+          });
+          return book.message;
+        }
+
+        return book.message;
+      } catch (err) {
+        errorHandling(err);
       }
     },
   },

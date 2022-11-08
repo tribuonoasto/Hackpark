@@ -48,5 +48,16 @@ class Slot {
       throw error;
     }
   }
+
+  static async findAllSlotBook(options) {
+    try {
+      const collection = getDB().collection("slots");
+
+      const slots = await collection.aggregate([options]).toArray();
+      return slots;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 module.exports = Slot;

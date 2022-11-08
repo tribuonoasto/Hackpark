@@ -147,8 +147,6 @@ class BookingController {
     try {
       await session.withTransaction(async () => {
         const { bookingId } = req.params;
-        const { access_token } = req.body;
-        console.log(access_token);
 
         const checkBooking = await Book.findOne(bookingId);
 
@@ -221,17 +219,6 @@ class BookingController {
             throw { name: "invalid_Book", msg: "Error when totalling price" };
           }
 
-          await axios({
-            method: "patch",
-            url: `${baseUrlLocalUser}/users/changeBalancePayment`,
-            headers: {
-              access_token,
-            },
-            data: {
-              price: checkoutPrice,
-            },
-          });
-
           const newBooking = await Book.editBooking(
             bookingId,
             {
@@ -251,7 +238,7 @@ class BookingController {
             slot: currentSlot + 1,
           });
 
-          res.status(200).json({ message: "Checkout Success" });
+          res.status(200).json({ message: "Checkout Success", checkoutPrice });
         }
       });
     } catch (error) {
