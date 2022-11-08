@@ -21,7 +21,6 @@ input InputBooking {
 type Venue {
     _id: String
     name: String
-    slot: Int
     address: String
     lat: Int
     lng: Int
@@ -29,6 +28,8 @@ type Venue {
     bookingPrice: Int
     imgVenue: String
     description: String
+    Ratings: [Rating]
+    Slots: [Slot]
 }
 
 type Slot {
@@ -43,7 +44,7 @@ type Rating {
     _id: String
     UserId: Int
     VenueId: String
-    rating: String
+    rating: Int
 }
 
 type Booking {
@@ -90,12 +91,64 @@ const resolvers = {
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
-          const { data } = await axios({
+          const { data: venues } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/venues/`,
           });
-          await redis.set("app:venues", JSON.stringify(data));
-          return data;
+
+          const { data: slots } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/slots`,
+          });
+
+          const { data: ratings } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/ratings`,
+          });
+
+          const slotVenues = venues.map((venue) => {
+            let slot = slots.filter((slot) => {
+              if (slot.VenueId === venue._id) {
+                return slot;
+              }
+            });
+            if (slot.length === 0) {
+              return {
+                ...venue,
+                Slots: [],
+              };
+            } else {
+              return {
+                ...venue,
+                Slots: slot,
+              };
+            }
+          });
+
+          const newVenues = slotVenues.map((venue) => {
+            let newRatings = ratings.filter((rating) => {
+              if (rating.VenueId === venue._id) {
+                return rating;
+              }
+            });
+            if (newRatings.length === 0) {
+              return {
+                ...venue,
+                Ratings: [],
+              };
+            } else {
+              return {
+                ...venue,
+                Ratings: newRatings,
+              };
+            }
+          });
+
+          console.log(newVenues);
+
+          await redis.set("app:venues", JSON.stringify(newVenues));
+
+          return newVenues;
         }
       } catch (error) {
         errorHandling(error);
