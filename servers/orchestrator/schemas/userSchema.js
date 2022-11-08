@@ -82,9 +82,9 @@ type MidtransResp {
 
 type Query {
     getUsers:[User]
-    getUserById(id:ID, access_token:String):User
-    getBalance(access_token:String):[BalanceHistories]
-    getVehicle(access_token:String):[Vehicle]
+    getUserById(id:ID):User
+    getBalance:[BalanceHistories]
+    getVehicle:[Vehicle]
     verify(id:ID): Data
 }
 
@@ -104,12 +104,11 @@ const resolvers = {
   Query: {
     getUsers: async () => {
       try {
-        const itemsCache = await redis.get("app:users");
+        // const itemsCache = await redis.get("app:users");
+        const itemsCache = null;
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlUser}/users/`,
@@ -121,14 +120,15 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getUserById: async (_, args) => {
+    getUserById: async (_, args, context) => {
       try {
-        const { id, access_token } = args;
+        const { id } = args;
+
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/users/${id}`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");
@@ -137,14 +137,13 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getBalance: async (_, args) => {
+    getBalance: async (_, args, context) => {
       try {
-        const { access_token } = args;
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/balances`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context. access_token}`,
           },
         });
         await redis.del("app:users");
@@ -153,14 +152,13 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getVehicle: async (_, args) => {
+    getVehicle: async (_, args, context) => {
       try {
-        const { access_token } = args;
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/vehicles`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");

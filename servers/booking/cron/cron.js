@@ -2,7 +2,7 @@ var cron = require("node-cron");
 const Book = require("../models/booking");
 const Slot = require("../models/slot");
 
-const task = cron.schedule("* * * * *", async () => {
+const task = cron.schedule("* */5 * * *", async () => {
   // console.log("running a task every five minutes", new Date().toLocaleString());
   try {
     const bookings = await Book.findAll();
@@ -15,17 +15,24 @@ const task = cron.schedule("* * * * *", async () => {
       }
     });
 
-    expiredBook.forEach(async (el) => {
-      const bookingId = el._id.toString();
-      await Book.editBooking(bookingId, {
+    const bookPromise = expiredBook.map((book) => {
+      const bookingId = book._id.toString();
+      return Book.editBooking(bookingId, {
         transactionStatus: "Expired",
       });
-      const checkSlot = await Slot.findOne(el.SlotId);
-      let currentSlot = checkSlot.slot;
+    });
+
+    Promise.allSettled(bookPromise);
+
+    expiredBook.forEach(async (el) => {
+      const checkSlot = await Slot.findOne(el.SlotId.toString());
+      const currentSlot = checkSlot.slot + 1;
       await Slot.editSlot(el.SlotId, {
-        slot: currentSlot + expiredBook.length,
+        slot: currentSlot,
       });
     });
+
+    console.log("cron jalan");
   } catch (error) {
     next(error);
   }

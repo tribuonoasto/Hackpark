@@ -33,8 +33,8 @@ export const GET_USER = gql`
 `;
 
 export const GET_USER_BY_ID = gql`
-  query GetUserById($getUserByIdId: ID, $accessToken: String) {
-    getUserById(id: $getUserByIdId, access_token: $accessToken) {
+  query GetUserById($getUserByIdId: ID) {
+    getUserById(id: $getUserByIdId) {
       id
       username
       email
