@@ -106,10 +106,8 @@ const resolvers = {
       try {
         const itemsCache = await redis.get("app:users");
         if (itemsCache) {
-          console.log("data dari cache");
           return JSON.parse(itemsCache);
         } else {
-          console.log("data dari service");
           const { data } = await axios({
             method: "GET",
             url: `${baseUrlUser}/users/`,

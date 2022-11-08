@@ -135,7 +135,6 @@ class Controller {
     try {
       const { id } = req.user;
       const { price } = req.body;
-      console.log(price, typeof price);
 
       if (!price) {
         throw { name: "invalid_input", msg: "Invalid Price" };

@@ -2,6 +2,7 @@ const axios = require("axios");
 const errorHandling = require("../middlewares/errorHandling");
 const baseUrlBooking = "http://localhost:4002";
 const redis = require("./../config/redis");
+const baseUrlUser = "http://localhost:3000";
 
 const typeDefs = `#graphql
 
@@ -65,6 +66,45 @@ type Data {
   message: String
 }
 
+type Payload {
+    access_token: String
+    id: ID
+    username: String
+    email: String
+}
+
+type User {
+    id:ID
+    username: String
+    email: String
+    password: String
+    fullName: String
+    balance: Int
+    isRegis: Boolean
+    imgUrl: String
+    role: String
+    BalanceHistories: [BalanceHistories]
+    Vehicle: Vehicle
+}
+
+type BalanceHistories {
+    id: ID
+    UserId: ID
+    dateTransaction: String
+    type: String
+    amount: Int
+    status: String
+}
+
+type Vehicle{
+    id: ID
+    UserId: ID
+    plat: String
+    modelName: String
+    name: String
+    imgUrl: String
+}
+
 type Query {
     getVenues:[Venue]
     getVenueById(id:String): Venue
@@ -78,7 +118,7 @@ type Query {
 
 type Mutation {
     rating(rating: InputRating): Data
-    booking(booking: InputBooking): Data
+    booking(access_token:String,booking: InputBooking,id:ID): Data
 }
 `;
 
@@ -223,13 +263,39 @@ const resolvers = {
     booking: async (_, args) => {
       try {
         const { booking } = args;
-        const { data } = await axios({
+        const { UserId, SlotId, bookingDate, access_token } = booking;
+
+        const { data: user } = await axios({
+          method: "get",
+          url: `${baseUrlUser}/users/${UserId}`,
+          headers: {
+            access_token,
+          },
+        });
+
+        if (!user) throw { name: "user_not_found" };
+
+        const { data: book } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/bookings`,
-          data: booking,
+          data: {
+            SlotId,
+            bookingDate,
+            access_token,
+            UserId,
+          },
         });
-        await redis.del("app:bookings");
-        return data;
+
+        const { data: resp } = await axios({
+          method: "patch",
+          url: `${baseUrlUser}/users/changeBalancePayment`,
+          headers: {
+            access_token,
+          },
+          data: {
+            price: book.price,
+          },
+        });
       } catch (error) {
         errorHandling(error);
       }
