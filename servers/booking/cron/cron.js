@@ -8,7 +8,7 @@ const task = cron.schedule("*/5 * * * *", async () => {
       $lookup: {
         from: "bookings",
         let: {
-          bookingDate: "$bookingDate",
+          expiredDate: "$expiredDate",
           transactionStatus: "$transactionStatus",
         },
         localField: "_id",
@@ -19,7 +19,7 @@ const task = cron.schedule("*/5 * * * *", async () => {
             $match: {
               $expr: {
                 $and: [
-                  { $lt: ["$bookingDate", new Date()] },
+                  { $lt: ["$expiredDate", new Date()] },
                   { $eq: ["$transactionStatus", "Booked"] },
                 ],
               },

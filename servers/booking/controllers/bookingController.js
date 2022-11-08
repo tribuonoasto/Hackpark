@@ -23,10 +23,7 @@ class BookingController {
           };
         }
 
-        //// CHECK DATE
-        const today = format(new Date(), "yyyy-MM-dd");
-        const checkBookingDate = format(new Date(bookingDate), "yyyy-MM-dd");
-        if (checkBookingDate < today) {
+        if (new Date(bookingDate) < new Date()) {
           throw {
             name: "invalid_validation",
             msg: "Invalid date",
@@ -100,6 +97,10 @@ class BookingController {
             name: "invalid_Book",
             msg: "Error when booking parking slot",
           };
+
+        //// CHECK DATE
+        const today = format(new Date(), "yyyy-MM-dd");
+        const checkBookingDate = format(new Date(bookingDate), "yyyy-MM-dd");
 
         //// DECREASE PARKING SLOT
         if (today === checkBookingDate) {
