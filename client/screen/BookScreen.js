@@ -32,10 +32,6 @@ const BookScreen = ({ route, navigation }) => {
 
   const { id } = route.params;
 
-  // console.log(id);
-
-  // console.log(bookingData, bookingLoading, bookingError);
-
   const {
     loading: venueLoading,
     error: venueError,
@@ -45,11 +41,9 @@ const BookScreen = ({ route, navigation }) => {
     variables: { getVenueByIdId: id },
   });
 
-  // console.log(venueData);
-
   const { loading, error, data, refetch } = useQuery(GET_SLOTS, {
     refetchOnWindowFocus: false,
-    enabled: false, // disable this query from automatically running
+    enabled: false,
   });
   const venues = data?.getSlots.filter((slot) => {
     if (slot.VenueId === id && slot.slot > 0 && slot.slot !== null) return slot;
@@ -121,17 +115,19 @@ const BookScreen = ({ route, navigation }) => {
       console.log(userId, date, slotRes[0]._id);
       booking({
         variables: {
-          booking: {
-            bookingDate: date,
-            SlotId: slotRes[0]._id,
-            UserId: +userId,
-          },
+          bookingDate: date,
+          SlotId: slotRes[0]._id,
+          UserId: +userId,
         },
-      }).then(() => {
-        refetch();
-        venueRefetch();
-        navigation.navigate("Orders");
-      });
+      })
+        .then(() => {
+          refetch();
+          venueRefetch();
+          navigation.navigate("Orders");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
 

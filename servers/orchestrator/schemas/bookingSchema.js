@@ -591,6 +591,8 @@ const resolvers = {
         const { access_token } = context;
         const { UserId, SlotId, bookingDate } = booking;
 
+        console.log(booking, access_token);
+
         const { data: user } = await axios({
           method: "get",
           url: `${baseUrlUser}/users/${UserId}`,
