@@ -3,6 +3,8 @@ const request = require("supertest");
 const { mongoClear, getDB } = require("../config/mongo");
 const Book = require("../models/booking");
 const { ObjectId } = require("mongodb");
+const Slot = require("../models/slot");
+const task = require("../cron/cron");
 jest.setTimeout(10000);
 
 const docsSlots = [
@@ -1743,5 +1745,46 @@ describe("PATCH /bookings/:id", () => {
       "message",
       "Error when check-outchange status"
     );
+  });
+});
+
+describe("PATCH /bookings/:id", () => {
+  test.skip("PATCH /bookings/:id - fail test server patch for failed one booking ", async () => {
+    const collectionSlot = getDB().collection("slots");
+    await collectionSlot.insertMany(docsSlots);
+    const collection = getDB().collection("bookings");
+    await collection.insertMany(docBookings);
+    // jest
+    //   .spyOn(Slot, "findAllSlotBook")
+    //   .mockResolvedValue({ acknowledged: false });
+
+    const slots = await Slot.findAllSlotBook({
+      $lookup: {
+        from: "bookings",
+        let: {
+          expiredDate: "$expiredDate",
+          transactionStatus: "$transactionStatus",
+        },
+        localField: "_id",
+        foreignField: "SlotId",
+        as: "bookings",
+        pipeline: [
+          {
+            $match: {
+              $expr: {
+                $and: [
+                  { $lt: ["$expiredDate", new Date()] },
+                  { $eq: ["$transactionStatus", "Booked"] },
+                ],
+              },
+            },
+          },
+        ],
+      },
+    });
+
+    task.start();
+
+    console.log(slots);
   });
 });
