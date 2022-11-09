@@ -4,7 +4,7 @@ const Slot = require("../models/slot");
 const format = require("date-fns/format");
 const addDays = require("date-fns/addDays");
 
-const taskSlot = cron.schedule("* */23 * * *", async () => {
+const yourFunction = async () => {
   try {
     const today = format(new Date(), "yyyy-MM-dd");
     const tommorrow = format(addDays(new Date(), 1), "yyyy-MM-dd");
@@ -14,6 +14,7 @@ const taskSlot = cron.schedule("* */23 * * *", async () => {
         from: "bookings",
         let: {
           bookingDate: "$bookingDate",
+          transactionStatus: "$transactionStatus",
         },
         localField: "_id",
         foreignField: "SlotId",
@@ -25,6 +26,7 @@ const taskSlot = cron.schedule("* */23 * * *", async () => {
                 $and: [
                   { $gte: ["$bookingDate", new Date(today)] },
                   { $lt: ["$bookingDate", new Date(tommorrow)] },
+                  { $eq: ["$transactionStatus", "Booked"] },
                 ],
               },
             },
@@ -41,10 +43,13 @@ const taskSlot = cron.schedule("* */23 * * *", async () => {
 
     Promise.allSettled(slotPromise);
     console.log("cron jalan");
+    return "cron jalan";
   } catch (error) {
     console.log(error);
-    next(error);
+    return error;
   }
-});
+};
 
-module.exports = taskSlot;
+const taskSlot = cron.schedule("* */23 * * *", yourFunction);
+
+module.exports = { yourFunction, taskSlot };

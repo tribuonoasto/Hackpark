@@ -3,6 +3,9 @@ const request = require("supertest");
 const { mongoClear, getDB } = require("../config/mongo");
 const Book = require("../models/booking");
 const { ObjectId } = require("mongodb");
+const Slot = require("../models/slot");
+const { taskFunction } = require("../cron/cron");
+const { yourFunction } = require("../cron/cronSlot");
 jest.setTimeout(10000);
 
 const docsSlots = [
@@ -1743,5 +1746,27 @@ describe("PATCH /bookings/:id", () => {
       "message",
       "Error when check-outchange status"
     );
+  });
+});
+
+describe("PATCH /bookings/:id", () => {
+  test("PATCH /bookings/:id - fail test server patch for failed one booking ", async () => {
+    const collectionSlot = getDB().collection("slots");
+    await collectionSlot.insertMany(docsSlots);
+    const collection = getDB().collection("bookings");
+    await collection.insertMany(docBookings);
+    const result = await yourFunction();
+    expect(result).toBe("cron jalan");
+  });
+});
+
+describe("PATCH /bookings/:id", () => {
+  test("PATCH /bookings/:id - fail test server patch for failed one booking ", async () => {
+    const collectionSlot = getDB().collection("slots");
+    await collectionSlot.insertMany(docsSlots);
+    const collection = getDB().collection("bookings");
+    await collection.insertMany(docBookings);
+    const result = await taskFunction();
+    expect(result).toBe("cron jalan");
   });
 });
