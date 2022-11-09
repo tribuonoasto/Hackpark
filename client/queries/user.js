@@ -37,10 +37,29 @@ export const GET_USER_BY_ID = gql`
     getUserById(id: $getUserByIdId) {
       id
       username
-      imgUrl
       email
+      password
       fullName
       balance
+      isRegis
+      imgUrl
+      role
+      BalanceHistories {
+        id
+        UserId
+        dateTransaction
+        type
+        amount
+        status
+      }
+      Vehicle {
+        id
+        UserId
+        plat
+        modelName
+        name
+        imgUrl
+      }
     }
   }
 `;
@@ -100,6 +119,22 @@ export const LOGIN = gql`
       id
       username
       email
+    }
+  }
+`;
+
+export const REGISTER = gql`
+  mutation Register($register: InputRegister) {
+    register(register: $register) {
+      message
+    }
+  }
+`;
+
+export const VEHICLE = gql`
+  mutation Vehicle($vehicle: InputVehicle) {
+    vehicle(vehicle: $vehicle) {
+      message
     }
   }
 `;
