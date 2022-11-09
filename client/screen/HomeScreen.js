@@ -251,9 +251,7 @@ const HomeScreen = ({ navigation }) => {
             color: "#474E68",
             marginBottom: 20,
           }}
-        >
-          Closest spot
-        </Text>
+        ></Text>
         <FlatList
           data={data.getVenues}
           scrollEnabled={true}

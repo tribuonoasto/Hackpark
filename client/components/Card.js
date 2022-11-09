@@ -46,25 +46,6 @@ const Card = ({ navigation, item }) => {
               </Text>
             </View>
           </View>
-          <View
-            style={{
-              justifyContent: "center",
-              alignItems: "center",
-              flexDirection: "row",
-            }}
-          >
-            <FontAwesome5 name="map-pin" color="#404258" size={24} />
-            <Text
-              style={{
-                marginLeft: 10,
-                color: "#50577A",
-                fontWeight: "400",
-                fontSize: 14,
-              }}
-            >
-              2.3 Km
-            </Text>
-          </View>
         </View>
       </View>
     </TouchableOpacity>

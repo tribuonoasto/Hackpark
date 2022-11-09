@@ -44,6 +44,8 @@ const TopupScreen = () => {
     }
   };
 
+  console.log(data, loading, error);
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>

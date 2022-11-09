@@ -17,10 +17,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Orders = ({ navigation }) => {
   const [bookings, setBookings] = useState([]);
-  const { loading, data, error } = useQuery(GET_BOOKINGS);
+  const { loading, data, error, refetch } = useQuery(GET_BOOKINGS);
 
   useEffect(() => {
     (async () => {
+      refetch();
       const id = await AsyncStorage.getItem("id");
 
       if (data) {
