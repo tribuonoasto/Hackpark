@@ -9,21 +9,33 @@ import {
 } from "react-native";
 import { useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
+import { useQuery } from "@apollo/client";
+import { GET_USER_BY_ID } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLazyQuery } from "@apollo/client";
 import UserList from "../components/UserList";
-const ngrok = require("./../config/apollo");
 
 const UserScreen = ({ navigation }) => {
-  const [users, setUsers] = useState({});
-  const [loading, setLoading] = useState(true);
+  const { loading, error, data } = useQuery(GET_USER_BY_ID);
+
+  const [
+    getUserId,
+    { loading: userLoading, error: userError, data: userData },
+  ] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
-    fetch(`${ngrok}/users`)
-      .then((response) => response.json())
-      .then((json) => {
-        setUsers(json);
-        setLoading(false);
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+      console.log(id, " <<<<");
+      getUserId({
+        variables: {
+          getUserByIdId: id,
+        },
       });
+    })();
   }, []);
+
+  console.log(userData);
 
   if (loading) {
     return (
@@ -49,7 +61,7 @@ const UserScreen = ({ navigation }) => {
           >
             <View style={{ flexDirection: "row" }}>
               <Image
-                source={{ uri: users[0].imgUrl }}
+                source={{ uri: userData.getUserById.imgUrl }}
                 style={{
                   width: 60,
                   height: 60,
@@ -67,10 +79,10 @@ const UserScreen = ({ navigation }) => {
                       color: "#404258",
                     }}
                   >
-                    {users[0].username}
+                    {userData.getUserById.username}
                   </Text>
                   <Text style={{ marginTop: 5, color: "#50577A" }}>
-                    {users[0].email}
+                    {userData.getUserById.email}
                   </Text>
                 </View>
               </View>

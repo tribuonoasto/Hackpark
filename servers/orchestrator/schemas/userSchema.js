@@ -82,9 +82,9 @@ type MidtransResp {
 
 type Query {
     getUsers:[User]
-    getUserById(id:ID, access_token:String):User
-    getBalance(access_token:String):[BalanceHistories]
-    getVehicle(access_token:String):[Vehicle]
+    getUserById(id:ID):User
+    getBalance:[BalanceHistories]
+    getVehicle:[Vehicle]
     verify(id:ID): Data
 }
 
@@ -94,8 +94,8 @@ type Mutation {
     delete(access_token:String): Data
     changeUsername(access_token:String, username:String): Data
     changeBalance(price:Int): Data
-    vehicle(access_token:String, vehicle: InputVehicle ): Data
-    deleteVehicle(access_token:String, id:ID): Data
+    vehicle(vehicle: InputVehicle ): Data
+    deleteVehicle(id:ID): Data
     payment(totalPrice:Int,paymentStatus:String,bank:String):MidtransResp
 }
 `;
@@ -137,14 +137,13 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getBalance: async (_, args) => {
+    getBalance: async (_, args, context) => {
       try {
-        const { access_token } = args;
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/balances`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context. access_token}`,
           },
         });
         await redis.del("app:users");
@@ -153,14 +152,13 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getVehicle: async (_, args) => {
+    getVehicle: async (_, args, context) => {
       try {
-        const { access_token } = args;
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/vehicles`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");
@@ -271,14 +269,14 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    vehicle: async (_, args) => {
+    vehicle: async (_, args, context) => {
       try {
-        const { access_token, vehicle } = args;
+        const { vehicle } = args;
         const { data } = await axios({
           method: "POST",
           url: `${baseUrlUser}/vehicles`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
           data: vehicle,
         });
@@ -288,14 +286,14 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    deleteVehicle: async (_, args) => {
+    deleteVehicle: async (_, args, context) => {
       try {
-        const { access_token, id } = args;
+        const { id } = args;
         const { data } = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/vehicles/${id}`,
           headers: {
-            access_token: `${access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");

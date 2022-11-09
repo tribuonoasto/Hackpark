@@ -9,11 +9,54 @@ import {
   Keyboard,
   ScrollView,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 
 import Constants from "expo-constants";
+import { useState, useEffect } from "react";
+import { useMutation } from "@apollo/client";
+import { REGISTER } from "../queries/user";
 
 const Register = ({ navigation }) => {
+  const [register, { data, loading, error }] = useMutation(REGISTER);
+  const [username, SetUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = () => {
+    register({
+      variables: {
+        register: {
+          email: email,
+          password: password,
+          username: username,
+          fullName: null,
+        },
+      },
+    });
+  };
+
+  useEffect(() => {
+    // (async () => {
+    //   if (data) {
+    //     console.log(data)
+    //   }
+    // })();
+    // console.log(data, loading, error);
+
+    if (data && data.register !== null) {
+      navigation.navigate("Login");
+    }
+  }, [data, loading, error]);
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
+
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -53,11 +96,23 @@ const Register = ({ navigation }) => {
             </View>
             <View>
               <Text style={styles.label}>Username</Text>
-              <TextInput style={styles.input} placeholder="Username" />
+              <TextInput
+                style={styles.input}
+                placeholder="Username"
+                value={username}
+                onChangeText={SetUsername}
+                onSubmitEditing={Keyboard.dismiss}
+              />
             </View>
             <View style={{ marginTop: 10 }}>
               <Text style={styles.label}>Email</Text>
-              <TextInput style={styles.input} placeholder="Enter your email" />
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your email"
+                value={email}
+                onChangeText={setEmail}
+                onSubmitEditing={Keyboard.dismiss}
+              />
             </View>
             <View style={{ marginTop: 10 }}>
               <Text style={styles.label}>Password</Text>
@@ -67,10 +122,13 @@ const Register = ({ navigation }) => {
                 secureTextEntry={true}
                 keyboardType="visible-password"
                 placeholder="Password"
+                value={password}
+                onChangeText={setPassword}
+                onSubmitEditing={Keyboard.dismiss}
               />
             </View>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Login")}
+              onPress={handleRegister}
               style={{
                 marginTop: 15,
                 height: 40,
