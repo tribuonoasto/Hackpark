@@ -20,12 +20,12 @@ const EditUserScreen = ({ navigation }) => {
   const [uploadImage, setUploadImage] = useState();
   const [image, setImage] = useState(null);
 
-  const { loading, error, data } = useQuery(GET_USER_BY_ID);
+  const [getUserId,{ loading, error, data }]= useLazyQuery(GET_USER_BY_ID);
 
-  const [
-    getUserId,
-    { loading: userLoading, error: userError, data: userData },
-  ] = useLazyQuery(GET_USER_BY_ID);
+  // const [
+  //   getUserId,
+  //   { loading: userLoading, error: userError, data: userData },
+  // ] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
     (async () => {
@@ -39,7 +39,7 @@ const EditUserScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userData);
+  console.log(data);
 
   const handleEdit = () => {
     console.log(name, email);
@@ -84,9 +84,9 @@ const EditUserScreen = ({ navigation }) => {
         onPress={pickImage}
       >
         <View style={{ position: "relative" }}>
-          {image ? (
+          {/* {image ? ( */}
             <Image
-              source={{ uri: image }}
+              source={{ uri: data?.getUserById.imgUrl }}
               style={{
                 width: 150,
                 height: 150,
@@ -94,7 +94,7 @@ const EditUserScreen = ({ navigation }) => {
                 resizeMode: "cover",
               }}
             />
-          ) : (
+          {/* ) : (
             <Image
               source={require("../assets/user.jpg")}
               style={{
@@ -105,7 +105,7 @@ const EditUserScreen = ({ navigation }) => {
                 alignItems: "center",
               }}
             />
-          )}
+          )} */}
 
           <TouchableOpacity
             style={{
@@ -134,24 +134,32 @@ const EditUserScreen = ({ navigation }) => {
       <View style={{ marginTop: 40 }}>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>
-            Name <Text style={{ color: "red" }}>*</Text>
+            Username <Text style={{ color: "red" }}>*</Text>
           </Text>
-          <TextInput
+          <Text
             style={styles.input}
-            value={userData?.getUserById.username === null ? name : userData?.getUserById.username }
-            onChangeText={setName}
-          />
+            // value={data?.getUserById.username === null ? name : data?.getUserById.username }
+            // onChangeText={setName}
+          >
+            {data?.getUserById.username === null
+              ? name
+              : data?.getUserById.username}
+          </Text>
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>
             Email <Text style={{ color: "red" }}>*</Text>
           </Text>
-          <TextInput
+          <Text
             req
             style={styles.input}
-            value={userData?.getUserById.email === null ? email : userData?.getUserById.email}
-            onChangeText={setEmail}
-          />
+            // value={data?.getUserById.email === null ? email : data?.getUserById.email}
+            // onChangeText={setEmail}
+          >
+            {data?.getUserById.email === null
+              ? email
+              : data?.getUserById.email}
+          </Text>
         </View>
       </View>
 
@@ -187,7 +195,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    padding: 10,
+    padding: 0,
     paddingLeft: 0,
     borderColor: "rgba(64, 66, 68, 0.1)",
     borderBottomWidth: 1,
