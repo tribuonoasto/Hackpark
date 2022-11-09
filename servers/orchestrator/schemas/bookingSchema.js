@@ -68,6 +68,16 @@ type Booking {
   PriceAdjusterId: Int
   totalPrice: Int
   imgQrCode: String
+  User: User
+  Slot: Slot
+  Price: PriceAdjuster
+  Venue: Venue
+}
+
+type PriceAdjuster {
+  _id: Int
+  name: String
+  value: String
 }
 
 type Data {
@@ -545,26 +555,167 @@ const resolvers = {
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
-          const { data } = await axios({
+          const { data: bookings } = await axios({
             method: "GET",
             url: `${baseUrlBooking}/bookings/`,
           });
-          await redis.set("app:bookings", JSON.stringify(data));
-          return data;
+
+          const { data: slots } = await axios({
+            method: "get",
+            url: `${baseUrlBooking}/slots`,
+          });
+
+          const { data: venues } = await axios({
+            method: "GET",
+            url: `${baseUrlBooking}/venues`,
+          });
+
+          const { data: users } = await axios({
+            method: "get",
+            url: `${baseUrlUser}/users`,
+          });
+
+          const priceAdjuster = [
+            {
+              _id: 1,
+              name: "Weekdays",
+              value: 1,
+            },
+            {
+              _id: 2,
+              name: "Weekends",
+              value: 1.5,
+            },
+          ];
+
+          const bookingSlot = bookings.map((book) => {
+            let slot = slots.filter((el) => {
+              if (el._id === book.SlotId) return el;
+            });
+            if (slot.length === 0) {
+              return {
+                ...book,
+                Slot: {},
+              };
+            } else {
+              return {
+                ...book,
+                Slot: slot[0],
+              };
+            }
+          });
+
+          const bookingVenue = bookingSlot.map((book) => {
+            let venue = venues.filter((el) => {
+              if (el._id == book.Slot.VenueId) return el;
+            });
+            if (venue.length === 0) {
+              return {
+                ...book,
+                Venue: {},
+              };
+            } else {
+              return {
+                ...book,
+                Venue: venue[0],
+              };
+            }
+          });
+
+          const bookingUser = bookingVenue.map((book) => {
+            let user = users.filter((el) => {
+              if (el.id == book.UserId) return el;
+            });
+            if (user.length === 0) {
+              return {
+                ...book,
+                User: {},
+              };
+            } else {
+              return {
+                ...book,
+                User: user[0],
+              };
+            }
+          });
+
+          const bookingAdjuster = bookingUser.map((book) => {
+            let price = priceAdjuster.filter((el) => {
+              if (el._id == book.PriceAdjusterId) return el;
+            });
+            if (price.length === 0) {
+              return {
+                ...book,
+                Price: {},
+              };
+            } else {
+              return {
+                ...book,
+                Price: price,
+              };
+            }
+          });
+
+          // await redis.set("app:bookings", JSON.stringify(data));
+          return bookingAdjuster;
         }
       } catch (error) {
         errorHandling(error);
       }
     },
-    getBookingById: async (_, args) => {
+    getBookingById: async (_, args, context) => {
       try {
         const { id } = args;
-        const { data } = await axios({
+        let { data: book } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/bookings/${id}`,
         });
-        await redis.del("app:bookings");
-        return data;
+
+        // await redis.del("app:bookings");
+        const { data: user } = await axios({
+          method: "get",
+          url: `${baseUrlUser}/users/${book.UserId}`,
+          headers: {
+            access_token: context.access_token,
+          },
+        });
+
+        book.User = user;
+
+        const { data: slot } = await axios({
+          method: "get",
+          url: `${baseUrlBooking}/slots/${book.SlotId}`,
+        });
+
+        book.Slot = slot;
+
+        const { data: venue } = await axios({
+          method: "get",
+          url: `${baseUrlBooking}/venues/${book.Slot.VenueId}`,
+        });
+
+        book.Venue = venue;
+
+        const priceAdjuster = [
+          {
+            _id: 1,
+            name: "Weekdays",
+            value: 1,
+          },
+          {
+            _id: 2,
+            name: "Weekends",
+            value: 1.5,
+          },
+        ];
+
+        const price = priceAdjuster.filter((el) => {
+          if (el._id == book.PriceAdjusterId) return el;
+        });
+
+        book.Price = price[0];
+
+        return book;
       } catch (error) {
         errorHandling(error);
       }
