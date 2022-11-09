@@ -144,7 +144,7 @@ const resolvers = {
           method: "GET",
           url: `${baseUrlUser}/balances`,
           headers: {
-            access_token: `${context. access_token}`,
+            access_token: `${context.access_token}`,
           },
         });
         await redis.del("app:users");
@@ -307,7 +307,7 @@ const resolvers = {
     payment: async (_, args, context) => {
       try {
         const { totalPrice, paymentStatus, bank } = args;
-        console.log(totalPrice, paymentStatus, bank);
+
         const { data } = await axios({
           method: "post",
           url: `${baseUrlUser}/balances/payment`,
@@ -320,7 +320,7 @@ const resolvers = {
             bank,
           },
         });
-        console.log(data);
+
         return data;
       } catch (err) {
         errorHandling(err);
