@@ -4,7 +4,7 @@ const Slot = require("../models/slot");
 const format = require("date-fns/format");
 const addDays = require("date-fns/addDays");
 
-const taskSlot = cron.schedule("* */23 * * *", async () => {
+const yourFunction = async () => {
   try {
     const today = format(new Date(), "yyyy-MM-dd");
     const tommorrow = format(addDays(new Date(), 1), "yyyy-MM-dd");
@@ -45,6 +45,8 @@ const taskSlot = cron.schedule("* */23 * * *", async () => {
     console.log(error);
     next(error);
   }
-});
+};
+
+const taskSlot = cron.schedule("* */23 * * *", yourFunction);
 
 module.exports = taskSlot;
