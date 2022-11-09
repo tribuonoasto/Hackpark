@@ -666,21 +666,22 @@ const resolvers = {
     getBookingById: async (_, args, context) => {
       try {
         const { id } = args;
+
         let { data: book } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/bookings/${id}`,
         });
 
         // await redis.del("app:bookings");
-        const { data: user } = await axios({
+        const { data: users } = await axios({
           method: "get",
-          url: `${baseUrlUser}/users/${book.UserId}`,
-          headers: {
-            access_token: context.access_token,
-          },
+          url: `${baseUrlUser}/users`,
         });
 
-        book.User = user;
+        const user = users.filter((el) => el.id === book.UserId);
+        const filteredUser = user[0];
+
+        book.User = filteredUser;
 
         const { data: slot } = await axios({
           method: "get",
