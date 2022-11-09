@@ -219,8 +219,6 @@ const resolvers = {
           data: login,
         });
 
-        await redis.del("app:users");
-
         return data;
       } catch (error) {
         errorHandling(error);
@@ -350,6 +348,8 @@ const resolvers = {
         });
 
         await redis.del("app:users");
+
+        await redis.del("app:bookings:balances");
 
         return data;
       } catch (err) {

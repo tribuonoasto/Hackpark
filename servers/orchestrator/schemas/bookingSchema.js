@@ -220,10 +220,6 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:bookings:venues:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: venue } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/venues/${id}`,
@@ -281,7 +277,6 @@ const resolvers = {
 
         const newVenue = newVenues[0];
 
-        await redis.set(`app:bookings:venues:${id}`, JSON.stringify(newVenue));
         return newVenue;
       } catch (error) {
         errorHandling(error);
@@ -358,10 +353,6 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:bookings:slots:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: slot } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/slots/${id}`,
@@ -419,7 +410,6 @@ const resolvers = {
 
         const newSlot = newSlots[0];
 
-        await redis.set(`app:bookings:slots:${id}`, JSON.stringify(newSlot));
         return newSlot;
       } catch (error) {
         errorHandling(error);
@@ -496,10 +486,6 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:bookings:ratings:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: rating } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/ratings/${id}`,
@@ -557,10 +543,6 @@ const resolvers = {
 
         const newRating = newRatings[0];
 
-        await redis.set(
-          `app:bookings:ratings:${id}`,
-          JSON.stringify(newRating)
-        );
         return newRating;
       } catch (error) {
         errorHandling(error);
@@ -685,10 +667,6 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:bookings:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         let { data: book } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/bookings/${id}`,
@@ -804,8 +782,12 @@ const resolvers = {
             url: `${baseUrlBooking}/${book.resp._id}`,
           });
 
+          await redis.del("app:bookings");
+
           return { message: "Failed Booking", bookingId: null };
         }
+
+        await redis.del("app:bookings");
         return { message: book.message, bookingId: book.resp.insertedId };
       } catch (error) {
         errorHandling(error);
@@ -834,6 +816,10 @@ const resolvers = {
           });
           return book;
         }
+
+        await redis.del("app:bookings");
+
+        await redis.del("app:bookings:balances");
 
         return book;
       } catch (err) {
