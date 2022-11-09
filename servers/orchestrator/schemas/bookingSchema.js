@@ -672,7 +672,7 @@ const resolvers = {
           url: `${baseUrlBooking}/bookings/${id}`,
         });
 
-        // await redis.del("app:bookings");
+        await redis.del("app:bookings");
         const { data: users } = await axios({
           method: "get",
           url: `${baseUrlUser}/users`,

@@ -1,6 +1,6 @@
 const axios = require("axios");
 const errorHandling = require("../middlewares/errorHandling");
-const baseUrlUser = "http://localhost:3000";
+const baseUrlUser = "https://hackpark-service-user.herokuapp.com";
 const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
@@ -105,8 +105,8 @@ const resolvers = {
   Query: {
     getUsers: async () => {
       try {
-        // const itemsCache = await redis.get("app:users");
-        const itemsCache = null;
+        const itemsCache = await redis.get("app:users");
+
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -125,14 +125,20 @@ const resolvers = {
       try {
         const { id } = args;
 
+        const cache = await redis.get(`app:users:${id}`);
+
+        if (cache) return JSON.parse(cache);
+
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/users/${id}`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
           },
         });
-        await redis.del("app:users");
+        await redis.set(`app:users:${id}`, JSON.stringify(data));
         return data;
       } catch (error) {
         errorHandling(error);
@@ -140,14 +146,20 @@ const resolvers = {
     },
     getBalance: async (_, args, context) => {
       try {
+        const cache = await redis.get("app:users:balances");
+
+        if (cache) return JSON.parse(cache);
+
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/balances`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
           },
         });
-        await redis.del("app:users");
+        await redis.set("app:users:balances", JSON.stringify(data));
         return data;
       } catch (error) {
         errorHandling(error);
@@ -155,14 +167,20 @@ const resolvers = {
     },
     getVehicle: async (_, args, context) => {
       try {
+        const cache = await redis.get("app:users:vehicles");
+
+        if (cache) return JSON.parse(cache);
+
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "GET",
           url: `${baseUrlUser}/vehicles`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
           },
         });
-        await redis.del("app:users");
+        await redis.set("app:users:vehicles", JSON.stringify(data));
         return data;
       } catch (error) {
         errorHandling(error);
@@ -171,6 +189,7 @@ const resolvers = {
     verify: async (_, args) => {
       try {
         const { id } = args;
+
         const { data } = await axios({
           method: "get",
           url: `${baseUrlUser}/users/verify/${id}`,
@@ -190,7 +209,6 @@ const resolvers = {
           url: `${baseUrlUser}/register`,
           data: register,
         });
-        await redis.del("app:users");
         return data;
       } catch (error) {
         errorHandling(error);
@@ -204,20 +222,20 @@ const resolvers = {
           url: `${baseUrlUser}/login`,
           data: login,
         });
-        await redis.del("app:users");
         return data;
       } catch (error) {
         errorHandling(error);
       }
     },
-    delete: async (_, args) => {
+    delete: async (_, args, context) => {
       try {
-        const { access_token } = args;
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/users/`,
           headers: {
-            access_token: `${access_token}`,
+            access_token,
           },
         });
         await redis.del("app:users");
@@ -226,9 +244,11 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    changeUsername: async (_, args) => {
+    changeUsername: async (_, args, context) => {
       try {
-        const { access_token, username } = args;
+        const { username } = args;
+
+        const { access_token } = context;
 
         const params = new URLSearchParams();
         params.append("username", username);
@@ -237,7 +257,7 @@ const resolvers = {
           method: "PATCH",
           url: `${baseUrlUser}/users/changeusername`,
           headers: {
-            access_token: `${access_token}`,
+            access_token,
             "Content-Type": "application/x-www-form-urlencoded",
           },
           data: params,
@@ -252,6 +272,8 @@ const resolvers = {
       try {
         const { price } = args;
 
+        const { access_token } = context;
+
         const params = new URLSearchParams();
         params.append("price", price);
 
@@ -259,12 +281,12 @@ const resolvers = {
           method: "PATCH",
           url: `${baseUrlUser}/users/changeBalancePayment`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
             "Content-Type": "application/x-www-form-urlencoded",
           },
           data: params,
         });
-        await redis.del("app:users");
+        await redis.del("app:users:balances");
         return data;
       } catch (error) {
         errorHandling(error);
@@ -273,32 +295,37 @@ const resolvers = {
     vehicle: async (_, args, context) => {
       try {
         const { vehicle } = args;
+
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "POST",
           url: `${baseUrlUser}/vehicles`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
           },
           data: vehicle,
         });
-        await redis.del("app:users");
+        await redis.del("app:users:vehicles");
         return data;
       } catch (error) {
-        console.log(error)
         errorHandling(error);
       }
     },
     deleteVehicle: async (_, args, context) => {
       try {
         const { id } = args;
+
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "DELETE",
           url: `${baseUrlUser}/vehicles/${id}`,
           headers: {
-            access_token: `${context.access_token}`,
+            access_token,
           },
         });
-        await redis.del("app:users");
+        await redis.del("app:users:vehicles");
         return data;
       } catch (error) {
         errorHandling(error);
@@ -308,11 +335,13 @@ const resolvers = {
       try {
         const { totalPrice, paymentStatus, bank } = args;
 
+        const { access_token } = context;
+
         const { data } = await axios({
           method: "post",
           url: `${baseUrlUser}/balances/payment`,
           headers: {
-            access_token: context.access_token,
+            access_token,
           },
           data: {
             totalPrice,
