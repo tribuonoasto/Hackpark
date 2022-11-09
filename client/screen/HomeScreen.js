@@ -18,21 +18,18 @@ import {
 import Card from "../components/Card";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import * as Location from "expo-location";
 import { GET_USER_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const HomeScreen = ({ navigation }) => {
   const [location, setLocation] = useState(null);
-
   const { loading, error, data } = useQuery(GET_VENUES);
   const [
     getUserId,
     { loading: userLoading, error: userError, data: userData, refetch },
   ] = useLazyQuery(GET_USER_BY_ID);
-
-  console.log();
 
   useEffect(() => {
     (async () => {
@@ -44,7 +41,7 @@ const HomeScreen = ({ navigation }) => {
         },
       });
     })();
-  }, []);
+  }, [userData]);
 
   useFocusEffect(
     useCallback(() => {
@@ -71,10 +68,20 @@ const HomeScreen = ({ navigation }) => {
     })();
   }, []);
 
-  if (loading || userLoading || !userData?.getUserById.imgUrl) {
+  if (loading || userLoading) {
     return (
-      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -124,8 +131,8 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={
-                    userData?.getUserById.imgUrl
-                      ? require("../assets/user.jpg")
+                    userData?.getUserById.imgUrl === null
+                      ? require("../assets/userImg.jpg")
                       : { uri: userData?.getUserById.imgUrl }
                   }
                   style={{ width: 50, height: 50, borderRadius: 100 }}

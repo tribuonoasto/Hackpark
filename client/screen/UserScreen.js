@@ -7,9 +7,8 @@ import {
   ScrollView,
   ActivityIndicator,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
-import { useQuery } from "@apollo/client";
 import { GET_USER_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
@@ -21,7 +20,6 @@ const UserScreen = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       const id = await AsyncStorage.getItem("id");
-      const access_token = await AsyncStorage.getItem("access_token");
       getUserId({
         variables: {
           getUserByIdId: id,
@@ -40,8 +38,6 @@ const UserScreen = ({ navigation }) => {
 
   logout = async () => {
     AsyncStorage.clear();
-    const access_token = await AsyncStorage.getItem("access_token");
-    console.log(access_token, " <<< clear");
     navigation.navigate("Login");
   };
 
@@ -61,7 +57,11 @@ const UserScreen = ({ navigation }) => {
           >
             <View style={{ flexDirection: "row" }}>
               <Image
-                source={{ uri: data?.getUserById.imgUrl }}
+                source={
+                  !data?.getUserById.imgUrl
+                    ? require("../assets/userImg.jpg")
+                    : { uri: data?.getUserById.imgUrl }
+                }
                 style={{
                   width: 60,
                   height: 60,
