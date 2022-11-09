@@ -1,9 +1,6 @@
 const errorHandler = (err, req, res, next) => {
-  // console.log(err);
   let status = 500;
   let message = "Internal Server Error";
-
-  // console.log(err);
 
   if (err.name === `SequelizeUniqueConstraintError`) {
     if (err.parent.constraint === "Users_email_key") {
