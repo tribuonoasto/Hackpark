@@ -13,10 +13,12 @@ import { GET_USER_BY_ID } from "../queries/user";
 import { useEffect } from "react";
 
 const SaldoDetail = () => {
-  const [getUserId, { loading, error, data }] = useLazyQuery(GET_USER_BY_ID);
+  const [getUserId, { loading, error, data, refetch }] =
+    useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
     (async () => {
+      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
@@ -25,6 +27,14 @@ const SaldoDetail = () => {
       });
     })();
   }, []);
+
+  if (loading || !data) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
