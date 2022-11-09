@@ -14,6 +14,7 @@ const yourFunction = async () => {
         from: "bookings",
         let: {
           bookingDate: "$bookingDate",
+          transactionStatus: "$transactionStatus",
         },
         localField: "_id",
         foreignField: "SlotId",
@@ -25,6 +26,7 @@ const yourFunction = async () => {
                 $and: [
                   { $gte: ["$bookingDate", new Date(today)] },
                   { $lt: ["$bookingDate", new Date(tommorrow)] },
+                  { $eq: ["$transactionStatus", "Booked"] },
                 ],
               },
             },
@@ -41,12 +43,13 @@ const yourFunction = async () => {
 
     Promise.allSettled(slotPromise);
     console.log("cron jalan");
+    return "cron jalan";
   } catch (error) {
     console.log(error);
-    next(error);
+    return error;
   }
 };
 
 const taskSlot = cron.schedule("* */23 * * *", yourFunction);
 
-module.exports = taskSlot;
+module.exports = { yourFunction, taskSlot };

@@ -2,7 +2,7 @@ var cron = require("node-cron");
 const Book = require("../models/booking");
 const Slot = require("../models/slot");
 
-const task = cron.schedule("*/5 * * * *", async () => {
+const taskFunction = async () => {
   try {
     const slots = await Slot.findAllSlotBook({
       $lookup: {
@@ -46,12 +46,13 @@ const task = cron.schedule("*/5 * * * *", async () => {
     });
 
     Promise.allSettled(bookPromise);
-
     console.log("cron jalan");
-    res.status(200).json({ message: "cron jalan" });
+    return "cron jalan";
   } catch (error) {
-    next(error);
+    return error;
   }
-});
+};
 
-module.exports = task;
+const task = cron.schedule("* * * * *", taskFunction);
+
+module.exports = { taskFunction, task };
