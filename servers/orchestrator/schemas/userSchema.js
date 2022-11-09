@@ -125,10 +125,6 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:users:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { access_token } = context;
 
         const { data } = await axios({
@@ -138,7 +134,7 @@ const resolvers = {
             access_token,
           },
         });
-        await redis.set(`app:users:${id}`, JSON.stringify(data));
+
         return data;
       } catch (error) {
         errorHandling(error);
@@ -222,6 +218,9 @@ const resolvers = {
           url: `${baseUrlUser}/login`,
           data: login,
         });
+
+        await redis.del("app:users");
+
         return data;
       } catch (error) {
         errorHandling(error);
@@ -349,6 +348,8 @@ const resolvers = {
             bank,
           },
         });
+
+        await redis.del("app:users");
 
         return data;
       } catch (err) {
