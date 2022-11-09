@@ -1,7 +1,7 @@
 const axios = require("axios");
 const errorHandling = require("../middlewares/errorHandling");
-const baseUrlBooking = "http://localhost:4002";
-const baseUrlUser = "http://localhost:3000";
+const baseUrlBooking = "https://hackpark-booking.herokuapp.com";
+const baseUrlUser = "https://hackpark-service-user.herokuapp.com";
 const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
