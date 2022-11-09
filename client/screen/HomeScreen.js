@@ -34,6 +34,7 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
+      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
@@ -46,7 +47,7 @@ const HomeScreen = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [])
+    }, [userData, data])
   );
 
   useEffect(() => {
