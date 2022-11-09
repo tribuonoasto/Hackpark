@@ -39,8 +39,6 @@ const EditUserScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userData);
-
   const handleEdit = () => {
     console.log(name, email);
     navigation.navigate("UserScreen");
@@ -138,7 +136,11 @@ const EditUserScreen = ({ navigation }) => {
           </Text>
           <TextInput
             style={styles.input}
-            value={userData?.getUserById.username === null ? name : userData?.getUserById.username }
+            value={
+              userData?.getUserById.username === null
+                ? name
+                : userData?.getUserById.username
+            }
             onChangeText={setName}
           />
         </View>
@@ -149,7 +151,11 @@ const EditUserScreen = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={userData?.getUserById.email === null ? email : userData?.getUserById.email}
+            value={
+              userData?.getUserById.email === null
+                ? email
+                : userData?.getUserById.email
+            }
             onChangeText={setEmail}
           />
         </View>

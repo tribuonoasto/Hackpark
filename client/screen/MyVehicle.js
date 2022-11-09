@@ -34,8 +34,6 @@ const MyVehicle = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(data);
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,11 +55,13 @@ const MyVehicle = ({ navigation }) => {
 
     let formData = new FormData();
     formData.append("image", { uri: localUri, name: filename, type });
+
     setUploadImage(formData);
   };
 
   const handleEdit = () => {
-    navigation.navigate("UserScreen");
+    console.log(uploadImage);
+    // navigation.navigate("UserScreen");
   };
 
   if (loading) {
@@ -82,7 +82,7 @@ const MyVehicle = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          {image ? (
+          {data?.getUserById.Vehicle?.imgUrl ? (
             <Image
               source={{ uri: data?.getUserById.Vehicle?.imgUrl }}
               style={{

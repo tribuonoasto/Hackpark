@@ -25,7 +25,8 @@ const Orders = ({ navigation }) => {
       refetch();
       const id = await AsyncStorage.getItem("id");
 
-      const res = data?.getBookings.filter((booking) => booking.UserId === +id);
+      const res = data?.getBookings.filter((booking) => booking.UserId == id);
+
       setBookings(res);
     })();
   }, [data, loading, error]);
@@ -33,7 +34,7 @@ const Orders = ({ navigation }) => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [])
+    }, [bookings])
   );
 
   if (loading && !data) {

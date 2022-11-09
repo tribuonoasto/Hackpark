@@ -1,5 +1,5 @@
-import { useLazyQuery } from "@apollo/client";
-import { useState, useEffect } from "react";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import { useState, useEffect, useCallback } from "react";
 import {
   Text,
   View,
@@ -8,16 +8,19 @@ import {
   Image,
   FlatList,
   ActivityIndicator,
+  TouchableOpacity,
 } from "react-native";
 import { AirbnbRating } from "react-native-ratings";
 import { GET_BOOKINGS_BY_ID, GET_VENUE_BY_SLOT_ID } from "../queries/bookings";
+import { ADD_RATING, RATINGS, RATING_BY_ID } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const OrderDetail = ({ route }) => {
+  const [showBtn, setShowBtn] = useState(false);
+  const [venueRating, setVenueRating] = useState(0);
+  const [rated, setRated] = useState(false);
+
   const { id, status } = route.params;
-  console.log(id, status);
-  const ratingCompleted = (rating) => {
-    console.log("Rating is: " + rating);
-  };
 
   const [order, { loading, error, data }] = useLazyQuery(GET_BOOKINGS_BY_ID);
   const [
@@ -25,10 +28,16 @@ const OrderDetail = ({ route }) => {
     { loading: venueLoading, data: venueData, error: venueError },
   ] = useLazyQuery(GET_VENUE_BY_SLOT_ID);
 
+  const {
+    loading: ratingsLoading,
+    data: ratingsData,
+    error: ratingsError,
+    refetch,
+  } = useQuery(RATINGS);
+
   useEffect(() => {
     order({ variables: { getBookingByIdId: id } });
   }, [id, status]);
-  console.log(loading, error, data);
 
   useEffect(() => {
     if (data) {
@@ -39,7 +48,34 @@ const OrderDetail = ({ route }) => {
       });
     }
   }, [data]);
-  console.log(venueLoading, venueData, venueError);
+
+  const ratingCompleted = async (rating) => {
+    setShowBtn(true);
+    setVenueRating(rating);
+  };
+
+  const [
+    addRating,
+    { data: ratingData, loading: ratingLoading, error: ratingError },
+  ] = useMutation(ADD_RATING);
+
+  const submitRating = async () => {
+    const userId = await AsyncStorage.getItem("id");
+
+    addRating({
+      variables: {
+        rating: {
+          UserId: +userId,
+          VenueId: venueData?.getSlotById.Venue._id,
+          rating: `${venueRating}`,
+        },
+      },
+    });
+
+    setVenueRating(venueRating);
+    setShowBtn(false);
+    setRated(true);
+  };
 
   const onChangeTime = (selectedDate) => {
     const currentDate = selectedDate || new Date();
@@ -57,7 +93,7 @@ const OrderDetail = ({ route }) => {
     return tempTime.toLocaleTimeString("en-us", options);
   };
 
-  if (loading || venueLoading) {
+  if (loading || venueLoading || ratingsLoading || ratingLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="red" />
@@ -129,10 +165,14 @@ const OrderDetail = ({ route }) => {
             alignItems: "center",
           }}
         >
-          {status === "Done" ? (
-            <View>
+          {status === "Done" && (
+            <View style={{ height: 250 }}>
               <Text
-                style={{ fontSize: 18, color: "#2C2D3E", fontWeight: "700" }}
+                style={{
+                  fontSize: 18,
+                  color: "#2C2D3E",
+                  fontWeight: "700",
+                }}
               >
                 How was the parking spot?
               </Text>
@@ -150,44 +190,58 @@ const OrderDetail = ({ route }) => {
                   defaultRating={0}
                   size={35}
                   onFinishRating={ratingCompleted}
+                  isDisabled={rated}
                 />
               </View>
+
+              {showBtn && (
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: "darkgreen",
+                    paddingVertical: 15,
+                    padding: 10,
+                    borderRadius: 40,
+                  }}
+                  onPress={submitRating}
+                >
+                  <Text
+                    style={{
+                      textAlign: "center",
+                      color: "#ededed",
+                      fontWeight: "600",
+                      fontSize: 18,
+                    }}
+                  >
+                    Submit
+                  </Text>
+                </TouchableOpacity>
+              )}
             </View>
-          ) : (
+          )}
+
+          {status === "Book Paid" && (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
+              <Text>Please check-in before</Text>
+              <Text>{onChangeTime(data?.getBookingById.expiredDate)}.</Text>
+              <Image
+                source={{ uri: data?.getBookingById.imgQrCode }}
+                style={{
+                  width: 250,
+                  height: 250,
+                  resizeMode: "contain",
+                  marginVertical: 20,
+                }}
+              />
+            </View>
+          )}
+
+          {status === "Expired" && (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               {data?.getBookingById.transactionStatus === "Expired" ? (
                 <Text style={{ fontWeight: "600", fontSize: 20 }}>
                   Your booking already expired
                 </Text>
               ) : data?.getBookingById.transactionStatus === "Done" ? (
-                <View>
-                  <Text
-                    style={{
-                      fontSize: 18,
-                      color: "#2C2D3E",
-                      fontWeight: "700",
-                    }}
-                  >
-                    How was the parking spot?
-                  </Text>
-                  <View
-                    style={{
-                      height: 150,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <AirbnbRating
-                      reviewColor="#2C2D3E"
-                      count={5}
-                      reviews={["Bad", "Meh", "OK", "Good", "Amazing"]}
-                      defaultRating={0}
-                      size={35}
-                      onFinishRating={ratingCompleted}
-                    />
-                  </View>
-                </View>
-              ) : (
                 <View
                   style={{ alignItems: "center", justifyContent: "center" }}
                 >
@@ -203,6 +257,8 @@ const OrderDetail = ({ route }) => {
                     }}
                   />
                 </View>
+              ) : (
+                status === "Book Paid"()
               )}
             </View>
           )}
