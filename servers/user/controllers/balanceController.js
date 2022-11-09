@@ -133,7 +133,6 @@ class Controller {
       const data = await core.transaction.notification(req.body);
 
       const id = +data.order_id.split("-")[2].replace("$", "");
-      console.log("jln");
 
       if (data.transaction_status == "settlement") {
         const user = await User.findOne({
