@@ -14,7 +14,7 @@ import ModalScreenBank from "../components/ModalScreenBank";
 import ModalScreenTopup from "../components/ModalScreenTopup";
 import { TOPUP_BALANCE } from "../queries/user";
 
-const TopupScreen = () => {
+const TopupScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [clicked, setClicked] = useState(false);
   const [inputAmount, setInputAmount] = useState(0);
@@ -33,7 +33,11 @@ const TopupScreen = () => {
         paymentStatus: "done",
         bank: inputBank,
       },
-    });
+    })
+      .then(() => setModalTopUp(true))
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   const handleModal = (codeName, bank) => {
@@ -43,8 +47,6 @@ const TopupScreen = () => {
       setBankName(bank);
     }
   };
-
-  console.log(loading, data, error);
 
   if (loading) {
     return (
@@ -69,6 +71,7 @@ const TopupScreen = () => {
             keyboardAppearance="default"
             onChangeText={setInputAmount}
             onFocus={() => setClicked(true)}
+            placeholderTextColor="#ededed"
           />
 
           {clicked && (
@@ -125,12 +128,15 @@ const TopupScreen = () => {
         />
       )}
 
-      {/* {modalTopUp && (
+      {modalTopUp && (
         <ModalScreenTopup
           modalVisible={modalTopUp}
           setModalVisible={setModalTopUp}
+          data={data}
+          bankName={bankName}
+          navigation={navigation}
         />
-      )} */}
+      )}
     </View>
   );
 };
