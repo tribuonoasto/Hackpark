@@ -164,3 +164,17 @@ export const RATING_BY_ID = gql`
     }
   }
 `;
+
+export const GET_VEHICLE_BY_ID = gql`
+  query GetUserById {
+    getUserById {
+      Vehicle {
+        id
+        imgUrl
+        modelName
+        name
+        plat
+      }
+    }
+  }
+`;

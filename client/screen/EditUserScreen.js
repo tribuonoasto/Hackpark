@@ -41,13 +41,6 @@ const EditUserScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userData);
-
-  const handleEdit = () => {
-    console.log(name, email);
-    navigation.navigate("UserScreen");
-  };
-
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
     let result = await ImagePicker.launchImageLibraryAsync({

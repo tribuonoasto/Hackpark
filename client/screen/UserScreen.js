@@ -22,8 +22,6 @@ const UserScreen = ({ navigation }) => {
     (async () => {
       const id = await AsyncStorage.getItem("id");
       const access_token = await AsyncStorage.getItem("access_token");
-      console.log(id, " <<<<");
-      console.log(access_token, " <<<<");
       getUserId({
         variables: {
           getUserByIdId: id,
@@ -31,8 +29,6 @@ const UserScreen = ({ navigation }) => {
       });
     })();
   }, []);
-
-  console.log(data);
 
   if (loading) {
     return (
