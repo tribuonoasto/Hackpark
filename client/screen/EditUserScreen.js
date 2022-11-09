@@ -1,4 +1,3 @@
-import { useState } from "react";
 import {
   Text,
   View,
@@ -9,12 +8,38 @@ import {
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from "expo-image-picker";
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_USER_BY_ID } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLazyQuery } from "@apollo/client";
 
 const EditUserScreen = ({ navigation }) => {
-  const [name, setName] = useState("Anto Suprapto");
-  const [email, setEmail] = useState("anto@mail.com");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
   const [uploadImage, setUploadImage] = useState();
   const [image, setImage] = useState(null);
+
+  const { loading, error, data } = useQuery(GET_USER_BY_ID);
+
+  const [
+    getUserId,
+    { loading: userLoading, error: userError, data: userData },
+  ] = useLazyQuery(GET_USER_BY_ID);
+
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+      console.log(id, " <<<<");
+      getUserId({
+        variables: {
+          getUserByIdId: id,
+        },
+      });
+    })();
+  }, []);
+
+  console.log(userData);
 
   const handleEdit = () => {
     console.log(name, email);
@@ -111,7 +136,11 @@ const EditUserScreen = ({ navigation }) => {
           <Text style={styles.label}>
             Name <Text style={{ color: "red" }}>*</Text>
           </Text>
-          <TextInput style={styles.input} value={name} onChangeText={setName} />
+          <TextInput
+            style={styles.input}
+            value={userData?.getUserById.username === null ? name : userData?.getUserById.username }
+            onChangeText={setName}
+          />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>
@@ -120,7 +149,7 @@ const EditUserScreen = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={email}
+            value={userData?.getUserById.email === null ? email : userData?.getUserById.email}
             onChangeText={setEmail}
           />
         </View>

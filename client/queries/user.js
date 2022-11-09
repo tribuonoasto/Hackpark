@@ -130,3 +130,11 @@ export const REGISTER = gql`
     }
   }
 `;
+
+export const VEHICLE = gql`
+  mutation Vehicle($vehicle: InputVehicle) {
+    vehicle(vehicle: $vehicle) {
+      message
+    }
+  }
+`;
