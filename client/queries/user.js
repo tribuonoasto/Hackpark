@@ -138,3 +138,43 @@ export const VEHICLE = gql`
     }
   }
 `;
+
+export const ADD_RATING = gql`
+  mutation Mutation($rating: InputRating) {
+    rating(rating: $rating) {
+      message
+    }
+  }
+`;
+
+export const RATINGS = gql`
+  query GetRatings {
+    getRatings {
+      UserId
+      VenueId
+      _id
+    }
+  }
+`;
+
+export const RATING_BY_ID = gql`
+  query GetRatingById($getRatingByIdId: String) {
+    getRatingById(id: $getRatingByIdId) {
+      rating
+    }
+  }
+`;
+
+export const GET_VEHICLE_BY_ID = gql`
+  query GetUserById {
+    getUserById {
+      Vehicle {
+        id
+        imgUrl
+        modelName
+        name
+        plat
+      }
+    }
+  }
+`;

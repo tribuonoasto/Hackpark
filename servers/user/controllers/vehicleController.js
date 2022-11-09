@@ -27,6 +27,7 @@ class Controller {
     try {
       const { id } = req.user;
       const { vehicleId } = req.params;
+      console.log(vehicleId);
       const { path, filename, originalname } = req.file;
 
       const fileUploaded = fs.readFileSync(`./uploads/${filename}`);

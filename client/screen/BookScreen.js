@@ -12,9 +12,10 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import ModalScreen from "../components/ModalScreen";
 import ModalScreenSlot from "../components/ModalScreenSlot";
-import { useMutation, useQuery } from "@apollo/client";
+import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import { BOOKINGS, GET_SLOTS, GET_VENUES_BY_ID } from "../queries/bookings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GET_USER_BY_ID } from "../queries/user";
 
 const BookScreen = ({ route, navigation }) => {
   const [modalVisible, setModalVisible] = useState(false);
@@ -25,12 +26,34 @@ const BookScreen = ({ route, navigation }) => {
   const [name, setName] = useState("Area");
   const [saldo, setSaldo] = useState(10000);
   const [showSlot, setShowSlot] = useState(false);
+  const { id } = route.params;
   const [
     booking,
     { data: bookingData, loading: bookingLoading, error: bookingError },
   ] = useMutation(BOOKINGS);
 
-  const { id } = route.params;
+  console.log(bookingData, bookingError, bookingLoading);
+
+  const [
+    getUserId,
+    {
+      loading: userLoading,
+      error: userError,
+      data: userData,
+      refetch: userRefetch,
+    },
+  ] = useLazyQuery(GET_USER_BY_ID);
+
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+      getUserId({
+        variables: {
+          getUserByIdId: +id,
+        },
+      });
+    })();
+  }, []);
 
   const {
     loading: venueLoading,
@@ -133,11 +156,7 @@ const BookScreen = ({ route, navigation }) => {
     }
   };
 
-  console.log(date);
-
-  console.log(bookingData, bookingLoading, bookingError);
-
-  if (loading) {
+  if (loading || userLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="red" />
@@ -351,7 +370,8 @@ const BookScreen = ({ route, navigation }) => {
         />
       )}
       <View>
-        {saldo < 10000 ? (
+        {userData?.getUserById.balance <
+        venueData?.getVenueById.bookingPrice ? (
           <View
             style={{
               backgroundColor: "#282C3D",
@@ -405,7 +425,8 @@ const BookScreen = ({ route, navigation }) => {
           <TouchableOpacity
             style={{
               backgroundColor:
-                saldo < 10000 ||
+                userData?.getUserById.balance <
+                  venueData?.getVenueById.bookingPrice ||
                 textDate === "Date" ||
                 textTime === "Time" ||
                 name === "Area"
@@ -417,7 +438,8 @@ const BookScreen = ({ route, navigation }) => {
             }}
             onPress={handleSubmit}
             disabled={
-              saldo < 10000 ||
+              userData?.getUserById.balance <
+                venueData?.getVenueById.bookingPrice ||
               textDate === "Date" ||
               textTime === "Time" ||
               name === "Area"

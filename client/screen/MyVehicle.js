@@ -15,18 +15,27 @@ import { GET_USER_BY_ID } from "../queries/user";
 import { VEHICLE } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
+import axios from "axios";
 
 const MyVehicle = ({ navigation }) => {
   const [image, setImage] = useState(null);
+  const [edit, setEdit] = useState(false);
   const [uploadImage, setUploadImage] = useState();
   const [carName, setCarName] = useState("");
   const [carId, setCarId] = useState("");
   const [carType, setCarType] = useState("");
 
-  const [getUserId, { loading, error, data }] = useLazyQuery(GET_USER_BY_ID);
+  const [getUserId, { loading, error, data, refetch }] =
+    useLazyQuery(GET_USER_BY_ID);
+
+  const [
+    createVehicle,
+    { loading: vehicleLoading, error: errorVehicle, data: dataVehicle },
+  ] = useMutation(VEHICLE);
 
   useEffect(() => {
     (async () => {
+      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
@@ -36,15 +45,8 @@ const MyVehicle = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(data);
-
-  const [
-    createVehicle,
-    { loading: vehicleLoading, error: errorVehicle, data: dataVehicle },
-  ] = useMutation(VEHICLE);
-
   const pickImage = async () => {
-    // No permissions request is necessary for launching the image library
+    setEdit(true);
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -64,6 +66,7 @@ const MyVehicle = ({ navigation }) => {
 
     let formData = new FormData();
     formData.append("image", { uri: localUri, name: filename, type });
+
     setUploadImage(formData);
   };
 
@@ -78,7 +81,25 @@ const MyVehicle = ({ navigation }) => {
         },
       },
     });
-    navigation.navigate("UserScreen");
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const access_token = await AsyncStorage.getItem("access_token");
+
+      const { data: res } = await axios({
+        url: `http://localhost:3000/vehicles/${data?.getUserById.Vehicle.id}`,
+        method: "patch",
+        data: uploadImage,
+        headers: {
+          access_token: access_token,
+        },
+      });
+
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   if (loading || vehicleLoading) {
@@ -99,7 +120,7 @@ const MyVehicle = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          {image ? (
+          {data?.getUserById.Vehicle.imgUrl !== null && !edit ? (
             <Image
               source={{ uri: data?.getUserById.Vehicle?.imgUrl }}
               style={{
@@ -111,7 +132,7 @@ const MyVehicle = ({ navigation }) => {
             />
           ) : (
             <Image
-              source={require("../assets/car.jpg")}
+              source={{ uri: image }}
               style={{
                 width: 150,
                 height: 150,
@@ -193,25 +214,48 @@ const MyVehicle = ({ navigation }) => {
         </View>
       </View>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#404258",
-          paddingVertical: 10,
-          borderRadius: 40,
-        }}
-        onPress={handleEdit}
-      >
-        <Text
+      {data?.getUserById.Vehicle.imgUrl === null ||
+      data?.getUserById.Vehicle.imgUrl ? (
+        <TouchableOpacity
           style={{
-            textAlign: "center",
-            color: "#ededed",
-            fontSize: 20,
-            fontWeight: "500",
+            backgroundColor: "#404258",
+            paddingVertical: 10,
+            borderRadius: 40,
           }}
+          onPress={handleSubmit}
         >
-          Save
-        </Text>
-      </TouchableOpacity>
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#ededed",
+              fontSize: 20,
+              fontWeight: "500",
+            }}
+          >
+            Save
+          </Text>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          style={{
+            backgroundColor: "#404258",
+            paddingVertical: 10,
+            borderRadius: 40,
+          }}
+          onPress={handleEdit}
+        >
+          <Text
+            style={{
+              textAlign: "center",
+              color: "#ededed",
+              fontSize: 20,
+              fontWeight: "500",
+            }}
+          >
+            Save
+          </Text>
+        </TouchableOpacity>
+      )}
     </View>
   );
 };

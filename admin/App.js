@@ -22,11 +22,7 @@ export default function App() {
     console.log(type, data);
     const { data: res } = await axios({
       method: "post",
-      url: `https://fce1-36-74-45-34.ap.ngrok.io/bookings/check/${data}`,
-      data: {
-        access_token:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc4MjM4MTJ9.xodVUsKeMqUvAzOxFMW9tyoRqxf1XSc18_ucEUqDmd0",
-      },
+      url: `https://175f-94-198-43-62.ap.ngrok.io/bookings/check/${data}`,
     });
 
     console.log(res);

@@ -17,7 +17,7 @@ const SaldoList = ({ item }) => {
 
   return (
     <View style={styles.container}>
-      {item.type === "kredit" && item.status === "Success" ? (
+      {item.type === "kredit" && item.status === "Success" && (
         <View
           style={{
             flexDirection: "row",
@@ -32,7 +32,9 @@ const SaldoList = ({ item }) => {
             {onChangeTime(item.dateTransaction)}
           </Text>
         </View>
-      ) : item.type === "kredit" && item.status === "Success" ? (
+      )}
+
+      {item.type === "debit" && item.status === "Success" && (
         <View
           style={{
             flexDirection: "row",
@@ -47,7 +49,7 @@ const SaldoList = ({ item }) => {
             {onChangeTime(item.dateTransaction)}
           </Text>
         </View>
-      ) : null}
+      )}
     </View>
   );
 };

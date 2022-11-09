@@ -27,6 +27,12 @@ const SaldoDetail = () => {
     })();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [data])
+  );
+
   if (loading || !data) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
