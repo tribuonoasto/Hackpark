@@ -7,6 +7,8 @@ export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScan, setShowScan] = useState(false);
+  const [bookingData, setBookingData] = useState({});
+  const [bookingsId, setbookingsId] = useState("");
 
   useEffect(() => {
     const getBarCodeScannerPermissions = async () => {
@@ -20,13 +22,21 @@ export default function App() {
   const handleBarCodeScanned = async ({ type, data }) => {
     setScanned(true);
     console.log(type, data);
+    const { data: response } = await axios({
+      method: "get",
+      url: `https://b59f-180-251-251-19.ap.ngrok.io/bookings/${data}`,
+    });
+    setBookingData(response);
+    setbookingsId(bookingsId);
+  };
+
+  const handleSubmitButton = async () => {
     const { data: res } = await axios({
       method: "post",
-      url: `https://175f-94-198-43-62.ap.ngrok.io/bookings/check/${data}`,
+      url: `https://b59f-180-251-251-19.ap.ngrok.io/bookings/check/${bookingsId}`,
     });
 
     console.log(res);
-    // console.log(type, data);
   };
 
   if (hasPermission === null) {
