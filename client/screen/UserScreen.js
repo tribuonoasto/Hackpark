@@ -26,7 +26,9 @@ const UserScreen = ({ navigation }) => {
   useEffect(() => {
     (async () => {
       const id = await AsyncStorage.getItem("id");
+      const access_token = await AsyncStorage.getItem("access_token");
       console.log(id, " <<<<");
+      console.log(access_token, " <<<<");
       getUserId({
         variables: {
           getUserByIdId: id,
@@ -44,6 +46,13 @@ const UserScreen = ({ navigation }) => {
       </View>
     );
   }
+
+  logout = async () => {
+    AsyncStorage.clear();
+    const access_token = await AsyncStorage.getItem("access_token");
+    console.log(access_token, " <<< clear");
+    navigation.navigate("Login");
+  };
 
   return (
     <ScrollView style={styles.container}>
@@ -120,7 +129,7 @@ const UserScreen = ({ navigation }) => {
             paddingVertical: 14,
             borderRadius: 40,
           }}
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => logout()}
         >
           <Text
             style={{
