@@ -2,6 +2,7 @@ const app = require("../app");
 const request = require("supertest");
 const { mongoClear, getDB } = require("../config/mongo");
 const Book = require("../models/booking");
+const { ObjectId } = require("mongodb");
 jest.setTimeout(10000);
 
 const docsSlots = [
@@ -98,11 +99,11 @@ const docPri = [
 const docBookings = [
   {
     UserId: 1,
-    SlotId: "6364c5698b3a2b673173d4e1",
-    bookingDate: "November 04, 2022 04:24:00",
-    expiredDate: "November 04, 2022 04:24:00",
-    checkinDate: "November 04, 2022 04:24:00",
-    checkoutDate: "November 04, 2022 04:24:00",
+    SlotId: ObjectId("6364c5698b3a2b673173d4e1"),
+    bookingDate: "November 15, 2022 04:24:00",
+    expiredDate: "November 15, 2022 05:24:00",
+    checkinDate: "November 15, 2022 04:24:00",
+    checkoutDate: "November 15, 2022 04:24:00",
     transactionStatus: "Done",
     paymentStatus: "Paid",
     PriceAdjusterId: 2,
@@ -111,11 +112,11 @@ const docBookings = [
   },
   {
     UserId: 1,
-    SlotId: "6364c5698b3a2b673173d4e1",
-    bookingDate: "November 04, 2022 04:24:00",
-    expiredDate: "November 04, 2022 04:24:00",
-    checkinDate: "November 04, 2022 04:24:00",
-    checkoutDate: "November 04, 2022 04:24:00",
+    SlotId: ObjectId("6364c5698b3a2b673173d4e1"),
+    bookingDate: "November 15, 2022 04:24:00",
+    expiredDate: "November 15, 2022 04:24:00",
+    checkinDate: "November 15, 2022 04:24:00",
+    checkoutDate: "November 15, 2022 04:24:00",
     transactionStatus: "Done",
     paymentStatus: "Paid",
     PriceAdjusterId: 2,
@@ -124,9 +125,9 @@ const docBookings = [
   },
   {
     UserId: 1,
-    SlotId: "6364c5698b3a2b673173d4e1",
-    bookingDate: "November 04, 2022 04:24:00",
-    expiredDate: "November 04, 2022 04:24:00",
+    SlotId: ObjectId("6364c5698b3a2b673173d4e1"),
+    bookingDate: "November 15, 2022 04:24:00",
+    expiredDate: "November 15, 2022 04:24:00",
     checkinDate: null,
     checkoutDate: null,
     transactionStatus: "Booked",
@@ -137,10 +138,10 @@ const docBookings = [
   },
   {
     UserId: 1,
-    SlotId: "6364c5698b3a2b673173d4e1",
-    bookingDate: "November 04, 2022 04:24:00",
-    expiredDate: "November 04, 2022 04:24:00",
-    checkinDate: "November 04, 2022 04:24:00",
+    SlotId: ObjectId("6364c5698b3a2b673173d4e1"),
+    bookingDate: "November 15, 2022 04:24:00",
+    expiredDate: "November 15, 2022 04:24:00",
+    checkinDate: "November 15, 2022 04:24:00",
     checkoutDate: null,
     transactionStatus: "Inprogress",
     paymentStatus: "Book Paid",
@@ -152,8 +153,8 @@ const docBookings = [
 const docBooking = {
   UserId: 1,
   SlotId: "6364c5698b3a2b673173d4e1",
-  bookingDate: "November 04, 2022 04:24:00",
-  expiredDate: "November 04, 2022 04:24:00",
+  bookingDate: "November 15, 2022 04:24:00",
+  expiredDate: "November 15, 2022 04:24:00",
   checkinDate: null,
   checkoutDate: null,
   transactionStatus: "Booked",
@@ -463,7 +464,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -495,7 +496,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 02, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -507,7 +508,7 @@ describe("POST /bookings", () => {
 });
 
 describe("POST /bookings", () => {
-  test("POST /bookings - success test without date booking ", async () => {
+  test("POST /bookings - fail test without date booking ", async () => {
     const collectionPri = getDB().collection("priceAdjuster");
     await collectionPri.insertMany(docPri);
 
@@ -532,9 +533,9 @@ describe("POST /bookings", () => {
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
     const result = await request(app).post(`/bookings`).send(payload);
-    expect(result.status).toBe(201);
+    expect(result.status).toBe(400);
     expect(result.body).toHaveProperty("message", expect.any(String));
-    expect(result.body).toHaveProperty("message", "slot booked");
+    expect(result.body).toHaveProperty("message", "Invalid Input");
   });
 });
 
@@ -559,7 +560,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: null,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -591,7 +592,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: null,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -623,7 +624,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: 123,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -655,7 +656,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -687,7 +688,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -1230,7 +1231,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 02, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -1375,7 +1376,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
@@ -1411,7 +1412,7 @@ describe("POST /bookings", () => {
     const payload = {
       UserId: 1,
       SlotId: slotId,
-      bookingDate: "November 04, 2022 04:24:00",
+      bookingDate: "November 15, 2022 04:24:00",
       access_token:
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwidXNlcm5hbWUiOiJ0cmlidW9ub2FzdG8iLCJlbWFpbCI6InRyaWJ1b25vYXN0b0BnbWFpbC5jb20iLCJpYXQiOjE2Njc2MjEyNzZ9.Hbt3lw0hPqPmRLj4TpLh5Pj_yYLtw--yENqeTxxuumo",
     };
