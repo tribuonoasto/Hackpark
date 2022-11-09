@@ -21,17 +21,11 @@ const MyVehicle = ({ navigation }) => {
   const [carId, setCarId] = useState("");
   const [carType, setCarType] = useState("");
 
-  const { loading, error, data } = useQuery(GET_USER_BY_ID);
-
-  const [
-    getUserId,
-    { loading: userLoading, error: userError, data: userData },
-  ] = useLazyQuery(GET_USER_BY_ID);
+  const [getUserId, { loading, error, data }] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
     (async () => {
       const id = await AsyncStorage.getItem("id");
-      console.log(id, " <<<<");
       getUserId({
         variables: {
           getUserByIdId: id,
@@ -40,7 +34,7 @@ const MyVehicle = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userData);
+  console.log(data);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -58,22 +52,25 @@ const MyVehicle = ({ navigation }) => {
     let localUri = result.uri;
     let filename = localUri.split("/").pop();
 
-    // Infer the type of the image
     let match = /\.(\w+)$/.exec(filename);
     let type = match ? `image/${match[1]}` : `image`;
 
-    // Upload the image using the fetch and FormData APIs
     let formData = new FormData();
-    // Assume "photo" is the name of the form field the server expects
     formData.append("image", { uri: localUri, name: filename, type });
     setUploadImage(formData);
   };
 
-  // console.log(uploadImage._parts[0]);
-
   const handleEdit = () => {
     navigation.navigate("UserScreen");
   };
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -87,7 +84,7 @@ const MyVehicle = ({ navigation }) => {
         <View style={{ position: "relative" }}>
           {image ? (
             <Image
-              source={{ uri: userData.getUserById.Vehicle.imgUrl }}
+              source={{ uri: data?.getUserById.Vehicle?.imgUrl }}
               style={{
                 width: 150,
                 height: 150,
@@ -139,7 +136,11 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={userData?.getUserById.Vehicle.name === null ? carName : userData?.getUserById.Vehicle.name }
+            value={
+              data?.getUserById.Vehicle?.name === null
+                ? carName
+                : data?.getUserById.Vehicle?.name
+            }
             onChangeText={setCarName}
           />
         </View>
@@ -150,7 +151,11 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={userData?.getUserById.Vehicle.plat === null ? carId : userData?.getUserById.Vehicle.plat}
+            value={
+              data?.getUserById.Vehicle?.plat === null
+                ? carId
+                : data?.getUserById.Vehicle?.plat
+            }
             onChangeText={setCarId}
           />
         </View>
@@ -161,7 +166,11 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={userData?.getUserById.Vehicle.modelNam === null ? carType : userData?.getUserById.Vehicle.modelName}
+            value={
+              data?.getUserById.Vehicle?.modelName === null
+                ? carType
+                : data?.getUserById.Vehicle?.modelName
+            }
             onChangeText={setCarType}
           />
         </View>

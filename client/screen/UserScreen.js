@@ -16,12 +16,7 @@ import { useLazyQuery } from "@apollo/client";
 import UserList from "../components/UserList";
 
 const UserScreen = ({ navigation }) => {
-  const { loading, error, data } = useQuery(GET_USER_BY_ID);
-
-  const [
-    getUserId,
-    { loading: userLoading, error: userError, data: userData },
-  ] = useLazyQuery(GET_USER_BY_ID);
+  const [getUserId, { loading, error, data }] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
     (async () => {
@@ -35,7 +30,7 @@ const UserScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userData);
+  console.log(data);
 
   if (loading) {
     return (
@@ -61,7 +56,7 @@ const UserScreen = ({ navigation }) => {
           >
             <View style={{ flexDirection: "row" }}>
               <Image
-                source={{ uri: userData.getUserById.imgUrl }}
+                source={{ uri: data?.getUserById.imgUrl }}
                 style={{
                   width: 60,
                   height: 60,
@@ -79,10 +74,10 @@ const UserScreen = ({ navigation }) => {
                       color: "#404258",
                     }}
                   >
-                    {userData.getUserById.username}
+                    {data?.getUserById.username}
                   </Text>
                   <Text style={{ marginTop: 5, color: "#50577A" }}>
-                    {userData.getUserById.email}
+                    {data?.getUserById.email}
                   </Text>
                 </View>
               </View>
