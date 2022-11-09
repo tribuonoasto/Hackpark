@@ -165,7 +165,7 @@ const OrderDetail = ({ route }) => {
             alignItems: "center",
           }}
         >
-          {status === "Done" && (
+          {data?.getBookingById.transactionStatus === "Booked" && (
             <View style={{ height: 250 }}>
               <Text
                 style={{
@@ -219,7 +219,7 @@ const OrderDetail = ({ route }) => {
             </View>
           )}
 
-          {status === "Book Paid" && (
+          {/* {data?.getBookingById.transactionStatus === "Booked" && (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Text>Please check-in before</Text>
               <Text>{onChangeTime(data?.getBookingById.expiredDate)}.</Text>
@@ -233,9 +233,9 @@ const OrderDetail = ({ route }) => {
                 }}
               />
             </View>
-          )}
+          )} */}
 
-          {status === "Expired" && (
+          {data?.getBookingById.transactionStatus === "Expired" && (
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               {data?.getBookingById.transactionStatus === "Expired" ? (
                 <Text style={{ fontWeight: "600", fontSize: 20 }}>
