@@ -124,6 +124,7 @@ export const GET_VENUE_BY_SLOT_ID = gql`
   query GetSlotById($getSlotByIdId: String) {
     getSlotById(id: $getSlotByIdId) {
       Venue {
+        _id
         imgVenue
         name
       }

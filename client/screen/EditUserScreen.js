@@ -5,6 +5,7 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from "expo-image-picker";
@@ -13,6 +14,7 @@ import { useQuery } from "@apollo/client";
 import { GET_USER_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
+import axios from "axios";
 
 const EditUserScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -20,17 +22,17 @@ const EditUserScreen = ({ navigation }) => {
   const [uploadImage, setUploadImage] = useState();
   const [image, setImage] = useState(null);
 
-  const [getUserId,{ loading, error, data }]= useLazyQuery(GET_USER_BY_ID);
+  const { loading, error, data } = useQuery(GET_USER_BY_ID);
 
-  // const [
-  //   getUserId,
-  //   { loading: userLoading, error: userError, data: userData },
-  // ] = useLazyQuery(GET_USER_BY_ID);
+  const [
+    getUserId,
+    { loading: userLoading, error: userError, data: userData },
+  ] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
     (async () => {
+      refetch();
       const id = await AsyncStorage.getItem("id");
-      console.log(id, " <<<<");
       getUserId({
         variables: {
           getUserByIdId: id,
@@ -39,7 +41,7 @@ const EditUserScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(data);
+  console.log(userData);
 
   const handleEdit = () => {
     console.log(name, email);
@@ -70,9 +72,33 @@ const EditUserScreen = ({ navigation }) => {
     let formData = new FormData();
     // Assume "photo" is the name of the form field the server expects
     formData.append("image", { uri: localUri, name: filename, type });
-    console.log(formData);
     setUploadImage(formData);
   };
+
+  const handleEdit = async () => {
+    try {
+      const access_token = await AsyncStorage.getItem("access_token");
+
+      const { data } = await axios({
+        url: "http://localhost:3000/users/changeImg",
+        method: "patch",
+        data: uploadImage,
+        headers: {
+          access_token: access_token,
+        },
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  if (userLoading || !userData?.getUserById.imgUrl) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -85,18 +111,22 @@ const EditUserScreen = ({ navigation }) => {
       >
         <View style={{ position: "relative" }}>
           {/* {image ? ( */}
-            <Image
-              source={{ uri: data?.getUserById.imgUrl }}
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 100,
-                resizeMode: "cover",
-              }}
-            />
+          <Image
+            source={{ uri: data?.getUserById.imgUrl }}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: 100,
+              resizeMode: "cover",
+            }}
+          />
           {/* ) : (
             <Image
-              source={require("../assets/user.jpg")}
+              source={
+                !userData?.getUserById.imgUrl
+                  ? require("../assets/user.jpg")
+                  : { uri: userData?.getUserById.imgUrl }
+              }
               style={{
                 width: 150,
                 height: 150,
@@ -134,32 +164,35 @@ const EditUserScreen = ({ navigation }) => {
       <View style={{ marginTop: 40 }}>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>
-            Username <Text style={{ color: "red" }}>*</Text>
+            Name <Text style={{ color: "red" }}>*</Text>
           </Text>
-          <Text
+          <TextInput
             style={styles.input}
-            // value={data?.getUserById.username === null ? name : data?.getUserById.username }
-            // onChangeText={setName}
-          >
-            {data?.getUserById.username === null
-              ? name
-              : data?.getUserById.username}
-          </Text>
+            value={
+              userData?.getUserById.username === null
+                ? name
+                : userData?.getUserById.username
+            }
+            onChangeText={setName}
+          />
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>
-            Email <Text style={{ color: "red" }}>*</Text>
+          <Text style={styles.label}>Email</Text>
+          <Text style={styles.input}>
+            {userData?.getUserById.email === null
+              ? email
+              : userData?.getUserById.email}
           </Text>
-          <Text
+          <TextInput
             req
             style={styles.input}
-            // value={data?.getUserById.email === null ? email : data?.getUserById.email}
-            // onChangeText={setEmail}
-          >
-            {data?.getUserById.email === null
-              ? email
-              : data?.getUserById.email}
-          </Text>
+            value={
+              userData?.getUserById.email === null
+                ? email
+                : userData?.getUserById.email
+            }
+            onChangeText={setEmail}
+          />
         </View>
       </View>
 

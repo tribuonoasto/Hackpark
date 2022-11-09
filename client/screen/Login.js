@@ -42,8 +42,6 @@ const Login = ({ navigation }) => {
       }
     })();
 
-    console.log(data, loading, error);
-
     if (data && data.login !== null) {
       navigation.navigate("TabScreen");
     }

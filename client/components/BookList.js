@@ -44,7 +44,7 @@ const BookList = ({ navigation, item }) => {
     return tempTime.toLocaleTimeString("en-us", options);
   };
 
-  if (loading || !data || data === null) {
+  if (loading || !data) {
     return (
       <View
         style={{ alignItems: "center", justifyContent: "center", flex: 1 }}

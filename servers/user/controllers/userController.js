@@ -114,6 +114,8 @@ class Controller {
       const { id } = req.user;
       const { path, filename, originalname } = req.file;
 
+      console.log(req.file);
+
       const fileUploaded = fs.readFileSync(`./uploads/${filename}`);
       const result = await imagekit.upload({
         file: fileUploaded, //required
