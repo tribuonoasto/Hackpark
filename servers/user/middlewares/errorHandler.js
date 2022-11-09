@@ -42,7 +42,7 @@ const errorHandler = (err, req, res, next) => {
     status = 500;
     message = "Failed to pay";
   } else if (
-    err.ApiResponse.status_message ==
+    err.ApiResponse?.status_message ==
     "The request could not be completed due to a conflict with the current state of the target resource, please try again"
   ) {
     status = 406;
