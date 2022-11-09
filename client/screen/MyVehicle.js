@@ -8,14 +8,39 @@ import {
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from "expo-image-picker";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useQuery } from "@apollo/client";
+import { GET_USER_BY_ID } from "../queries/user";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLazyQuery } from "@apollo/client";
 
 const MyVehicle = ({ navigation }) => {
   const [image, setImage] = useState(null);
   const [uploadImage, setUploadImage] = useState();
-  const [carName, setCarName] = useState("Cepmek");
-  const [carId, setCarId] = useState("B 3 OL");
-  const [carType, setCarType] = useState("Harimau");
+  const [carName, setCarName] = useState("");
+  const [carId, setCarId] = useState("");
+  const [carType, setCarType] = useState("");
+
+  const { loading, error, data } = useQuery(GET_USER_BY_ID);
+
+  const [
+    getUserId,
+    { loading: userLoading, error: userError, data: userData },
+  ] = useLazyQuery(GET_USER_BY_ID);
+
+  useEffect(() => {
+    (async () => {
+      const id = await AsyncStorage.getItem("id");
+      console.log(id, " <<<<");
+      getUserId({
+        variables: {
+          getUserByIdId: id,
+        },
+      });
+    })();
+  }, []);
+
+  console.log(userData);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -62,7 +87,7 @@ const MyVehicle = ({ navigation }) => {
         <View style={{ position: "relative" }}>
           {image ? (
             <Image
-              source={{ uri: image }}
+              source={{ uri: userData.getUserById.Vehicle.imgUrl }}
               style={{
                 width: 150,
                 height: 150,
@@ -114,7 +139,7 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={carName}
+            value={userData?.getUserById.Vehicle.name === null ? carName : userData?.getUserById.Vehicle.name }
             onChangeText={setCarName}
           />
         </View>
@@ -125,7 +150,7 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={carId}
+            value={userData?.getUserById.Vehicle.plat === null ? carId : userData?.getUserById.Vehicle.plat}
             onChangeText={setCarId}
           />
         </View>
@@ -136,7 +161,7 @@ const MyVehicle = ({ navigation }) => {
           <TextInput
             req
             style={styles.input}
-            value={carType}
+            value={userData?.getUserById.Vehicle.modelNam === null ? carType : userData?.getUserById.Vehicle.modelName}
             onChangeText={setCarType}
           />
         </View>
