@@ -87,8 +87,9 @@ class Book {
       const collection = getDB().collection("bookings");
 
       const options = {};
+      const sort = { bookingDate: -1 };
 
-      const bookings = await collection.find({}, options).toArray();
+      const bookings = await collection.find({}, options).sort(sort).toArray();
       return bookings;
     } catch (error) {
       throw error;
