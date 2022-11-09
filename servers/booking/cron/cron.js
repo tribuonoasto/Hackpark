@@ -48,6 +48,7 @@ const task = cron.schedule("*/5 * * * *", async () => {
     Promise.allSettled(bookPromise);
 
     console.log("cron jalan");
+    res.status(200).json({ message: "cron jalan" });
   } catch (error) {
     next(error);
   }
