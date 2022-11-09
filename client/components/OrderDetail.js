@@ -188,7 +188,9 @@ const OrderDetail = ({ route }) => {
                   </View>
                 </View>
               ) : (
-                <View>
+                <View
+                  style={{ alignItems: "center", justifyContent: "center" }}
+                >
                   <Text>Please check-in before</Text>
                   <Text>{onChangeTime(data?.getBookingById.expiredDate)}.</Text>
                   <Image

@@ -7,11 +7,11 @@ import { useEffect, useState } from "react";
 const ModalScreenSlot = ({ setShowSlot, setName, venues }) => {
   const [selected, setSelected] = useState("");
   const res = [];
-  venues.forEach((slot) => {
+  venues?.forEach((slot) => {
     res.push(slot.name);
   });
 
-  let area = venues.filter((el) => el.name === selected);
+  let area = venues?.filter((el) => el.name === selected);
 
   const handleSubmit = () => {
     setShowSlot(false);

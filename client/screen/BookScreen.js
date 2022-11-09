@@ -29,9 +29,12 @@ const BookScreen = ({ route, navigation }) => {
     booking,
     { data: bookingData, loading: bookingLoading, error: bookingError },
   ] = useMutation(BOOKINGS);
+
   const { id } = route.params;
 
-  console.log(id);
+  // console.log(id);
+
+  // console.log(bookingData, bookingLoading, bookingError);
 
   const {
     loading: venueLoading,
@@ -42,7 +45,7 @@ const BookScreen = ({ route, navigation }) => {
     variables: { getVenueByIdId: id },
   });
 
-  console.log(venueData);
+  // console.log(venueData);
 
   const { loading, error, data, refetch } = useQuery(GET_SLOTS, {
     refetchOnWindowFocus: false,
@@ -114,6 +117,8 @@ const BookScreen = ({ route, navigation }) => {
 
     if (answer === "sure") {
       setModalVisible(false);
+
+      console.log(userId, date, slotRes[0]._id);
       booking({
         variables: {
           booking: {
@@ -125,10 +130,12 @@ const BookScreen = ({ route, navigation }) => {
       }).then(() => {
         refetch();
         venueRefetch();
-        // navigation.navigate("OrderDetail");
+        navigation.navigate("Orders");
       });
     }
   };
+
+  console.log(bookingData, bookingLoading, bookingError);
 
   if (loading) {
     return (
