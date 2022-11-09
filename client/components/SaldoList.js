@@ -1,6 +1,22 @@
 import { Text, View, StyleSheet } from "react-native";
 
 const SaldoList = ({ item }) => {
+  const onChangeTime = (selectedDate) => {
+    const currentDate = selectedDate || new Date();
+
+    let tempTime = new Date(currentDate);
+    let options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+
+    return tempTime.toLocaleTimeString("en-us", options);
+  };
+
   return (
     <View style={styles.container}>
       {item.type === "kredit" ? (
@@ -14,7 +30,7 @@ const SaldoList = ({ item }) => {
       )}
 
       <Text style={{ fontSize: 12, color: "#6B728E" }}>
-        {item.dateTransaction}
+        {onChangeTime(item.dateTransaction)}
       </Text>
     </View>
   );

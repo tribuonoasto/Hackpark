@@ -7,41 +7,47 @@ import {
 } from "react-native";
 import SaldoList from "../components/SaldoList";
 import { useQuery } from "@apollo/client";
-import { GET_BALANCE } from "../queries/user";
+import { useLazyQuery } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GET_USER_BY_ID } from "../queries/user";
+import { useEffect } from "react";
 
-const SaldoDetail = async () => {
-  const access_token = AsyncStorage.getItem("access_token");
-  console.log(access_token, "<<<<");
-  try {
-    const { loading, error, data } = useQuery(GET_BALANCE, {
-      variables: {
-        access_token: await AsyncStorage.getItem("access_token"),
-      },
-    });
-    if (loading) {
-      return (
-        <View>
-          <ActivityIndicator size="large" color="#ededed" />
-        </View>
-      );
-    }
+const SaldoDetail = () => {
+  const [getUserId, { loading, error, data, refetch }] =
+    useLazyQuery(GET_USER_BY_ID);
 
+  useEffect(() => {
+    (async () => {
+      refetch();
+      const id = await AsyncStorage.getItem("id");
+      getUserId({
+        variables: {
+          getUserByIdId: id,
+        },
+      });
+    })();
+  }, []);
+
+  if (loading || !data) {
     return (
-      <View style={styles.container}>
-        <FlatList
-          data={data.getBalance}
-          scrollEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => <SaldoList item={item} />}
-          style={{ marginTop: 40 }}
-        />
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="red" />
       </View>
     );
-  } catch (error) {
-    console.log(error);
   }
+
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={data?.getUserById.BalanceHistories}
+        scrollEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => <SaldoList item={item} />}
+        style={{ marginTop: 40 }}
+      />
+    </View>
+  );
 };
 export default SaldoDetail;
 

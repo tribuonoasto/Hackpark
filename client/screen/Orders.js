@@ -77,24 +77,16 @@ const Orders = ({ navigation }) => {
         </View>
       </TouchableOpacity>
 
-      {bookings.length === 0 ? (
-        <View
-          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
-        >
-          <ActivityIndicator size="large" color="red" />
-        </View>
-      ) : (
-        <FlatList
-          data={bookings}
-          scrollEnabled={true}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-            <BookList item={item} img={img} navigation={navigation} />
-          )}
-          style={{ marginTop: 40 }}
-        />
-      )}
+      <FlatList
+        data={bookings}
+        scrollEnabled={true}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        renderItem={({ item }) => (
+          <BookList item={item} img={img} navigation={navigation} />
+        )}
+        style={{ marginTop: 40 }}
+      />
     </View>
   );
 };

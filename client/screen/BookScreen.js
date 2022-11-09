@@ -121,13 +121,27 @@ const BookScreen = ({ route, navigation }) => {
             UserId: +userId,
           },
         },
-      }).then(() => {
-        refetch();
-        venueRefetch();
-        navigation.navigate("Orders");
-      });
+      })
+        .then(() => {
+          refetch();
+          venueRefetch();
+          navigation.navigate("Orders");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // booking({
+      //   variables: {
+      //     booking: {
+      //       bookingDate: date,
+      //       SlotId: slotRes[0]._id,
+      //       UserId: +userId,
+      //     },
+      //   },
     }
   };
+
+  console.log(date);
 
   console.log(bookingData, bookingLoading, bookingError);
 

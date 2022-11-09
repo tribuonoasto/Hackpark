@@ -132,9 +132,10 @@ export const GET_VENUE_BY_SLOT_ID = gql`
 `;
 
 export const BOOKINGS = gql`
-  mutation Mutation($booking: InputBooking) {
+  mutation Mutation($booking: InputBooking!) {
     booking(booking: $booking) {
       message
+      bookingId
     }
   }
 `;
