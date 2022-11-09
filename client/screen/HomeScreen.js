@@ -124,7 +124,7 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={
-                    !userData?.getUserById.imgUrl
+                    userData?.getUserById.imgUrl
                       ? require("../assets/user.jpg")
                       : { uri: userData?.getUserById.imgUrl }
                   }

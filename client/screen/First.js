@@ -22,12 +22,11 @@ const First = ({ navigation }) => {
               <Text
                 style={{ fontSize: 24, fontWeight: "700", color: "#EDEDED" }}
               >
-                Let's find the best parking spot for you
+                On-Street Parking Solution
               </Text>
-              <Text style={{ fontSize: 12, color: "#C7CCE0", marginTop: 10 }}>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                Deleniti aspernatur quas modi corporis consectetur ipsam
-                praesentium quisquam aliquam ducimus numquam?
+              <Text style={{ fontSize: 12, color: "#ededed", marginTop: 10 }}>
+                We offer you solutions for your daily needs and provide a sense
+                of security for your vehicle and we give you space unlike her.
               </Text>
             </View>
 
