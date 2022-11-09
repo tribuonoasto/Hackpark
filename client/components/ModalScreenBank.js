@@ -45,11 +45,12 @@ const ModalScreenBank = ({ handleModal, setModalVisible, modalVisible }) => {
     <View style={styles.container}>
       <Modal
         animationType="slide"
-        transparent={true}
+        transparent={false}
         visible={modalVisible}
         onRequestClose={() => {
           setModalVisible(!modalVisible);
         }}
+        style={{ backgroundColor: "#fff" }}
       >
         <TouchableOpacity
           style={{
@@ -109,7 +110,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     padding: 20,
-    paddingTop: Constans.statusBarHeight + 10,
+    backgroundColor: "#fff",
+    zIndex: 1,
   },
 });
 
