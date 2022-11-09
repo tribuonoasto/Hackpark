@@ -133,6 +133,7 @@ class Controller {
       const data = await core.transaction.notification(req.body);
 
       const id = +data.order_id.split("-")[2].replace("$", "");
+      console.log("jln");
 
       if (data.transaction_status == "settlement") {
         const user = await User.findOne({
@@ -185,9 +186,11 @@ class Controller {
           },
           { where: { signatureKey: data.signature_key }, transaction: t }
         );
+        await t.commit();
 
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "pending") {
+        await t.commit();
         res.status(200).json({ message: `${data.transaction_status}` });
       } else if (data.transaction_status == "refund") {
         await BalanceHistory.update(
@@ -196,6 +199,7 @@ class Controller {
           },
           { where: { signatureKey: data.signature_key }, transaction: t }
         );
+        await t.commit();
 
         res.status(200).json({ message: `${data.transaction_status}` });
       }
