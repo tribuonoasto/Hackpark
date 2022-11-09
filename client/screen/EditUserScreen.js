@@ -22,11 +22,9 @@ const EditUserScreen = ({ navigation }) => {
   const [uploadImage, setUploadImage] = useState();
   const [image, setImage] = useState(null);
 
-  const { loading, error, data } = useQuery(GET_USER_BY_ID);
-
   const [
     getUserId,
-    { loading: userLoading, error: userError, data: userData },
+    { loading: userLoading, error: userError, data: userData, refetch },
   ] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
@@ -73,7 +71,7 @@ const EditUserScreen = ({ navigation }) => {
       const access_token = await AsyncStorage.getItem("access_token");
 
       const { data } = await axios({
-        url: "http://localhost:3000/users/changeImg",
+        url: "https://hackpark-service-user.herokuapp.com/users/changeImg",
         method: "patch",
         data: uploadImage,
         headers: {
@@ -105,7 +103,7 @@ const EditUserScreen = ({ navigation }) => {
         <View style={{ position: "relative" }}>
           {/* {image ? ( */}
           <Image
-            source={{ uri: data?.getUserById.imgUrl }}
+            source={{ uri: userData?.getUserById.imgUrl }}
             style={{
               width: 150,
               height: 150,

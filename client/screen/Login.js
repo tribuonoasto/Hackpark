@@ -34,6 +34,8 @@ const Login = ({ navigation }) => {
     });
   };
 
+  console.log(data, loading, error);
+
   useEffect(() => {
     (async () => {
       if (data) {
@@ -49,8 +51,18 @@ const Login = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/loading.gif")}
+          style={{ width: 100, height: 100, resizeMode: "cover" }}
+        />
       </View>
     );
   }
