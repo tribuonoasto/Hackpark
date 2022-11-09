@@ -674,7 +674,7 @@ const resolvers = {
             }
           });
 
-          await redis.set("app:bookings", JSON.stringify(data));
+          await redis.set("app:bookings", JSON.stringify(bookingAdjuster));
           return bookingAdjuster;
         }
       } catch (error) {
