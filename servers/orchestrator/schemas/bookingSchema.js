@@ -1,7 +1,7 @@
 const axios = require("axios");
 const errorHandling = require("../middlewares/errorHandling");
-const baseUrlBooking = "https://hackpark-booking.herokuapp.com";
-const baseUrlUser = "https://hackpark-service-user.herokuapp.com";
+const baseUrlBooking = "http://localhost:4002";
+const baseUrlUser = "http://localhost:3000";
 const redis = require("./../config/redis");
 
 const typeDefs = `#graphql
@@ -150,8 +150,8 @@ const resolvers = {
   Query: {
     getVenues: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings:venues");
-
+        // const itemsCache = await redis.get("app:venues");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -208,7 +208,7 @@ const resolvers = {
             }
           });
 
-          await redis.set("app:bookings:venues", JSON.stringify(newVenues));
+          await redis.set("app:venues", JSON.stringify(newVenues));
 
           return newVenues;
         }
@@ -216,14 +216,9 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    getVenueById: async (_, args) => {
+    getVenueById: async (_, args, context) => {
       try {
         const { id } = args;
-
-        const cache = await redis.get(`app:bookings:venues:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: venue } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/venues/${id}`,
@@ -281,7 +276,7 @@ const resolvers = {
 
         const newVenue = newVenues[0];
 
-        await redis.set(`app:bookings:venues:${id}`, JSON.stringify(newVenue));
+        await redis.del("app:venues");
         return newVenue;
       } catch (error) {
         errorHandling(error);
@@ -289,8 +284,8 @@ const resolvers = {
     },
     getSlots: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings:slots");
-
+        // const itemsCache = await redis.get("app:slots");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -357,11 +352,6 @@ const resolvers = {
     getSlotById: async (_, args) => {
       try {
         const { id } = args;
-
-        const cache = await redis.get(`app:bookings:slots:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: slot } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/slots/${id}`,
@@ -419,7 +409,7 @@ const resolvers = {
 
         const newSlot = newSlots[0];
 
-        await redis.set(`app:bookings:slots:${id}`, JSON.stringify(newSlot));
+        await redis.del("app:slots");
         return newSlot;
       } catch (error) {
         errorHandling(error);
@@ -427,8 +417,8 @@ const resolvers = {
     },
     getRatings: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings:ratings");
-
+        // const itemsCache = await redis.get("app:ratings");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -485,7 +475,7 @@ const resolvers = {
             }
           });
 
-          await redis.set("app:bookings:ratings", JSON.stringify(newRatings));
+          await redis.set("app:ratings", JSON.stringify(newRatings));
           return newRatings;
         }
       } catch (error) {
@@ -495,11 +485,6 @@ const resolvers = {
     getRatingById: async (_, args) => {
       try {
         const { id } = args;
-
-        const cache = await redis.get(`app:bookings:ratings:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
         const { data: rating } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/ratings/${id}`,
@@ -557,7 +542,7 @@ const resolvers = {
 
         const newRating = newRatings[0];
 
-        await redis.set(`app:bookings:ratings:${id}`);
+        await redis.del("app:ratings");
         return newRating;
       } catch (error) {
         errorHandling(error);
@@ -565,8 +550,8 @@ const resolvers = {
     },
     getBookings: async () => {
       try {
-        const itemsCache = await redis.get("app:bookings");
-
+        // const itemsCache = await redis.get("app:bookings");
+        const itemsCache = null;
         if (itemsCache) {
           return JSON.parse(itemsCache);
         } else {
@@ -671,7 +656,7 @@ const resolvers = {
             }
           });
 
-          await redis.set("app:bookings", JSON.stringify(data));
+          // await redis.set("app:bookings", JSON.stringify(data));
           return bookingAdjuster;
         }
       } catch (error) {
@@ -682,26 +667,21 @@ const resolvers = {
       try {
         const { id } = args;
 
-        const cache = await redis.get(`app:bookings:${id}`);
-
-        if (cache) return JSON.parse(cache);
-
-        const { access_token } = context;
-
         let { data: book } = await axios({
           method: "GET",
           url: `${baseUrlBooking}/bookings/${id}`,
         });
 
-        const { data: user } = await axios({
+        await redis.del("app:bookings");
+        const { data: users } = await axios({
           method: "get",
-          url: `${baseUrlUser}/users/${book.UserId}`,
-          headers: {
-            access_token,
-          },
+          url: `${baseUrlUser}/users`,
         });
 
-        book.User = user;
+        const user = users.filter((el) => el.id === book.UserId);
+        const filteredUser = user[0];
+
+        book.User = filteredUser;
 
         const { data: slot } = await axios({
           method: "get",
@@ -736,8 +716,6 @@ const resolvers = {
 
         book.Price = price[0];
 
-        await redis.set(`app:bookings`, JSON.stringify(book));
-
         return book;
       } catch (error) {
         errorHandling(error);
@@ -748,13 +726,12 @@ const resolvers = {
     rating: async (_, args) => {
       try {
         const { rating } = args;
-
         const { data } = await axios({
           method: "POST",
           url: `${baseUrlBooking}/ratings`,
           data: rating,
         });
-        await redis.del("app:bookings:ratings");
+        await redis.del("app:ratings");
         return data;
       } catch (error) {
         errorHandling(error);
@@ -763,9 +740,7 @@ const resolvers = {
     booking: async (_, args, context) => {
       try {
         const { booking } = args;
-
         const { access_token } = context;
-
         const { UserId, SlotId, bookingDate } = booking;
 
         const { data: user } = await axios({
@@ -815,7 +790,6 @@ const resolvers = {
     checkBooking: async (_, args, context) => {
       try {
         const { bookingId } = args;
-
         const { access_token } = context;
 
         const { data: book } = await axios({
