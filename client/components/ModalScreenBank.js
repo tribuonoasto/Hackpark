@@ -12,25 +12,28 @@ import Constans from "expo-constants";
 import { Entypo, Feather } from "react-native-vector-icons";
 const banks = [
   {
-    name: "Bank Mandiri",
-    codeName: "mandiri",
-    imgUrl:
-      "https://seeklogo.com/images/B/bank-mandiri-logo-B10991D0B8-seeklogo.com.png",
-    bankCode: "200",
-  },
-  {
     name: "Bank Permata",
     codeName: "permata",
     imgUrl:
       "https://seeklogo.com/images/B/bank-permata-logo-A7B3360D9F-seeklogo.com.png",
-    bankCode: "013",
   },
   {
     name: "Bank BCA",
     codeName: "bca",
     imgUrl:
       "https://seeklogo.com/images/B/bca-bank-logo-1E89320DC2-seeklogo.com.png",
-    bankCode: "014",
+  },
+  {
+    codeName: "bri",
+    imgUrl:
+      "https://seeklogo.com/images/B/bank-bri-bank-rakyat-logo-C06D6783A8-seeklogo.com.png",
+    name: "Bank BRI",
+  },
+  {
+    name: "Bank BNI",
+    codeName: "bni",
+    imgUrl:
+      "https://seeklogo.com/images/B/bank-bni-logo-737EE0F32C-seeklogo.com.png",
   },
 ];
 
