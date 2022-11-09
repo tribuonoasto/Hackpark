@@ -23,7 +23,13 @@ class Controller {
 
       const user = await User.findOne({
         where: { id },
-        include: [BalanceHistory, Vehicle],
+        include: [
+          {
+            model: BalanceHistory,
+          },
+          { model: Vehicle },
+        ],
+        order: [[BalanceHistory, "dateTransaction", "DESC"]],
       });
 
       if (!user) throw { name: "User not found" };
