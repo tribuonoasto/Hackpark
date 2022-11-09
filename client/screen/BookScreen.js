@@ -113,6 +113,8 @@ const BookScreen = ({ route, navigation }) => {
       setModalVisible(false);
 
       console.log(userId, date, slotRes[0]._id);
+
+      console.log(bookingData, bookingLoading, bookingError);
       booking({
         variables: {
           booking: {
@@ -121,15 +123,17 @@ const BookScreen = ({ route, navigation }) => {
             UserId: +userId,
           },
         },
-      }).then(() => {
-        refetch();
-        venueRefetch();
-        navigation.navigate("Orders");
-      });
+      })
+        .then(() => {
+          refetch();
+          venueRefetch();
+          navigation.navigate("Orders");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     }
   };
-
-  console.log(bookingData, bookingLoading, bookingError);
 
   if (loading) {
     return (

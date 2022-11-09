@@ -587,9 +587,11 @@ const resolvers = {
     },
     booking: async (_, args, context) => {
       try {
+        console.log(args);
         const { booking } = args;
         const { access_token } = context;
         const { UserId, SlotId, bookingDate } = booking;
+        console.log(UserId, SlotId, bookingDate);
 
         const { data: user } = await axios({
           method: "get",
