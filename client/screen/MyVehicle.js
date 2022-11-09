@@ -5,12 +5,14 @@ import {
   Image,
   TouchableOpacity,
   TextInput,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "react-native-vector-icons";
 import * as ImagePicker from "expo-image-picker";
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { GET_USER_BY_ID } from "../queries/user";
+import { VEHICLE } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
 
@@ -35,6 +37,11 @@ const MyVehicle = ({ navigation }) => {
   }, []);
 
   console.log(data);
+
+  const [
+    createVehicle,
+    { loading: vehicleLoading, error: errorVehicle, data: dataVehicle },
+  ] = useMutation(VEHICLE);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -61,10 +68,20 @@ const MyVehicle = ({ navigation }) => {
   };
 
   const handleEdit = () => {
+    createVehicle({
+      variables: {
+        vehicle: {
+          modelName: carType,
+          name: carName,
+          plat: carId,
+          UserId: id,
+        },
+      },
+    });
     navigation.navigate("UserScreen");
   };
 
-  if (loading) {
+  if (loading || vehicleLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="red" />

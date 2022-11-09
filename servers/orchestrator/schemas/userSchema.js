@@ -21,6 +21,7 @@ input InputVehicle{
   plat: String
   modelName: String
   name: String
+  UserId: Int
 }
 
 type Payload {
@@ -283,6 +284,7 @@ const resolvers = {
         await redis.del("app:users");
         return data;
       } catch (error) {
+        console.log(error)
         errorHandling(error);
       }
     },
