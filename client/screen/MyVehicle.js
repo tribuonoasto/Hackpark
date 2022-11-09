@@ -16,6 +16,7 @@ import { VEHICLE } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
 import axios from "axios";
+import img from "../assets/car.jpg";
 
 const MyVehicle = ({ navigation }) => {
   const [image, setImage] = useState(null);
@@ -81,6 +82,7 @@ const MyVehicle = ({ navigation }) => {
         },
       },
     });
+    handleSubmit();
   };
 
   const handleSubmit = async () => {
@@ -120,27 +122,15 @@ const MyVehicle = ({ navigation }) => {
         }}
       >
         <View style={{ position: "relative" }}>
-          {data?.getUserById.Vehicle.imgUrl !== null && !edit ? (
-            <Image
-              source={{ uri: data?.getUserById.Vehicle?.imgUrl }}
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 100,
-                resizeMode: "cover",
-              }}
-            />
-          ) : (
-            <Image
-              source={{ uri: image }}
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 100,
-                resizeMode: "cover",
-              }}
-            />
-          )}
+          <Image
+            source={image !== null ? { uri: image } : img}
+            style={{
+              width: 150,
+              height: 150,
+              borderRadius: 100,
+              resizeMode: "cover",
+            }}
+          />
 
           <TouchableOpacity
             onPress={pickImage}
@@ -214,48 +204,25 @@ const MyVehicle = ({ navigation }) => {
         </View>
       </View>
 
-      {data?.getUserById.Vehicle.imgUrl === null ||
-      data?.getUserById.Vehicle.imgUrl ? (
-        <TouchableOpacity
+      <TouchableOpacity
+        style={{
+          backgroundColor: "#404258",
+          paddingVertical: 10,
+          borderRadius: 40,
+        }}
+        onPress={handleEdit}
+      >
+        <Text
           style={{
-            backgroundColor: "#404258",
-            paddingVertical: 10,
-            borderRadius: 40,
+            textAlign: "center",
+            color: "#ededed",
+            fontSize: 20,
+            fontWeight: "500",
           }}
-          onPress={handleSubmit}
         >
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#ededed",
-              fontSize: 20,
-              fontWeight: "500",
-            }}
-          >
-            Save
-          </Text>
-        </TouchableOpacity>
-      ) : (
-        <TouchableOpacity
-          style={{
-            backgroundColor: "#404258",
-            paddingVertical: 10,
-            borderRadius: 40,
-          }}
-          onPress={handleEdit}
-        >
-          <Text
-            style={{
-              textAlign: "center",
-              color: "#ededed",
-              fontSize: 20,
-              fontWeight: "500",
-            }}
-          >
-            Save
-          </Text>
-        </TouchableOpacity>
-      )}
+          Save
+        </Text>
+      </TouchableOpacity>
     </View>
   );
 };

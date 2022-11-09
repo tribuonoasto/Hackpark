@@ -116,9 +116,9 @@ export const LOGIN = gql`
   mutation Login($login: InputLogin) {
     login(login: $login) {
       access_token
+      email
       id
       username
-      email
     }
   }
 `;

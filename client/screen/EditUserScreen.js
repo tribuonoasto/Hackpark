@@ -15,6 +15,7 @@ import { GET_USER_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLazyQuery } from "@apollo/client";
 import axios from "axios";
+import img from "../assets/userImg.jpg";
 
 const EditUserScreen = ({ navigation }) => {
   const [name, setName] = useState("");
@@ -83,7 +84,7 @@ const EditUserScreen = ({ navigation }) => {
     }
   };
 
-  if (userLoading || !userData?.getUserById.imgUrl) {
+  if (userLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="red" />
@@ -101,9 +102,14 @@ const EditUserScreen = ({ navigation }) => {
         onPress={pickImage}
       >
         <View style={{ position: "relative" }}>
-          {/* {image ? ( */}
           <Image
-            source={{ uri: userData?.getUserById.imgUrl }}
+            source={
+              image !== null
+                ? { uri: image }
+                : !userData?.getUserById.imgUrl
+                ? img
+                : { uri: userData?.getUserById.imgUrl }
+            }
             style={{
               width: 150,
               height: 150,
@@ -111,22 +117,6 @@ const EditUserScreen = ({ navigation }) => {
               resizeMode: "cover",
             }}
           />
-          {/* ) : (
-            <Image
-              source={
-                !userData?.getUserById.imgUrl
-                  ? require("../assets/user.jpg")
-                  : { uri: userData?.getUserById.imgUrl }
-              }
-              style={{
-                width: 150,
-                height: 150,
-                borderRadius: 100,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            />
-          )} */}
 
           <TouchableOpacity
             style={{
@@ -154,18 +144,12 @@ const EditUserScreen = ({ navigation }) => {
 
       <View style={{ marginTop: 40 }}>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>
-            Name <Text style={{ color: "red" }}>*</Text>
+          <Text style={styles.label}>Name</Text>
+          <Text style={styles.input}>
+            {userData?.getUserById.username === null
+              ? name
+              : userData?.getUserById.username}
           </Text>
-          <TextInput
-            style={styles.input}
-            value={
-              userData?.getUserById.username === null
-                ? name
-                : userData?.getUserById.username
-            }
-            onChangeText={setName}
-          />
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Email</Text>
@@ -174,16 +158,6 @@ const EditUserScreen = ({ navigation }) => {
               ? email
               : userData?.getUserById.email}
           </Text>
-          <TextInput
-            req
-            style={styles.input}
-            value={
-              userData?.getUserById.email === null
-                ? email
-                : userData?.getUserById.email
-            }
-            onChangeText={setEmail}
-          />
         </View>
       </View>
 

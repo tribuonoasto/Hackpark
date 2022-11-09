@@ -135,7 +135,6 @@ const BookScreen = ({ route, navigation }) => {
     if (answer === "sure") {
       setModalVisible(false);
 
-      console.log(userId, date, slotRes[0]._id);
       booking({
         variables: {
           booking: {
