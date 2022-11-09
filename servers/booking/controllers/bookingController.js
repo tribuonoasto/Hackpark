@@ -3,7 +3,6 @@ const Book = require("../models/booking");
 const Slot = require("../models/slot");
 const Venue = require("../models/venue");
 const format = require("date-fns/format");
-const { baseUrlLocal, baseUrlLocalUser } = require("../helpers/baseUrl");
 const axios = require("axios");
 const ImageKit = require("imagekit");
 const { client } = require("../config/mongo");

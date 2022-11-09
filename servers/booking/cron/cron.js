@@ -46,7 +46,7 @@ const taskFunction = async () => {
     });
 
     Promise.allSettled(bookPromise);
-    console.log("cron jalan");
+
     return "cron jalan";
   } catch (error) {
     return error;

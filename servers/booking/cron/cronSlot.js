@@ -42,10 +42,8 @@ const yourFunction = async () => {
     });
 
     Promise.allSettled(slotPromise);
-    console.log("cron jalan");
     return "cron jalan";
   } catch (error) {
-    console.log(error);
     return error;
   }
 };
