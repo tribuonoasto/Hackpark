@@ -59,10 +59,7 @@ const MyVehicle = ({ navigation }) => {
     setUploadImage(formData);
   };
 
-  const handleEdit = () => {
-    console.log(uploadImage);
-    // navigation.navigate("UserScreen");
-  };
+  const handleEdit = async () => {};
 
   if (loading) {
     return (

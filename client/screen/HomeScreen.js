@@ -32,6 +32,8 @@ const HomeScreen = ({ navigation }) => {
     { loading: userLoading, error: userError, data: userData, refetch },
   ] = useLazyQuery(GET_USER_BY_ID);
 
+  console.log();
+
   useEffect(() => {
     (async () => {
       refetch();
@@ -69,7 +71,7 @@ const HomeScreen = ({ navigation }) => {
     })();
   }, []);
 
-  if (loading || userLoading) {
+  if (loading || userLoading || !userData?.getUserById.imgUrl) {
     return (
       <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
         <ActivityIndicator size="large" color="red" />
@@ -122,7 +124,7 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={
-                    userLoading || userData?.getUserById.imgUrl === null
+                    !userData?.getUserById.imgUrl
                       ? require("../assets/user.jpg")
                       : { uri: userData?.getUserById.imgUrl }
                   }
