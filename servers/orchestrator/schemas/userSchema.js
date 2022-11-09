@@ -219,8 +219,6 @@ const resolvers = {
           data: login,
         });
 
-        await redis.del("app:users");
-
         return data;
       } catch (error) {
         errorHandling(error);
