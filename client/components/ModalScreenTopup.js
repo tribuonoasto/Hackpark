@@ -11,10 +11,14 @@ import {
 import Constans from "expo-constants";
 import { Entypo, Feather } from "react-native-vector-icons";
 
-const ModalScreenTopup = ({ handleModal, setModalVisible, modalVisible }) => {
-  // const handleSubmit = (codeName, bank) => {
-  //     handleModal(codeName, bank);
-  //   };
+const ModalScreenTopup = ({
+  handleModal,
+  setModalVisible,
+  modalVisible,
+  data,
+  bankName,
+  navigation,
+}) => {
   return (
     <View style={styles.container}>
       <Modal
@@ -32,11 +36,14 @@ const ModalScreenTopup = ({ handleModal, setModalVisible, modalVisible }) => {
             top: Constans.statusBarHeight + 10,
             zIndex: 1,
           }}
-          onPress={() => setModalVisible(false)}
+          onPress={() => {
+            setModalVisible(false);
+            navigation.navigate("HomeScreen");
+          }}
         >
           <Entypo name="cross" size={25} color="black" style={{ padding: 1 }} />
         </TouchableOpacity>
-        {/* 
+
         <View
           style={{
             backgroundColor: "#ededed",
@@ -46,34 +53,95 @@ const ModalScreenTopup = ({ handleModal, setModalVisible, modalVisible }) => {
             paddingTop: 100,
           }}
         >
-          <FlatList
-            data={banks}
-            scrollEnabled={true}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            renderItem={({ item }) => (
-              <TouchableOpacity
-                style={{ flexDirection: "row", alignItems: "center" }}
-                onPress={() => {
-                  handleSubmit(item.codeName, item.name);
-                  setModalVisible(false);
+          <Text
+            style={{
+              textAlign: "center",
+              justifyContent: "center",
+              fontWeight: "600",
+              fontSize: 24,
+            }}
+          >
+            Top up Summary
+          </Text>
+
+          <View style={{ marginTop: 20 }}>
+            <Text
+              style={{ fontSize: 16, flexWeight: "600", alignSelf: "center" }}
+            >
+              Order Id: {data?.payment.order_id}
+            </Text>
+            <View
+              style={{
+                marginVertical: 40,
+                justifyContent: "center",
+                alignItems: "center",
+                backgroundColor: "#404258",
+                borderRadius: 10,
+                paddingVertical: 10,
+              }}
+            >
+              <Text
+                style={{ fontWeight: "300", fontSize: 12, color: "#ededed" }}
+              >
+                Your va number
+              </Text>
+              <Text
+                style={{ fontWeight: "700", fontSize: 28, color: "#ededed" }}
+              >
+                {data?.payment.va_numbers}
+              </Text>
+            </View>
+            <View style={{}}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
                 }}
               >
-                <Image
-                  source={{ uri: item.imgUrl }}
-                  style={{ width: 70, height: 70, resizeMode: "contain" }}
-                />
-                <Text
-                  style={{ marginLeft: 20, fontWeight: "600", fontSize: 16 }}
-                >
-                  {item.name}
+                <Text style={{ fontSize: 18, fontWeight: "500" }}>Bank</Text>
+                <Text style={{ fontSize: 14 }}>{bankName}</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                  Payment type
                 </Text>
-              </TouchableOpacity>
-            )}
-          />
-        </View> */}
+                <Text style={{ fontSize: 14 }}>Bank Transfer</Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginVertical: 20,
+                }}
+              >
+                <Text style={{ fontSize: 18, fontWeight: "500" }}>
+                  Top up amount
+                </Text>
+                <Text style={{ fontSize: 16, fontWeight: "500" }}>
+                  Rp {data?.payment.gross_amount}
+                </Text>
+              </View>
+            </View>
+          </View>
+        </View>
       </Modal>
     </View>
   );
 };
 export default ModalScreenTopup;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#ededed",
+    padding: 0,
+  },
+});

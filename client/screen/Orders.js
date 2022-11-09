@@ -7,13 +7,14 @@ import {
   FlatList,
   ActivityIndicator,
 } from "react-native";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
 import BookList from "../components/BookList";
 import img from "../assets/parking-img.jpg";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_BOOKINGS, GET_BOOKINGS_BY_ID } from "../queries/bookings";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const Orders = ({ navigation }) => {
   const [bookings, setBookings] = useState([]);
@@ -24,14 +25,16 @@ const Orders = ({ navigation }) => {
       refetch();
       const id = await AsyncStorage.getItem("id");
 
-      if (data) {
-        const res = data.getBookings.filter(
-          (booking) => booking.UserId === +id
-        );
-        setBookings(res);
-      }
+      const res = data?.getBookings.filter((booking) => booking.UserId === +id);
+      setBookings(res);
     })();
   }, [data, loading, error]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   if (loading && !data) {
     return (

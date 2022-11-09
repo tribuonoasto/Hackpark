@@ -6,11 +6,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import SaldoList from "../components/SaldoList";
-import { useQuery } from "@apollo/client";
 import { useLazyQuery } from "@apollo/client";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { GET_USER_BY_ID } from "../queries/user";
-import { useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
 const SaldoDetail = () => {
   const [getUserId, { loading, error, data, refetch }] =
@@ -18,11 +18,10 @@ const SaldoDetail = () => {
 
   useEffect(() => {
     (async () => {
-      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
-          getUserByIdId: id,
+          getUserByIdId: +id,
         },
       });
     })();
@@ -39,7 +38,9 @@ const SaldoDetail = () => {
   return (
     <View style={styles.container}>
       <FlatList
-        data={data?.getUserById.BalanceHistories}
+        data={data?.getUserById.BalanceHistories.filter(
+          (el) => el.status === "Success"
+        )}
         scrollEnabled={true}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -49,6 +50,7 @@ const SaldoDetail = () => {
     </View>
   );
 };
+
 export default SaldoDetail;
 
 const styles = StyleSheet.create({
