@@ -130,14 +130,6 @@ const BookScreen = ({ route, navigation }) => {
         .catch((err) => {
           console.log(err);
         });
-      // booking({
-      //   variables: {
-      //     booking: {
-      //       bookingDate: date,
-      //       SlotId: slotRes[0]._id,
-      //       UserId: +userId,
-      //     },
-      //   },
     }
   };
 

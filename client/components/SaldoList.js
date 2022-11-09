@@ -10,28 +10,44 @@ const SaldoList = ({ item }) => {
       year: "numeric",
       month: "long",
       day: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
     };
 
-    return tempTime.toLocaleTimeString("en-us", options);
+    return tempTime.toLocaleDateString("en-us", options);
   };
 
   return (
     <View style={styles.container}>
-      {item.type === "kredit" ? (
-        <Text style={{ color: "#B73E3E", fontSize: 18, fontWeight: "500" }}>
-          - IDR {item.amount}
-        </Text>
-      ) : (
-        <Text style={{ color: "#54B435", fontSize: 18, fontWeight: "500" }}>
-          IDR {item.amount}
-        </Text>
-      )}
-
-      <Text style={{ fontSize: 12, color: "#6B728E" }}>
-        {onChangeTime(item.dateTransaction)}
-      </Text>
+      {item.type === "kredit" && item.status === "Success" ? (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "#B73E3E", fontSize: 18, fontWeight: "500" }}>
+            - IDR {item.amount}
+          </Text>
+          <Text style={{ fontSize: 12, color: "#6B728E" }}>
+            {onChangeTime(item.dateTransaction)}
+          </Text>
+        </View>
+      ) : item.type === "kredit" && item.status === "Success" ? (
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: "#54B435", fontSize: 18, fontWeight: "500" }}>
+            IDR {item.amount}
+          </Text>
+          <Text style={{ fontSize: 12, color: "#6B728E" }}>
+            {onChangeTime(item.dateTransaction)}
+          </Text>
+        </View>
+      ) : null}
     </View>
   );
 };
@@ -43,8 +59,5 @@ const styles = StyleSheet.create({
     borderColor: "rgba(64, 66, 88, 0.2)",
     padding: 10,
     marginBottom: 15,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
   },
 });

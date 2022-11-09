@@ -1,5 +1,6 @@
 import { useLazyQuery } from "@apollo/client";
-import { useEffect } from "react";
+import { useFocusEffect } from "@react-navigation/native";
+import { useCallback, useEffect } from "react";
 import {
   Text,
   View,
@@ -10,7 +11,7 @@ import {
 import { GET_VENUE_BY_SLOT_ID } from "../queries/bookings";
 
 const BookList = ({ navigation, item }) => {
-  const [getVenue, { loading, data, error }] =
+  const [getVenue, { loading, data, error, refetch }] =
     useLazyQuery(GET_VENUE_BY_SLOT_ID);
 
   useEffect(() => {
@@ -20,6 +21,12 @@ const BookList = ({ navigation, item }) => {
       },
     });
   }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [data, item])
+  );
 
   const onChangeTime = (selectedDate) => {
     const currentDate = selectedDate || date;
@@ -37,7 +44,7 @@ const BookList = ({ navigation, item }) => {
     return tempTime.toLocaleTimeString("en-us", options);
   };
 
-  if (loading) {
+  if (loading || !data || data === null) {
     return (
       <View
         style={{ alignItems: "center", justifyContent: "center", flex: 1 }}
@@ -67,14 +74,14 @@ const BookList = ({ navigation, item }) => {
               ? {
                   uri: "https://www.technipages.com/wp-content/uploads/2020/10/fix-google-maps-not-updating-location-600x341.png",
                 }
-              : { uri: data?.getSlotById.Venue.imgVenue }
+              : { uri: data?.getSlotById?.Venue?.imgVenue }
           }
           style={{ width: 70, height: 70, borderRadius: 10 }}
         />
         <View style={{ marginLeft: 20, justifyContent: "space-between" }}>
           <View>
             <Text style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}>
-              {data?.getSlotById.Venue.name}
+              {data?.getSlotById?.Venue?.name}
             </Text>
             <Text
               style={{
@@ -88,9 +95,7 @@ const BookList = ({ navigation, item }) => {
             </Text>
           </View>
           <Text style={{ color: "#6B728E", fontSize: 10, fontWeight: "300" }}>
-            {item.checkoutDate
-              ? onChangeTime(item.checkoutDate)
-              : onChangeTime(item.expiredDate)}
+            {onChangeTime(item.bookingDate)}
           </Text>
         </View>
       </View>

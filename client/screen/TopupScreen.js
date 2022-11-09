@@ -44,7 +44,7 @@ const TopupScreen = () => {
     }
   };
 
-  console.log(data, loading, error);
+  console.log(loading, data, error);
 
   if (loading) {
     return (

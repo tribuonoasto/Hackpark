@@ -8,7 +8,7 @@ import {
   Image,
   ActivityIndicator,
 } from "react-native";
-
+import { useFocusEffect } from "@react-navigation/native";
 import {
   Entypo,
   FontAwesome5,
@@ -18,7 +18,7 @@ import {
 import Card from "../components/Card";
 import { useLazyQuery, useQuery } from "@apollo/client";
 import { GET_VENUES } from "../queries/bookings";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import * as Location from "expo-location";
 import { GET_USER_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -29,7 +29,7 @@ const HomeScreen = ({ navigation }) => {
   const { loading, error, data } = useQuery(GET_VENUES);
   const [
     getUserId,
-    { loading: userLoading, error: userError, data: userData },
+    { loading: userLoading, error: userError, data: userData, refetch },
   ] = useLazyQuery(GET_USER_BY_ID);
 
   useEffect(() => {
@@ -43,7 +43,11 @@ const HomeScreen = ({ navigation }) => {
     })();
   }, []);
 
-  console.log(userLoading, userError, userData);
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [])
+  );
 
   useEffect(() => {
     (async () => {
