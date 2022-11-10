@@ -814,6 +814,10 @@ const resolvers = {
               price: book.checkoutPrice,
             },
           });
+          await redis.del("app:bookings");
+
+          await redis.del("app:bookings:balances");
+
           return book;
         }
 
