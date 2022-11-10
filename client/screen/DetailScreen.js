@@ -51,7 +51,7 @@ const DetailScreen = ({ route, navigation }) => {
           height: "60%",
           borderTopRightRadius: 40,
           borderTopLeftRadius: 40,
-          padding: 40,
+          padding: 20,
           flex: 1,
         }}
         showsHorizontalScrollIndicator={false}
@@ -163,18 +163,17 @@ const DetailScreen = ({ route, navigation }) => {
         <TouchableOpacity
           style={{
             backgroundColor: "#404258",
-            width: "100%",
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 40,
             paddingVertical: 15,
             borderRadius: 40,
+            marginTop: 10,
           }}
           onPress={() =>
             navigation.navigate("BookScreen", { id: data.getVenueById._id })
           }
         >
-          <Text style={{ color: "#EDEDED", fontSize: 24, fontWeight: "600" }}>
+          <Text style={{ color: "#EDEDED", fontSize: 10, fontWeight: "600" }}>
             Book Now
           </Text>
         </TouchableOpacity>
