@@ -12,6 +12,8 @@ import Constans from "expo-constants";
 import { Entypo, Feather } from "react-native-vector-icons";
 import axios from "axios";
 import { useState } from "react";
+import { GET_BOOKINGS_BY_ID } from "../queries/bookings";
+import { useLazyQuery } from "@apollo/client";
 
 const ModalScreen = ({
   modalVisible,
@@ -20,6 +22,10 @@ const ModalScreen = ({
   data,
   setResult,
 }) => {
+  console.log(data);
+  const [bookings, { loading, error, data: bookingData }] =
+    useLazyQuery(GET_BOOKINGS_BY_ID);
+
   const handleSubmitButton = async () => {
     try {
       const { data: res } = await axios({
@@ -32,6 +38,12 @@ const ModalScreen = ({
         url: `https://hackpark-service-user.herokuapp.com/changeBalancePayment`,
         data: {
           UserId: data.User.id,
+        },
+      });
+
+      bookings({
+        variables: {
+          id: data._id,
         },
       });
 
