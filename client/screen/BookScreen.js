@@ -161,8 +161,18 @@ const BookScreen = ({ route, navigation }) => {
 
   if (loading || userLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -174,7 +184,7 @@ const BookScreen = ({ route, navigation }) => {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#ededed",
+          backgroundColor: "#fff",
         }}
       >
         <Text
@@ -187,7 +197,10 @@ const BookScreen = ({ route, navigation }) => {
         >
           Processing your booking
         </Text>
-        <ActivityIndicator size="large" color="red" />
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

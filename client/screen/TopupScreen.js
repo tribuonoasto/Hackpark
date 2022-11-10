@@ -8,6 +8,7 @@ import {
   TextInput,
   Keyboard,
   TouchableNativeFeedback,
+  Image,
 } from "react-native";
 import { Feather, FontAwesome5 } from "react-native-vector-icons";
 import ModalScreenBank from "../components/ModalScreenBank";
@@ -50,8 +51,19 @@ const TopupScreen = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
         <Text>Processing your top up...</Text>
+        <Image
+          source={require("../assets/payment.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

@@ -42,29 +42,33 @@ const EditUserScreen = ({ navigation }) => {
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    if (!result.cancelled) {
-      setImage(result.uri);
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+
+      let localUri = result.uri;
+      let filename = localUri.split("/").pop();
+
+      // Infer the type of the image
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      // Upload the image using the fetch and FormData APIs
+      let formData = new FormData();
+      // Assume "photo" is the name of the form field the server expects
+      formData.append("image", { uri: localUri, name: filename, type });
+      setUploadImage(formData);
+    } catch (error) {
+      console.log(error);
     }
-
-    let localUri = result.uri;
-    let filename = localUri.split("/").pop();
-
-    // Infer the type of the image
-    let match = /\.(\w+)$/.exec(filename);
-    let type = match ? `image/${match[1]}` : `image`;
-
-    // Upload the image using the fetch and FormData APIs
-    let formData = new FormData();
-    // Assume "photo" is the name of the form field the server expects
-    formData.append("image", { uri: localUri, name: filename, type });
-    setUploadImage(formData);
   };
 
   const handleEdit = async () => {
@@ -86,8 +90,18 @@ const EditUserScreen = ({ navigation }) => {
 
   if (userLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

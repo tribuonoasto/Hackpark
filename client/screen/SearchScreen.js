@@ -110,7 +110,10 @@ const SearchScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

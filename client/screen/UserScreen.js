@@ -30,13 +30,23 @@ const UserScreen = ({ navigation }) => {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="#404258" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
 
-  logout = async () => {
+  const logout = async () => {
     AsyncStorage.clear();
     navigation.navigate("Login");
   };

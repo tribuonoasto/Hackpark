@@ -143,8 +143,18 @@ const OrderDetail = ({ route }) => {
 
   if (loading || venueLoading || ratingsLoading || ratingLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -326,6 +336,7 @@ const OrderDetail = ({ route }) => {
           style={{
             flexDirection: "row",
             justifyContent: "space-between",
+            alignItems: "center",
             marginBottom: 10,
           }}
         >
@@ -338,12 +349,18 @@ const OrderDetail = ({ route }) => {
               -
             </Text>
           ) : (
-            <Text style={{ fontSize: 18, fontWeight: "300", color: "#474E68" }}>
-              {data?.getBookingById.checkinDate}
+            <Text style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}>
+              {onChangeTime(data?.getBookingById.checkinDate)}
             </Text>
           )}
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
           <Text style={{ fontSize: 16, fontWeight: "500", color: "#404258" }}>
             Check-out date
           </Text>
@@ -352,8 +369,8 @@ const OrderDetail = ({ route }) => {
               -
             </Text>
           ) : (
-            <Text style={{ fontSize: 14, fontWeight: "300", color: "#474E68" }}>
-              {data?.getBookingById.checkoutDate}
+            <Text style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}>
+              {onChangeTime(data?.getBookingById.checkoutDate)}
             </Text>
           )}
         </View>
