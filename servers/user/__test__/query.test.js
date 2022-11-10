@@ -332,13 +332,11 @@ describe("verify users", () => {
 });
 
 describe("change balance payment", () => {
-  it("get /users/changeBalancePayment => success test", async () => {
-    const result = await request(app)
-      .patch(`/users/changeBalancePayment`)
-      .set("access_token", access_token)
-      .send({
-        price: 10000,
-      });
+  it("get /changeBalancePayment => success test", async () => {
+    const result = await request(app).patch(`/changeBalancePayment`).send({
+      price: 10000,
+      UserId: 1,
+    });
 
     expect(result.status).toBe(200);
     expect(result.body).toBeInstanceOf(Object);
@@ -348,13 +346,11 @@ describe("change balance payment", () => {
 });
 
 describe("change balance payment", () => {
-  it("get /users/changeBalancePayment => fail test", async () => {
-    const result = await request(app)
-      .patch(`/users/changeBalancePayment`)
-      .set("access_token", access_token)
-      .send({
-        price: 10000000000,
-      });
+  it("get /changeBalancePayment => fail test", async () => {
+    const result = await request(app).patch(`/changeBalancePayment`).send({
+      price: 10000000000,
+      UserId: 1,
+    });
 
     expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
@@ -367,10 +363,13 @@ describe("change balance payment", () => {
 });
 
 describe("change balance payment", () => {
-  it("get /users/changeBalancePayment => fail test", async () => {
+  it("get /changeBalancePayment => fail test invalid price", async () => {
     const result = await request(app)
-      .patch(`/users/changeBalancePayment`)
-      .set("access_token", access_token);
+      .patch(`/changeBalancePayment`)
+      .set("access_token", access_token)
+      .send({
+        UserId: 1,
+      });
 
     expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
@@ -380,14 +379,12 @@ describe("change balance payment", () => {
 });
 
 describe("change balance payment", () => {
-  it("get /users/changeBalancePayment => fail test server", async () => {
+  it("get /changeBalancePayment => fail test server", async () => {
     jest.spyOn(User, "update").mockResolvedValue([0]);
-    const result = await request(app)
-      .patch(`/users/changeBalancePayment`)
-      .set("access_token", access_token)
-      .send({
-        price: 10000,
-      });
+    const result = await request(app).patch(`/changeBalancePayment`).send({
+      price: 10000,
+      UserId: 1,
+    });
     expect(result.status).toBe(400);
     expect(result.body).toBeInstanceOf(Object);
     expect(result.body).toHaveProperty("message", expect.any(String));
