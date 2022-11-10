@@ -20,11 +20,18 @@ const ModalScreen = ({
   data,
   setResult,
 }) => {
+  console.log(data);
   const handleSubmitButton = async () => {
     try {
       const { data: res } = await axios({
         method: "post",
         url: `https://hackpark-booking.herokuapp.com/bookings/check/${data._id}`,
+      });
+
+      const { data: temp } = await axios({
+        method: "patch",
+        url: `https://hackpark-service-user.herokuapp.com/changeBalancePayment`,
+        data: { UserId: data.UserId },
       });
 
       setResult(res.message);

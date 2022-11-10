@@ -66,19 +66,13 @@ const EditUserScreen = ({ navigation }) => {
       // Assume "photo" is the name of the form field the server expects
       formData.append("image", { uri: localUri, name: filename, type });
       setUploadImage(formData);
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
-  const handleEdit = async () => {
-    try {
       const access_token = await AsyncStorage.getItem("access_token");
 
       const { data } = await axios({
         url: "https://hackpark-service-user.herokuapp.com/users/changeImg",
         method: "patch",
-        data: uploadImage,
+        data: formData,
         headers: {
           access_token: access_token,
         },
@@ -174,26 +168,6 @@ const EditUserScreen = ({ navigation }) => {
           </Text>
         </View>
       </View>
-
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#404258",
-          paddingVertical: 10,
-          borderRadius: 40,
-        }}
-        onPress={handleEdit}
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            color: "#ededed",
-            fontSize: 20,
-            fontWeight: "500",
-          }}
-        >
-          Save
-        </Text>
-      </TouchableOpacity>
     </View>
   );
 };
