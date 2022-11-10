@@ -49,6 +49,11 @@ const HomeScreen = ({ navigation }) => {
     }, [userData, data])
   );
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   useEffect(() => {
     (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -223,7 +228,7 @@ const HomeScreen = ({ navigation }) => {
               <Text
                 style={{ marginTop: 10, color: "#50577A", fontWeight: "600" }}
               >
-                Rp {userData?.getUserById.balance}
+                {formatter.format(userData?.getUserById.balance)}
               </Text>
             </View>
             <TouchableOpacity

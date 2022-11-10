@@ -17,6 +17,11 @@ const DetailScreen = ({ route, navigation }) => {
     variables: { getVenueByIdId: id },
   });
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -72,23 +77,24 @@ const DetailScreen = ({ route, navigation }) => {
                 marginTop: 5,
               }}
             >
-              IDR{data.getVenueById.bookingPrice}
+              {formatter.format(data.getVenueById.bookingPrice)}
             </Text>
           </View>
-          <View
-            style={{
-              backgroundColor: "lightgreen",
-              padding: 7,
-              borderRadius: 5,
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{ color: "darkgreen", fontWeight: "500", fontSize: 16 }}
-            >
-              Available{" "}
-            </Text>
-          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "lightgreen",
+            padding: 7,
+            borderRadius: 5,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 15,
+          }}
+        >
+          <Text style={{ color: "darkgreen", fontWeight: "500", fontSize: 16 }}>
+            Available{" "}
+          </Text>
         </View>
 
         <View style={{ marginTop: 24 }}>
@@ -138,7 +144,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   First hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {data.getVenueById.bookingPrice}
+                    {formatter.format(data.getVenueById.bookingPrice)}
                   </Text>
                 </Text>
                 <Text
@@ -146,7 +152,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   Next hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {data.getVenueById.parkingPrice}
+                    {formatter.format(data.getVenueById.parkingPrice)}
                   </Text>
                 </Text>
               </View>

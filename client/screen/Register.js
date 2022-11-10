@@ -37,13 +37,6 @@ const Register = ({ navigation }) => {
   };
 
   useEffect(() => {
-    // (async () => {
-    //   if (data) {
-    //     console.log(data)
-    //   }
-    // })();
-    // console.log(data, loading, error);
-
     if (data && data.register !== null) {
       navigation.navigate("Login");
     }

@@ -155,6 +155,11 @@ const BookScreen = ({ route, navigation }) => {
     }
   };
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   if (loading || userLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -337,7 +342,7 @@ const BookScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
               >
-                Rp10.000
+                {formatter.format(venueData?.getVenueById.bookingPrice)}
               </Text>
             </View>
           </View>
@@ -356,7 +361,7 @@ const BookScreen = ({ route, navigation }) => {
             Total payment
           </Text>
           <Text style={{ fontWeight: "600", fontSize: 16, color: "#404258" }}>
-            Rp10.000
+            {formatter.format(venueData?.getVenueById.bookingPrice)}
           </Text>
         </View>
       </ScrollView>

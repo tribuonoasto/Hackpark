@@ -15,6 +15,11 @@ const SaldoList = ({ item }) => {
     return tempTime.toLocaleDateString("en-us", options);
   };
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   return (
     <View style={styles.container}>
       {item.type === "kredit" && item.status === "Success" && (
@@ -26,7 +31,7 @@ const SaldoList = ({ item }) => {
           }}
         >
           <Text style={{ color: "#B73E3E", fontSize: 18, fontWeight: "500" }}>
-            - IDR {item.amount}
+            - {formatter.format(item.amount)}
           </Text>
           <Text style={{ fontSize: 12, color: "#6B728E" }}>
             {onChangeTime(item.dateTransaction)}
@@ -43,7 +48,7 @@ const SaldoList = ({ item }) => {
           }}
         >
           <Text style={{ color: "#54B435", fontSize: 18, fontWeight: "500" }}>
-            IDR {item.amount}
+            {formatter.format(item.amount)}
           </Text>
           <Text style={{ fontSize: 12, color: "#6B728E" }}>
             {onChangeTime(item.dateTransaction)}

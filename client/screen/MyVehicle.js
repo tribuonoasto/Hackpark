@@ -29,6 +29,10 @@ const MyVehicle = ({ navigation }) => {
   const [getUserId, { loading, error, data, refetch }] =
     useLazyQuery(GET_USER_BY_ID);
 
+  console.log(data);
+
+  console.log(image);
+
   const [
     createVehicle,
     { loading: vehicleLoading, error: errorVehicle, data: dataVehicle },
@@ -90,15 +94,13 @@ const MyVehicle = ({ navigation }) => {
       const access_token = await AsyncStorage.getItem("access_token");
 
       const { data: res } = await axios({
-        url: `http://localhost:3000/vehicles/${data?.getUserById.Vehicle.id}`,
+        url: `https://hackpark-service-user.herokuapp.com//vehicles/${data?.getUserById.Vehicle.id}`,
         method: "patch",
         data: uploadImage,
         headers: {
           access_token: access_token,
         },
       });
-
-      console.log(res);
     } catch (error) {
       console.log(error);
     }
@@ -123,7 +125,15 @@ const MyVehicle = ({ navigation }) => {
       >
         <View style={{ position: "relative" }}>
           <Image
-            source={image !== null ? { uri: image } : img}
+            source={
+              image !== null
+                ? { uri: image }
+                : data?.getUserById.Vehicle.imgUrl === null
+                ? img
+                : data?.getUserById.Vehicle.imgUrl
+                ? data?.getUserById.Vehicle.imgUrl
+                : img
+            }
             style={{
               width: 150,
               height: 150,

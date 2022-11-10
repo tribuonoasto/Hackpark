@@ -93,6 +93,11 @@ const OrderDetail = ({ route }) => {
     return tempTime.toLocaleTimeString("en-us", options);
   };
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   if (loading || venueLoading || ratingsLoading || ratingLoading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
@@ -316,7 +321,7 @@ const OrderDetail = ({ route }) => {
               </Text>
             ) : (
               <Text style={{ color: "#404258" }}>
-                Rp {data?.getBookingById.totalPrice}
+                {formatter.format(data?.getBookingById.totalPrice)}
               </Text>
             )}
           </View>
@@ -331,7 +336,7 @@ const OrderDetail = ({ route }) => {
               Total
             </Text>
             <Text style={{ fontWeight: "600", fontSize: 18, color: "#2C2D3E" }}>
-              Rp {data?.getBookingById.totalPrice}
+              {formatter.format(data?.getBookingById.totalPrice)}
             </Text>
           </View>
         </View>
