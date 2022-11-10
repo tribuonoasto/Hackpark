@@ -27,6 +27,14 @@ const ModalScreen = ({
         url: `https://hackpark-booking.herokuapp.com/bookings/check/${data._id}`,
       });
 
+      await axios({
+        method: "patch",
+        url: `https://hackpark-service-user.herokuapp.com/changeBalancePayment`,
+        data: {
+          UserId: data.User.id,
+        },
+      });
+
       setResult(res.message);
       setModalVisible(false);
       setScanned(false);
