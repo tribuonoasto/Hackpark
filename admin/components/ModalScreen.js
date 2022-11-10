@@ -29,31 +29,32 @@ const ModalScreen = ({
     { loading: checkLoading, error: checkError, data: checkData },
   ] = useMutation(CHECK_BOOKING);
 
-  const handleSubmitButton = async () => {
-    try {
-      checkBookings({
-        variables: {
-          checkBooking: {
-            bookingId: data._id,
-            UserId: data.User.id,
-          },
+  const handleSubmitButton = () => {
+    checkBookings({
+      variables: {
+        bookingId: {
+          bookingId: data._id,
+          UserId: +data.User.id,
         },
+      },
+    })
+      .then((response) => {
+        console.log(response);
+        setModalVisible(false);
+        setScanned(false);
+        setResult(response.data.checkBooking.message);
+      })
+      .catch((err) => {
+        setModalVisible(false);
+        setScanned(false);
+        setResult("Can't proceed");
       });
 
-      bookings({
-        variables: {
-          id: data._id,
-        },
-      });
-
-      setResult(res.message);
-      setModalVisible(false);
-      setScanned(false);
-    } catch (error) {
-      setModalVisible(false);
-      setScanned(false);
-      setResult("Can't proceed");
-    }
+    bookings({
+      variables: {
+        id: data._id,
+      },
+    });
   };
 
   return (
