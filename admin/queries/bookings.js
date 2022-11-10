@@ -9,6 +9,7 @@ export const GET_BOOKINGS_BY_ID = gql`
       checkoutDate
       transactionStatus
       User {
+        id
         username
       }
       Slot {
