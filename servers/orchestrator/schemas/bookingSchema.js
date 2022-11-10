@@ -803,7 +803,7 @@ const resolvers = {
           url: `${baseUrlBooking}/bookings/check/${bookingId.bookingId}`,
         });
 
-        if (book == "Checkout Success") {
+        if (book.message === "Checkout Success") {
           await axios({
             method: "patch",
             url: `${baseUrlUser}/users/changeBalancePayment`,
