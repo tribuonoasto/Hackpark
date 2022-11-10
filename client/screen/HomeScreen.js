@@ -89,6 +89,8 @@ const HomeScreen = ({ navigation }) => {
     );
   }
 
+  console.log(userData?.getUserById?.imgUrl);
+
   return (
     <SafeAreaView style={styles.container}>
       <View
@@ -134,9 +136,10 @@ const HomeScreen = ({ navigation }) => {
               >
                 <Image
                   source={
-                    userData?.getUserById.imgUrl === null
+                    userData?.getUserById.imgUrl === null ||
+                    !userData?.getUserById.imgUrl
                       ? require("../assets/userImg.jpg")
-                      : { uri: userData?.getUserById.imgUrl }
+                      : { uri: userData?.getUserById?.imgUrl }
                   }
                   style={{ width: 50, height: 50, borderRadius: 100 }}
                 />

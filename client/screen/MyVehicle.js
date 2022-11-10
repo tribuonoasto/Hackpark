@@ -44,7 +44,7 @@ const MyVehicle = ({ navigation }) => {
         },
       });
     })();
-  }, []);
+  }, [data, dataVehicle]);
 
   const pickImage = async () => {
     try {
@@ -132,7 +132,7 @@ const MyVehicle = ({ navigation }) => {
             source={
               image !== null
                 ? { uri: image }
-                : data?.getUserById.Vehicle.imgUrl === null
+                : data?.getUserById?.Vehicle?.imgUrl === null
                 ? img
                 : data?.getUserById?.Vehicle?.imgUrl
                 ? { uri: data?.getUserById?.Vehicle?.imgUrl }
@@ -173,14 +173,15 @@ const MyVehicle = ({ navigation }) => {
       <View style={{ marginTop: 40 }}>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Name</Text>
-          {data?.getUserById.Vehicle?.name !== "" ? (
+          {data?.getUserById?.Vehicle?.name !== "" &&
+          data?.getUserById?.Vehicle !== null ? (
             <Text style={styles.input}>{data?.getUserById.Vehicle?.name}</Text>
           ) : (
             <TextInput
               req
               style={styles.input}
               value={
-                data?.getUserById.Vehicle?.name === null
+                data?.getUserById?.Vehicle?.name === null
                   ? carName
                   : data?.getUserById.Vehicle?.name
               }
@@ -190,16 +191,17 @@ const MyVehicle = ({ navigation }) => {
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Plate number</Text>
-          {data?.getUserById.Vehicle?.plat !== "" ? (
+          {data?.getUserById?.Vehicle?.plat !== "" &&
+          data?.getUserById?.Vehicle !== null ? (
             <Text style={styles.input}>{data?.getUserById.Vehicle?.plat}</Text>
           ) : (
             <TextInput
               req
               style={styles.input}
               value={
-                data?.getUserById.Vehicle?.plat === null
+                data?.getUserById?.Vehicle?.plat === null
                   ? carId
-                  : data?.getUserById.Vehicle?.plat
+                  : data?.getUserById?.Vehicle?.plat
               }
               onChangeText={setCarId}
             />
@@ -207,7 +209,8 @@ const MyVehicle = ({ navigation }) => {
         </View>
         <View style={styles.inputWrapper}>
           <Text style={styles.label}>Type</Text>
-          {data?.getUserById.Vehicle?.modelName !== "" ? (
+          {data?.getUserById.Vehicle?.modelName !== "" &&
+          data?.getUserById?.Vehicle !== null ? (
             <Text style={styles.input}>
               {data?.getUserById.Vehicle?.modelName}
             </Text>
@@ -227,7 +230,8 @@ const MyVehicle = ({ navigation }) => {
 
       {data?.getUserById.Vehicle?.modelName === "" ||
         data?.getUserById.Vehicle?.name === "" ||
-        (data?.getUserById.Vehicle?.plat === "" && (
+        data?.getUserById.Vehicle?.plat === "" ||
+        (data?.getUserById?.Vehicle === null && (
           <TouchableOpacity
             style={{
               backgroundColor: "#404258",

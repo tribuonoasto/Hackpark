@@ -44,11 +44,15 @@ const OrderDetail = ({ route }) => {
 
   useEffect(() => {
     refetch();
+    venueRefetch();
     order({ variables: { getBookingByIdId: id } });
-  }, [id, status, venueData]);
+  }, [id, venueData, data]);
+
+  console.log(data);
 
   useEffect(() => {
     venueRefetch();
+    refetch();
     if (data) {
       getVenue({
         variables: {
@@ -56,7 +60,7 @@ const OrderDetail = ({ route }) => {
         },
       });
     }
-  }, [data, venueData]);
+  }, [data, status, venueData]);
 
   const ratingCompleted = async (rating) => {
     setShowBtn(true);
@@ -71,7 +75,8 @@ const OrderDetail = ({ route }) => {
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [ratingsData])
+      venueRefetch();
+    }, [ratingsData, venueData, data])
   );
 
   useEffect(() => {
@@ -97,7 +102,7 @@ const OrderDetail = ({ route }) => {
         console.log(error);
       }
     })();
-  }, [ratingsData, venueData]);
+  }, [ratingsData, venueData, data]);
 
   const submitRating = async () => {
     try {
