@@ -31,6 +31,10 @@ const SearchScreen = ({ navigation }) => {
   const [clickedPin, setClickedPin] = useState(false);
 
   const map = useRef();
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
 
   function fitMap() {
     const coordinates = pin;
@@ -106,7 +110,10 @@ const SearchScreen = ({ navigation }) => {
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -145,9 +152,6 @@ const SearchScreen = ({ navigation }) => {
           title="You're here"
           description="This is your location"
           draggable={true}
-          onPress={() => {
-            console.log("Ini lokasi ku");
-          }}
           onDragEnd={(e) => {
             setPin({
               latitude: e.nativeEvent.coordinate.latitude,
@@ -258,7 +262,8 @@ const SearchScreen = ({ navigation }) => {
                         color: "#50577A",
                       }}
                     >
-                      Booking price: Rp {venueData?.getVenueById.bookingPrice}
+                      Booking price:{" "}
+                      {formatter.format(venueData?.getVenueById.bookingPrice)}
                     </Text>
                     <Text
                       style={{
@@ -267,7 +272,8 @@ const SearchScreen = ({ navigation }) => {
                         color: "#50577A",
                       }}
                     >
-                      Parking price: Rp {venueData?.getVenueById.parkingPrice}
+                      Parking price:{" "}
+                      {formatter.format(venueData?.getVenueById.parkingPrice)}
                     </Text>
                   </View>
                   <View

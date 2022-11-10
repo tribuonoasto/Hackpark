@@ -32,8 +32,6 @@ const BookScreen = ({ route, navigation }) => {
     { data: bookingData, loading: bookingLoading, error: bookingError },
   ] = useMutation(BOOKINGS);
 
-  console.log(bookingData, bookingError, bookingLoading);
-
   const [
     getUserId,
     {
@@ -68,6 +66,7 @@ const BookScreen = ({ route, navigation }) => {
     refetchOnWindowFocus: false,
     enabled: false,
   });
+
   const venues = data?.getSlots.filter((slot) => {
     if (slot.VenueId === id && slot.slot > 0 && slot.slot !== null) return slot;
   });
@@ -135,7 +134,6 @@ const BookScreen = ({ route, navigation }) => {
     if (answer === "sure") {
       setModalVisible(false);
 
-      console.log(userId, date, slotRes[0]._id);
       booking({
         variables: {
           booking: {
@@ -156,10 +154,25 @@ const BookScreen = ({ route, navigation }) => {
     }
   };
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   if (loading || userLoading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -171,7 +184,7 @@ const BookScreen = ({ route, navigation }) => {
           flex: 1,
           justifyContent: "center",
           alignItems: "center",
-          backgroundColor: "#ededed",
+          backgroundColor: "#fff",
         }}
       >
         <Text
@@ -184,7 +197,10 @@ const BookScreen = ({ route, navigation }) => {
         >
           Processing your booking
         </Text>
-        <ActivityIndicator size="large" color="red" />
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -338,7 +354,7 @@ const BookScreen = ({ route, navigation }) => {
               <Text
                 style={{ fontSize: 10, fontWeight: "300", color: "#474E68" }}
               >
-                Rp10.000
+                {formatter.format(venueData?.getVenueById.bookingPrice)}
               </Text>
             </View>
           </View>
@@ -357,7 +373,7 @@ const BookScreen = ({ route, navigation }) => {
             Total payment
           </Text>
           <Text style={{ fontWeight: "600", fontSize: 16, color: "#404258" }}>
-            Rp10.000
+            {formatter.format(venueData?.getVenueById.bookingPrice)}
           </Text>
         </View>
       </ScrollView>

@@ -33,21 +33,24 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
           getUserByIdId: id,
         },
-      });
+      }).catch((err) => console.log(err));
     })();
-  }, [userData]);
-
+  }, []);
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [userData, data])
+    }, [data, userData])
   );
+
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
 
   useEffect(() => {
     (async () => {
@@ -223,7 +226,7 @@ const HomeScreen = ({ navigation }) => {
               <Text
                 style={{ marginTop: 10, color: "#50577A", fontWeight: "600" }}
               >
-                Rp {userData?.getUserById.balance}
+                {formatter.format(userData?.getUserById.balance)}
               </Text>
             </View>
             <TouchableOpacity

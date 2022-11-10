@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Image,
 } from "react-native";
 import { useCallback, useEffect, useState } from "react";
 import { FontAwesome5 } from "react-native-vector-icons";
@@ -22,25 +23,34 @@ const Orders = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      refetch();
       const id = await AsyncStorage.getItem("id");
 
       const res = data?.getBookings.filter((booking) => booking.UserId == id);
 
       setBookings(res);
     })();
-  }, [data, loading, error]);
+  }, [data]);
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [bookings])
+    }, [data])
   );
 
   if (loading && !data) {
     return (
-      <View style={{ alignItems: "center", justifyContent: "center", flex: 1 }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          alignItems: "center",
+          justifyContent: "center",
+          flex: 1,
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

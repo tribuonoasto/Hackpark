@@ -113,12 +113,10 @@ export const TOPUP_BALANCE = gql`
 `;
 
 export const LOGIN = gql`
-  mutation Login($login: InputLogin) {
+  mutation Mutation($login: InputLogin) {
     login(login: $login) {
       access_token
       id
-      username
-      email
     }
   }
 `;
@@ -153,6 +151,7 @@ export const RATINGS = gql`
       UserId
       VenueId
       _id
+      rating
     }
   }
 `;

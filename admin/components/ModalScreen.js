@@ -67,13 +67,13 @@ const ModalScreen = ({
         >
           <View style={{ justifyContent: "center", alignItems: "center" }}>
             <Image
-              source={{ uri: data.Venue.imgVenue }}
+              source={{ uri: data?.Venue.imgVenue }}
               style={{ width: 150, height: 150, borderRadius: 100 }}
             />
             <Text
               style={{ marginVertical: 20, fontWeight: "600", fontSize: 18 }}
             >
-              {data.Venue.name}, {data.Venue.address}
+              {data?.Venue.name}, {data?.Venue.address}
             </Text>
           </View>
 
@@ -86,7 +86,7 @@ const ModalScreen = ({
               Username: {data.User.username}
             </Text> */}
             <Text style={{ fontSize: 12, fontWeight: "500", marginTop: 10 }}>
-              Booking ID: {data._id}
+              Booking ID: {data?._id}
             </Text>
           </View>
 
@@ -102,7 +102,7 @@ const ModalScreen = ({
               Booking date
             </Text>
             <Text style={{ fontSize: 16, fontWeight: "500" }}>
-              {data.bookingDate}
+              {data?.bookingDate}
             </Text>
           </View>
           <View
@@ -115,7 +115,7 @@ const ModalScreen = ({
           >
             <Text style={{ fontSize: 16, fontWeight: "500" }}>Floor</Text>
             <Text style={{ fontSize: 16, fontWeight: "500" }}>
-              {data.Slot.floor}
+              {data?.Slot.floor}
             </Text>
           </View>
           <View
@@ -128,7 +128,7 @@ const ModalScreen = ({
           >
             <Text style={{ fontSize: 16, fontWeight: "500" }}>Slot</Text>
             <Text style={{ fontSize: 16, fontWeight: "500" }}>
-              {data.Slot.name}
+              {data?.Slot.name}
             </Text>
           </View>
 

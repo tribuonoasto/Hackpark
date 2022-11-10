@@ -17,10 +17,25 @@ const DetailScreen = ({ route, navigation }) => {
     variables: { getVenueByIdId: id },
   });
 
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
+
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }
@@ -46,7 +61,7 @@ const DetailScreen = ({ route, navigation }) => {
           height: "60%",
           borderTopRightRadius: 40,
           borderTopLeftRadius: 40,
-          padding: 40,
+          padding: 20,
           flex: 1,
         }}
         showsHorizontalScrollIndicator={false}
@@ -72,23 +87,24 @@ const DetailScreen = ({ route, navigation }) => {
                 marginTop: 5,
               }}
             >
-              IDR{data.getVenueById.bookingPrice}
+              {formatter.format(data.getVenueById.bookingPrice)}
             </Text>
           </View>
-          <View
-            style={{
-              backgroundColor: "lightgreen",
-              padding: 7,
-              borderRadius: 5,
-              alignItems: "center",
-            }}
-          >
-            <Text
-              style={{ color: "darkgreen", fontWeight: "500", fontSize: 16 }}
-            >
-              Available{" "}
-            </Text>
-          </View>
+        </View>
+
+        <View
+          style={{
+            backgroundColor: "lightgreen",
+            padding: 7,
+            borderRadius: 5,
+            alignItems: "center",
+            justifyContent: "center",
+            marginTop: 15,
+          }}
+        >
+          <Text style={{ color: "darkgreen", fontWeight: "500", fontSize: 16 }}>
+            Available{" "}
+          </Text>
         </View>
 
         <View style={{ marginTop: 24 }}>
@@ -138,7 +154,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   First hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {data.getVenueById.bookingPrice}
+                    {formatter.format(data.getVenueById.bookingPrice)}
                   </Text>
                 </Text>
                 <Text
@@ -146,7 +162,7 @@ const DetailScreen = ({ route, navigation }) => {
                 >
                   Next hour:{" "}
                   <Text style={{ color: "#6B728E", fontWeight: "400" }}>
-                    IDR {data.getVenueById.parkingPrice}
+                    {formatter.format(data.getVenueById.parkingPrice)}
                   </Text>
                 </Text>
               </View>
@@ -157,18 +173,17 @@ const DetailScreen = ({ route, navigation }) => {
         <TouchableOpacity
           style={{
             backgroundColor: "#404258",
-            width: "100%",
             alignItems: "center",
             justifyContent: "center",
-            marginTop: 40,
             paddingVertical: 15,
             borderRadius: 40,
+            marginTop: 10,
           }}
           onPress={() =>
             navigation.navigate("BookScreen", { id: data.getVenueById._id })
           }
         >
-          <Text style={{ color: "#EDEDED", fontSize: 24, fontWeight: "600" }}>
+          <Text style={{ color: "#EDEDED", fontSize: 10, fontWeight: "600" }}>
             Book Now
           </Text>
         </TouchableOpacity>

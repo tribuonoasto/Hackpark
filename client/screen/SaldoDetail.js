@@ -3,6 +3,7 @@ import {
   Text,
   StyleSheet,
   FlatList,
+  Image,
   ActivityIndicator,
 } from "react-native";
 import SaldoList from "../components/SaldoList";
@@ -35,8 +36,18 @@ const SaldoDetail = () => {
 
   if (loading || !data) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-        <ActivityIndicator size="large" color="red" />
+      <View
+        style={{
+          flex: 1,
+          justifyContent: "center",
+          alignItems: "center",
+          backgroundColor: "#fff",
+        }}
+      >
+        <Image
+          source={require("../assets/shape-animation.gif")}
+          style={{ width: 150, height: 150, resizeMode: "cover" }}
+        />
       </View>
     );
   }

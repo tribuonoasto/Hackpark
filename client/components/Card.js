@@ -2,6 +2,10 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from "react-native";
 import { FontAwesome5 } from "react-native-vector-icons";
 
 const Card = ({ navigation, item }) => {
+  const formatter = new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR",
+  });
   return (
     <TouchableOpacity
       style={[styles.container, styles.shadow]}
@@ -42,7 +46,7 @@ const Card = ({ navigation, item }) => {
               <Text
                 style={{ fontWeight: "500", fontSize: 12, color: "#50577A" }}
               >
-                IDR {item.parkingPrice} /jam
+                {formatter.format(item.bookingPrice)}
               </Text>
             </View>
           </View>
