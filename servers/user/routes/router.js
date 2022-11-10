@@ -1,5 +1,6 @@
 const authController = require("../controllers/authController");
 const Controller = require("../controllers/balanceController");
+const UserController = require("../controllers/userController");
 const authentication = require("../middlewares/authentication");
 const userRouter = require("./userRouter");
 const balanceRouter = require("./balanceRouter");
@@ -13,6 +14,8 @@ router.post("/login", authController.login);
 router.post("/register", authController.register);
 
 router.post("/notification", Controller.paymentNotif);
+
+router.patch("/changeBalancePayment", UserController.changeBalancePayment);
 
 router.use("/users", userRouter);
 

@@ -767,7 +767,7 @@ const resolvers = {
 
         const { data: resp } = await axios({
           method: "patch",
-          url: `${baseUrlUser}/users/changeBalancePayment`,
+          url: `${baseUrlUser}/changeBalancePayment`,
           headers: {
             access_token,
           },
@@ -806,7 +806,7 @@ const resolvers = {
         if (book.message === "Checkout Success") {
           await axios({
             method: "patch",
-            url: `${baseUrlUser}/users/changeBalancePayment`,
+            url: `${baseUrlUser}/changeBalancePayment`,
             headers: {
               access_token,
             },

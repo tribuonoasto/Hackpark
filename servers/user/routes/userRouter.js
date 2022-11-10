@@ -15,8 +15,6 @@ router.patch("/changeusername", Controller.changeUsername);
 
 router.patch("/changeImg", upload.single("image"), Controller.changeImgUser);
 
-router.patch("/changeBalancePayment", Controller.changeBalancePayment);
-
 router.get("/:id", Controller.getUser);
 
 module.exports = router;
