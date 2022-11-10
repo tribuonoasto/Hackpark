@@ -20,6 +20,7 @@ input InputBooking {
 
 input InputBookingId {
   bookingId: String
+  UserId: Int
 }
 
 type Venue {
@@ -793,7 +794,7 @@ const resolvers = {
     },
     checkBooking: async (_, args) => {
       try {
-        const { bookingId, UserId } = args;
+        const { bookingId } = args;
 
         const { data: book } = await axios({
           method: "post",
@@ -806,7 +807,7 @@ const resolvers = {
             url: `${baseUrlUser}/changeBalancePayment`,
             data: {
               price: book.checkoutPrice,
-              UserId,
+              UserId: bookingId.UserId,
             },
           });
           await redis.del("app:bookings");

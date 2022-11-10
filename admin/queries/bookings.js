@@ -28,3 +28,11 @@ export const GET_BOOKINGS_BY_ID = gql`
     }
   }
 `;
+
+export const CHECK_BOOKING = gql`
+  mutation Mutation($bookingId: InputBookingId) {
+    checkBooking(bookingId: $bookingId) {
+      message
+    }
+  }
+`;
