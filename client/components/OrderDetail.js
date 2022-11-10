@@ -25,7 +25,12 @@ const OrderDetail = ({ route }) => {
   const [order, { loading, error, data }] = useLazyQuery(GET_BOOKINGS_BY_ID);
   const [
     getVenue,
-    { loading: venueLoading, data: venueData, error: venueError },
+    {
+      loading: venueLoading,
+      data: venueData,
+      error: venueError,
+      refetch: venueRefetch,
+    },
   ] = useLazyQuery(GET_VENUE_BY_SLOT_ID);
 
   const {
@@ -40,6 +45,7 @@ const OrderDetail = ({ route }) => {
   }, [id, status]);
 
   useEffect(() => {
+    venueRefetch();
     if (data) {
       getVenue({
         variables: {
@@ -123,16 +129,13 @@ const OrderDetail = ({ route }) => {
           <View
             style={{
               marginTop: 20,
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "flex-start",
             }}
           >
-            <View>
+            <View style={{ marginBottom: 10 }}>
               <Text
-                style={{ fontSize: 20, color: "#474E68", fontWeight: "500" }}
+                style={{ fontSize: 16, color: "#474E68", fontWeight: "500" }}
               >
-                {venueData?.getSlotById.Venue.name}
+                {venueData?.getSlotById.Venue?.name}
               </Text>
               <Text
                 style={{
@@ -228,6 +231,20 @@ const OrderDetail = ({ route }) => {
             <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Text>Please check-in before</Text>
               <Text>{onChangeTime(data?.getBookingById.expiredDate)}.</Text>
+              <Image
+                source={{ uri: data?.getBookingById.imgQrCode }}
+                style={{
+                  width: 250,
+                  height: 250,
+                  resizeMode: "contain",
+                  marginVertical: 20,
+                }}
+              />
+            </View>
+          )}
+
+          {data?.getBookingById.transactionStatus === "Inprogress" && (
+            <View style={{ alignItems: "center", justifyContent: "center" }}>
               <Image
                 source={{ uri: data?.getBookingById.imgQrCode }}
                 style={{

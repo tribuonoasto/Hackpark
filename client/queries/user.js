@@ -113,12 +113,10 @@ export const TOPUP_BALANCE = gql`
 `;
 
 export const LOGIN = gql`
-  mutation Login($login: InputLogin) {
+  mutation Mutation($login: InputLogin) {
     login(login: $login) {
-      access_token
       email
-      id
-      username
+      access_token
     }
   }
 `;
