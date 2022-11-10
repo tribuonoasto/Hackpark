@@ -136,8 +136,9 @@ class Controller {
   static async changeBalancePayment(req, res, next) {
     const t = await sequelize.transaction();
     try {
-      const { id } = req.user;
-      const { price } = req.body;
+      const { price, UserId } = req.body;
+
+      let id = UserId;
 
       if (!price) {
         throw { name: "invalid_input", msg: "Invalid Price" };

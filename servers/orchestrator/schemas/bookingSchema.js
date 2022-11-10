@@ -768,11 +768,9 @@ const resolvers = {
         const { data: resp } = await axios({
           method: "patch",
           url: `${baseUrlUser}/changeBalancePayment`,
-          headers: {
-            access_token,
-          },
           data: {
             price: book.price,
+            UserId,
           },
         });
 
@@ -793,10 +791,9 @@ const resolvers = {
         errorHandling(error);
       }
     },
-    checkBooking: async (_, args, context) => {
+    checkBooking: async (_, args) => {
       try {
-        const { bookingId } = args;
-        const { access_token } = context;
+        const { bookingId, UserId } = args;
 
         const { data: book } = await axios({
           method: "post",
@@ -807,11 +804,9 @@ const resolvers = {
           await axios({
             method: "patch",
             url: `${baseUrlUser}/changeBalancePayment`,
-            headers: {
-              access_token,
-            },
             data: {
               price: book.checkoutPrice,
+              UserId,
             },
           });
           await redis.del("app:bookings");
