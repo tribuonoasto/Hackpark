@@ -14,6 +14,7 @@ import { AirbnbRating } from "react-native-ratings";
 import { GET_BOOKINGS_BY_ID, GET_VENUE_BY_SLOT_ID } from "../queries/bookings";
 import { ADD_RATING, RATINGS, RATING_BY_ID } from "../queries/user";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from "@react-navigation/native";
 
 const OrderDetail = ({ route }) => {
   const [showBtn, setShowBtn] = useState(false);
@@ -23,6 +24,7 @@ const OrderDetail = ({ route }) => {
   const { id, status } = route.params;
 
   const [order, { loading, error, data }] = useLazyQuery(GET_BOOKINGS_BY_ID);
+
   const [
     getVenue,
     {
@@ -41,8 +43,9 @@ const OrderDetail = ({ route }) => {
   } = useQuery(RATINGS);
 
   useEffect(() => {
+    refetch();
     order({ variables: { getBookingByIdId: id } });
-  }, [id, status]);
+  }, [id, status, venueData]);
 
   useEffect(() => {
     venueRefetch();
@@ -53,7 +56,7 @@ const OrderDetail = ({ route }) => {
         },
       });
     }
-  }, [data]);
+  }, [data, venueData]);
 
   const ratingCompleted = async (rating) => {
     setShowBtn(true);
@@ -65,22 +68,56 @@ const OrderDetail = ({ route }) => {
     { data: ratingData, loading: ratingLoading, error: ratingError },
   ] = useMutation(ADD_RATING);
 
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [ratingsData])
+  );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userId = await AsyncStorage.getItem("id");
+        const res = ratingsData?.getRatings.filter((rate) => {
+          if (
+            rate.UserId == userId &&
+            venueData?.getSlotById?.Venue?._id === rate.VenueId
+          ) {
+            return rate;
+          }
+        });
+
+        if (ratingsData.getRatings.length !== 0) {
+          if (res?.length !== 0) {
+            setRated(true);
+            setVenueRating(res[0].rating);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    })();
+  }, [ratingsData, venueData]);
+
   const submitRating = async () => {
-    const userId = await AsyncStorage.getItem("id");
+    try {
+      const userId = await AsyncStorage.getItem("id");
 
-    addRating({
-      variables: {
-        rating: {
-          UserId: +userId,
-          VenueId: venueData?.getSlotById.Venue._id,
-          rating: `${venueRating}`,
+      addRating({
+        variables: {
+          rating: {
+            UserId: +userId,
+            VenueId: venueData?.getSlotById.Venue._id,
+            rating: `${venueRating}`,
+          },
         },
-      },
-    });
+      });
 
-    setVenueRating(venueRating);
-    setShowBtn(false);
-    setRated(true);
+      setVenueRating(venueRating);
+      setShowBtn(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onChangeTime = (selectedDate) => {
@@ -135,7 +172,7 @@ const OrderDetail = ({ route }) => {
               <Text
                 style={{ fontSize: 16, color: "#474E68", fontWeight: "500" }}
               >
-                {venueData?.getSlotById.Venue?.name}
+                {venueData?.getSlotById?.Venue?.name}
               </Text>
               <Text
                 style={{
@@ -195,7 +232,7 @@ const OrderDetail = ({ route }) => {
                   reviewColor="#2C2D3E"
                   count={5}
                   reviews={["Bad", "Meh", "OK", "Good", "Amazing"]}
-                  defaultRating={0}
+                  defaultRating={venueRating}
                   size={35}
                   onFinishRating={ratingCompleted}
                   isDisabled={rated}

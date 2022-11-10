@@ -33,20 +33,18 @@ const HomeScreen = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      refetch();
       const id = await AsyncStorage.getItem("id");
       getUserId({
         variables: {
           getUserByIdId: id,
         },
-      });
+      }).catch((err) => console.log(err));
     })();
-  }, [userData]);
-
+  }, []);
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [userData, data])
+    }, [data, userData])
   );
 
   const formatter = new Intl.NumberFormat("id-ID", {

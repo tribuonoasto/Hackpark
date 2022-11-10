@@ -115,8 +115,8 @@ export const TOPUP_BALANCE = gql`
 export const LOGIN = gql`
   mutation Mutation($login: InputLogin) {
     login(login: $login) {
-      email
       access_token
+      id
     }
   }
 `;
@@ -151,6 +151,7 @@ export const RATINGS = gql`
       UserId
       VenueId
       _id
+      rating
     }
   }
 `;

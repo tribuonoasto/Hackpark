@@ -22,19 +22,18 @@ const Orders = ({ navigation }) => {
 
   useEffect(() => {
     (async () => {
-      refetch();
       const id = await AsyncStorage.getItem("id");
 
       const res = data?.getBookings.filter((booking) => booking.UserId == id);
 
       setBookings(res);
     })();
-  }, [data, loading, error]);
+  }, [data]);
 
   useFocusEffect(
     useCallback(() => {
       refetch();
-    }, [bookings])
+    }, [data])
   );
 
   if (loading && !data) {

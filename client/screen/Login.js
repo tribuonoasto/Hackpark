@@ -34,19 +34,18 @@ const Login = ({ navigation }) => {
     });
   };
 
-  console.log(data, loading, error);
-
   useEffect(() => {
     (async () => {
-      if (data) {
-        await AsyncStorage.setItem("access_token", data?.login?.access_token);
-        await AsyncStorage.setItem("id", data?.login?.id);
+      try {
+        if (data) {
+          await AsyncStorage.setItem("access_token", data?.login?.access_token);
+          await AsyncStorage.setItem("id", data?.login?.id);
+          navigation.navigate("TabScreen");
+        }
+      } catch (error) {
+        console.log(error);
       }
     })();
-
-    if (data && data.login !== null) {
-      navigation.navigate("TabScreen");
-    }
   }, [data, loading, error]);
 
   if (loading) {

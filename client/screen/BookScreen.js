@@ -68,6 +68,7 @@ const BookScreen = ({ route, navigation }) => {
     refetchOnWindowFocus: false,
     enabled: false,
   });
+
   const venues = data?.getSlots.filter((slot) => {
     if (slot.VenueId === id && slot.slot > 0 && slot.slot !== null) return slot;
   });
