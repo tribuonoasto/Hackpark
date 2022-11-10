@@ -29,10 +29,6 @@ const MyVehicle = ({ navigation }) => {
   const [getUserId, { loading, error, data, refetch }] =
     useLazyQuery(GET_USER_BY_ID);
 
-  console.log(data);
-
-  console.log(image);
-
   const [
     createVehicle,
     { loading: vehicleLoading, error: errorVehicle, data: dataVehicle },
@@ -51,59 +47,57 @@ const MyVehicle = ({ navigation }) => {
   }, []);
 
   const pickImage = async () => {
-    setEdit(true);
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
+    try {
+      setEdit(true);
+      let result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.All,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 1,
+      });
 
-    if (!result.cancelled) {
-      setImage(result.uri);
+      if (!result.cancelled) {
+        setImage(result.uri);
+      }
+
+      let localUri = result.uri;
+      let filename = localUri.split("/").pop();
+
+      let match = /\.(\w+)$/.exec(filename);
+      let type = match ? `image/${match[1]}` : `image`;
+
+      let formData = new FormData();
+      formData.append("image", { uri: localUri, name: filename, type });
+
+      const access_token = await AsyncStorage.getItem("access_token");
+
+      const { data: res } = await axios({
+        url: `https://hackpark-service-user.herokuapp.com/vehicles/${data?.getUserById.Vehicle.id}`,
+        method: "patch",
+        data: formData,
+        headers: {
+          access_token: access_token,
+        },
+      });
+
+      refetch();
+    } catch (error) {
+      console.log(error);
     }
-
-    let localUri = result.uri;
-    let filename = localUri.split("/").pop();
-
-    let match = /\.(\w+)$/.exec(filename);
-    let type = match ? `image/${match[1]}` : `image`;
-
-    let formData = new FormData();
-    formData.append("image", { uri: localUri, name: filename, type });
-
-    setUploadImage(formData);
   };
 
   const handleEdit = () => {
+    const id = AsyncStorage.getItem("id");
     createVehicle({
       variables: {
         vehicle: {
           modelName: carType,
           name: carName,
           plat: carId,
-          UserId: id,
+          UserId: +id,
         },
       },
     });
-    handleSubmit();
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const access_token = await AsyncStorage.getItem("access_token");
-
-      const { data: res } = await axios({
-        url: `https://hackpark-service-user.herokuapp.com//vehicles/${data?.getUserById.Vehicle.id}`,
-        method: "patch",
-        data: uploadImage,
-        headers: {
-          access_token: access_token,
-        },
-      });
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   if (loading || vehicleLoading) {
@@ -130,8 +124,8 @@ const MyVehicle = ({ navigation }) => {
                 ? { uri: image }
                 : data?.getUserById.Vehicle.imgUrl === null
                 ? img
-                : data?.getUserById.Vehicle.imgUrl
-                ? data?.getUserById.Vehicle.imgUrl
+                : data?.getUserById?.Vehicle?.imgUrl
+                ? { uri: data?.getUserById?.Vehicle?.imgUrl }
                 : img
             }
             style={{
@@ -168,71 +162,82 @@ const MyVehicle = ({ navigation }) => {
 
       <View style={{ marginTop: 40 }}>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>
-            Name <Text style={{ color: "red" }}>*</Text>
-          </Text>
-          <TextInput
-            req
-            style={styles.input}
-            value={
-              data?.getUserById.Vehicle?.name === null
-                ? carName
-                : data?.getUserById.Vehicle?.name
-            }
-            onChangeText={setCarName}
-          />
+          <Text style={styles.label}>Name</Text>
+          {data?.getUserById.Vehicle?.name !== "" ? (
+            <Text style={styles.input}>{data?.getUserById.Vehicle?.name}</Text>
+          ) : (
+            <TextInput
+              req
+              style={styles.input}
+              value={
+                data?.getUserById.Vehicle?.name === null
+                  ? carName
+                  : data?.getUserById.Vehicle?.name
+              }
+              onChangeText={setCarName}
+            />
+          )}
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>
-            Plate number <Text style={{ color: "red" }}>*</Text>
-          </Text>
-          <TextInput
-            req
-            style={styles.input}
-            value={
-              data?.getUserById.Vehicle?.plat === null
-                ? carId
-                : data?.getUserById.Vehicle?.plat
-            }
-            onChangeText={setCarId}
-          />
+          <Text style={styles.label}>Plate number</Text>
+          {data?.getUserById.Vehicle?.plat !== "" ? (
+            <Text style={styles.input}>{data?.getUserById.Vehicle?.plat}</Text>
+          ) : (
+            <TextInput
+              req
+              style={styles.input}
+              value={
+                data?.getUserById.Vehicle?.plat === null
+                  ? carId
+                  : data?.getUserById.Vehicle?.plat
+              }
+              onChangeText={setCarId}
+            />
+          )}
         </View>
         <View style={styles.inputWrapper}>
-          <Text style={styles.label}>
-            Type <Text style={{ color: "red" }}>*</Text>
-          </Text>
-          <TextInput
-            req
-            style={styles.input}
-            value={
-              data?.getUserById.Vehicle?.modelName === null
-                ? carType
-                : data?.getUserById.Vehicle?.modelName
-            }
-            onChangeText={setCarType}
-          />
+          <Text style={styles.label}>Type</Text>
+          {data?.getUserById.Vehicle?.modelName !== "" ? (
+            <Text style={styles.input}>
+              {data?.getUserById.Vehicle?.modelName}
+            </Text>
+          ) : (
+            <TextInput
+              style={styles.input}
+              value={
+                data?.getUserById.Vehicle?.modelName === null
+                  ? carType
+                  : data?.getUserById.Vehicle?.modelName
+              }
+              onChangeText={setCarType}
+            />
+          )}
         </View>
       </View>
 
-      <TouchableOpacity
-        style={{
-          backgroundColor: "#404258",
-          paddingVertical: 10,
-          borderRadius: 40,
-        }}
-        onPress={handleEdit}
-      >
-        <Text
-          style={{
-            textAlign: "center",
-            color: "#ededed",
-            fontSize: 20,
-            fontWeight: "500",
-          }}
-        >
-          Save
-        </Text>
-      </TouchableOpacity>
+      {data?.getUserById.Vehicle?.modelName === "" ||
+        data?.getUserById.Vehicle?.name === "" ||
+        (data?.getUserById.Vehicle?.plat === "" && (
+          <TouchableOpacity
+            style={{
+              backgroundColor: "#404258",
+              paddingVertical: 10,
+              borderRadius: 40,
+            }}
+            onPress={handleEdit}
+          >
+            <Text
+              style={{
+                textAlign: "center",
+                color: "#ededed",
+                fontSize: 20,
+                fontWeight: "500",
+              }}
+            >
+              Save
+            </Text>
+          </TouchableOpacity>
+        ))}
     </View>
   );
 };

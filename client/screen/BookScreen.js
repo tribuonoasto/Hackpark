@@ -32,8 +32,6 @@ const BookScreen = ({ route, navigation }) => {
     { data: bookingData, loading: bookingLoading, error: bookingError },
   ] = useMutation(BOOKINGS);
 
-  console.log(bookingData, bookingError, bookingLoading);
-
   const [
     getUserId,
     {

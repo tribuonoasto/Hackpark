@@ -172,6 +172,7 @@ const SearchScreen = ({ navigation }) => {
                 })
               }
               image={require("../assets/pin-icon.png")}
+              style={{ width: 30, height: 30 }}
             >
               <Callout>
                 <View
